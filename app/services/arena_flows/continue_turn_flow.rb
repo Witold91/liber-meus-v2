@@ -2,7 +2,7 @@ module ArenaFlows
   class ContinueTurnFlow
     def self.call(game:, action:)
       # Step 1: Load scenario
-      scenario = ScenarioCatalog.find!(game.scenario_slug)
+      scenario = ScenarioCatalog.find!(game.scenario_slug, locale: game.game_language)
       world_state = game.world_state
 
       # Step 2: Determine turn number

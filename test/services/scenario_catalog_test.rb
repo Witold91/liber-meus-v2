@@ -53,4 +53,56 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert chapter["actors"].any?
     assert chapter["objects"].any?
   end
+
+  test "find with locale pl returns Polish title" do
+    scenario = ScenarioCatalog.find("prison_break", locale: "pl")
+    assert_not_nil scenario
+    assert_equal "Ucieczka z Więzienia", scenario["title"]
+  end
+
+  test "find with locale pl merges stage name" do
+    scenario = ScenarioCatalog.find("prison_break", locale: "pl")
+    chapter = scenario["chapters"].first
+    cell_stage = chapter["stages"].find { |s| s["id"] == "cell" }
+    assert_not_nil cell_stage
+    assert_equal "Twoja Cela", cell_stage["name"]
+  end
+
+  test "find with locale pl merges exit label" do
+    scenario = ScenarioCatalog.find("prison_break", locale: "pl")
+    chapter = scenario["chapters"].first
+    cell_stage = chapter["stages"].find { |s| s["id"] == "cell" }
+    exit_to_vent = cell_stage["exits"].find { |e| e["to"] == "vent_shaft" }
+    assert_not_nil exit_to_vent
+    assert_equal "Kratka wentylacyjna (nad pryczą)", exit_to_vent["label"]
+  end
+
+  test "find with unsupported locale falls back to English" do
+    scenario = ScenarioCatalog.find("prison_break", locale: "de")
+    assert_not_nil scenario
+    assert_equal "Prison Break", scenario["title"]
+  end
+
+  test "find with locale en returns English base" do
+    scenario = ScenarioCatalog.find("prison_break", locale: "en")
+    assert_not_nil scenario
+    assert_equal "Prison Break", scenario["title"]
+  end
+
+  test "find with locale pl preserves structural fields from base" do
+    scenario = ScenarioCatalog.find("prison_break", locale: "pl")
+    chapter = scenario["chapters"].first
+    cell_stage = chapter["stages"].find { |s| s["id"] == "cell" }
+    exit_to_cell_block = cell_stage["exits"].find { |e| e["to"] == "cell_block" }
+    assert_equal true, exit_to_cell_block["locked"]
+    actor = chapter["actors"].find { |a| a["id"] == "guard_rodriguez" }
+    assert_equal "awake", actor["default_status"]
+    assert_includes actor["status_options"], "alerted"
+  end
+
+  test "all returns only base scenarios without locale variants" do
+    scenarios = ScenarioCatalog.all
+    assert scenarios.all? { |s| s["slug"].present? }
+    assert_equal 1, scenarios.count
+  end
 end

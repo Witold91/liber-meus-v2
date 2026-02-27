@@ -1,7 +1,7 @@
 module ArenaFlows
   class StartScenarioFlow
     def self.call(scenario_slug:, hero_id: nil, game_language: I18n.default_locale.to_s)
-      scenario = ScenarioCatalog.find!(scenario_slug)
+      scenario = ScenarioCatalog.find!(scenario_slug, locale: game_language)
 
       hero = find_or_create_hero(scenario, hero_id)
 

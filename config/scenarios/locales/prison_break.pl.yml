@@ -1,0 +1,111 @@
+title: "Ucieczka z Więzienia"
+description: "Musisz uciec z więzienia o zaostrzonym rygorze przed świtem."
+
+hero:
+  name: "Skazaniec"
+  description: "Niesłusznie uwięziony wojownik, który nie ma nic do stracenia."
+
+chapters:
+  - number: 1
+    title: "Blok Cel"
+    intro: |
+      Fluorescencyjne światła migoczą nad głową, gdy nocna kontrola dobiegła końca.
+      Strażnik Rodriguez odbywa ostatni obchód, a buty dudnią na betonowej podłodze.
+      Masz trzy godziny do świtu — i jedną szansę na wolność.
+      Drzwi celi są zamknięte, ale zauważasz, że kratka wentylacyjna nad pryczą wygląda na luźną.
+    stages:
+      - id: cell
+        name: "Twoja Cela"
+        description: "Betonowa skrzynka 2x3 metry. Prycza przykręcona do ściany. Toaleta. Słabe światło fluorescencyjne."
+        exits:
+          - to: cell_block
+            label: "Drzwi celi (zamknięte)"
+          - to: vent_shaft
+            label: "Kratka wentylacyjna (nad pryczą)"
+      - id: vent_shaft
+        name: "Szyb Wentylacyjny"
+        description: "Wąskie metalowe kanały. Zakurzone. Dookoła słyszysz odgłosy więzienia."
+        exits:
+          - to: cell
+            label: "Powrót do celi"
+          - to: guard_room
+            label: "Wyjście z szybu (pokój strażników)"
+          - to: storage_room
+            label: "Wyjście z szybu (magazyn)"
+      - id: cell_block
+        name: "Blok Cel C"
+        description: "Główny korytarz. Dwadzieścia cel po każdej stronie. Tylko oświetlenie awaryjne."
+        exits:
+          - to: guard_station
+            label: "Posterunek strażniczy (północ)"
+          - to: yard_entrance
+            label: "Wejście na dziedziniec (południe)"
+      - id: guard_room
+        name: "Pokój Strażników"
+        description: "Mała poczekalnia. Ekspres do kawy, szafki, strażnik śpiący przy biurku."
+        exits:
+          - to: vent_shaft
+            label: "Powrót do szybu"
+          - to: cell_block
+            label: "Drzwi do bloku cel"
+          - to: control_room
+            label: "Pokój kontrolny (zamknięte drzwi)"
+      - id: storage_room
+        name: "Magazyn"
+        description: "Półki ze środkami czyszczącymi, zapasowymi mundurami i narzędziami konserwacyjnymi."
+        exits:
+          - to: vent_shaft
+            label: "Powrót do szybu"
+          - to: cell_block
+            label: "Boczne drzwi do bloku cel"
+      - id: guard_station
+        name: "Posterunek Strażniczy"
+        description: "Główne biurko monitoringu. Kamery pokazują wszystkie obszary. Jeden strażnik na służbie."
+        exits:
+          - to: cell_block
+            label: "Powrót do bloku cel"
+      - id: control_room
+        name: "Pokój Kontrolny"
+        description: "Elektroniczne sterowanie drzwiami. Szafka z kluczem głównym. Panel wyjść awaryjnych."
+        exits:
+          - to: guard_room
+            label: "Powrót do pokoju strażników"
+          - to: yard_entrance
+            label: "Korytarz wyjścia awaryjnego"
+      - id: yard_entrance
+        name: "Wejście na Dziedziniec"
+        description: "Ciężkie stalowe drzwi prowadzące na plac ćwiczeń. Za nimi widoczny mur."
+        exits:
+          - to: cell_block
+            label: "Powrót do środka"
+          - to: perimeter_wall
+            label: "Przejście przez dziedziniec"
+      - id: perimeter_wall
+        name: "Mur Zewnętrzny"
+        description: "Sześć metrów betonu pokrytego drutem kolczastym. Na wschodzie widać wieżę strażniczą."
+        exits:
+          - to: yard_entrance
+            label: "Powrót na dziedziniec"
+          - to: freedom
+            label: "Na szczyt muru"
+    actors:
+      - id: guard_rodriguez
+        name: "Strażnik Rodriguez"
+        description: "Gruby strażnik, dwa tygodnie do emerytury. Przewidywalne obchody."
+      - id: guard_chen
+        name: "Strażnik Chen"
+        description: "Młody, ambitny strażnik przy pokoju kontrolnym. Bystre oczy."
+      - id: inmate_torres
+        name: "Więzień Torres"
+        description: "Stary wyjadacz, który zna każdy centymetr tego więzienia. Jest ci winien przysługę."
+    objects:
+      - id: loose_grate
+        name: "Poluzowana Kratka Wentylacyjna"
+      - id: guard_keys
+        name: "Klucze Strażnika"
+      - id: uniform
+        name: "Mundur Strażnika"
+      - id: master_switch
+        name: "Główny Panel Drzwi"
+      - id: rope
+        name: "Związana Lina (ze ściereczek)"
