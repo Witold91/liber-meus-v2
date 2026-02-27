@@ -24,7 +24,7 @@ class ArenaNarratorService
     [ JSON.parse(content), tokens ]
   rescue => e
     Rails.logger.error("[ArenaNarratorService] Error: #{e.message}")
-    [ fallback_response(action, resolution_tag), 0 ]
+    raise AIConnectionError, e.message
   end
 
   def self.build_user_message(action, resolution_tag, difficulty, stage_context, recent_turns)
@@ -86,18 +86,4 @@ class ArenaNarratorService
     parts.join("\n")
   end
   private_class_method :build_user_message
-
-  def self.fallback_response(action, resolution_tag)
-    narrative = case resolution_tag
-    when "success"
-      I18n.t("services.arena_narrator_service.fallback.success")
-    when "partial"
-      I18n.t("services.arena_narrator_service.fallback.partial")
-    else
-      I18n.t("services.arena_narrator_service.fallback.failure")
-    end
-
-    { "narrative" => narrative, "diff" => {} }
-  end
-  private_class_method :fallback_response
 end

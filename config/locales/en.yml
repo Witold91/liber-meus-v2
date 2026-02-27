@@ -14,6 +14,7 @@ en:
     games:
       alerts:
         enter_action: "Please enter an action."
+        ai_connection_error: "Unable to connect to the AI server. Please try again."
         error: "Error: %{message}"
     scenario_select:
       alerts:

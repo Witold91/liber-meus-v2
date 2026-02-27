@@ -76,4 +76,28 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Do something")
     end
   end
+
+  test "raises AIConnectionError and creates no turn when first AI call fails" do
+    DifficultyRatingService.stubs(:rate).raises(::AIConnectionError, "network error")
+
+    assert_no_difference "Turn.count" do
+      assert_raises(::AIConnectionError) do
+        ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+      end
+    end
+  end
+
+  test "raises AIConnectionError and rolls back world state when second AI call fails" do
+    ArenaNarratorService.stubs(:narrate).raises(::AIConnectionError, "network error")
+    original_health = @game.world_state["health"]
+
+    assert_no_difference "Turn.count" do
+      assert_raises(::AIConnectionError) do
+        ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+      end
+    end
+
+    @game.reload
+    assert_equal original_health, @game.world_state["health"]
+  end
 end

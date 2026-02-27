@@ -5,6 +5,7 @@
 # locales as you wish. All of these examples are active by default:
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "hero", "heroes"
+  inflect.acronym "AI"
 end
 
 # ActiveSupport::Inflector.inflections(:en) do |inflect|

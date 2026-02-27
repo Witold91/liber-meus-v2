@@ -1,6 +1,7 @@
 module ArenaFlows
   class ContinueTurnFlow
     def self.call(game:, action:)
+      ActiveRecord::Base.transaction do
       # Step 1: Load scenario
       scenario = ScenarioCatalog.find!(game.scenario_slug, locale: game.game_language)
       world_state = game.world_state
@@ -73,6 +74,7 @@ module ArenaFlows
       end
 
       turn
+      end # transaction
     end
   end
 end

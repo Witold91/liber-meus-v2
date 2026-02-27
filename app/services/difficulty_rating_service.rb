@@ -1,6 +1,5 @@
 class DifficultyRatingService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "difficulty_rating.txt")
-  FALLBACK = { "difficulty" => "medium" }.freeze
 
   def self.rate(action, stage_context, hero)
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
@@ -25,7 +24,7 @@ class DifficultyRatingService
     [ JSON.parse(content), tokens ]
   rescue => e
     Rails.logger.error("[DifficultyRatingService] Error: #{e.message}")
-    [ FALLBACK.dup, 0 ]
+    raise AIConnectionError, e.message
   end
 
   def self.build_user_message(action, stage_context, hero)

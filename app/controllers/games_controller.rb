@@ -37,6 +37,12 @@ class GamesController < ApplicationController
       end
       format.html { redirect_to game_path(@game) }
     end
+  rescue AIConnectionError
+    message = t("controllers.games.alerts.ai_connection_error")
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { message: message }) }
+      format.html { redirect_to game_path(@game), alert: message }
+    end
   rescue => e
     Rails.logger.error("[GamesController#continue] #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     message = t("controllers.games.alerts.error", message: e.message)

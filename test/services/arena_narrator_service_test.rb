@@ -41,19 +41,11 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
     assert_equal 87, tokens
   end
 
-  test "narrate returns fallback on API error" do
+  test "narrate raises AIConnectionError on API error" do
     OpenAI::Client.expects(:new).raises(StandardError, "network error")
 
-    result, tokens = ArenaNarratorService.narrate("Do something", "success", "easy", @stage_context, @recent_turns)
-    assert result.key?("narrative")
-    assert result.key?("diff")
-    assert_equal 0, tokens
-  end
-
-  test "narrate fallback for failure resolution contains failure text" do
-    OpenAI::Client.expects(:new).raises(StandardError, "error")
-
-    result, _tokens = ArenaNarratorService.narrate("Do something", "failure", "hard", @stage_context, @recent_turns)
-    assert_match(/fail/i, result["narrative"])
+    assert_raises(::AIConnectionError) do
+      ArenaNarratorService.narrate("Do something", "success", "easy", @stage_context, @recent_turns)
+    end
   end
 end

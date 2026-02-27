@@ -3,6 +3,30 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["input", "submit"]
 
+  connect() {
+    this.turnLog = document.getElementById("turn-log")
+    this.scrollFrame = null
+
+    if (!this.turnLog) return
+
+    this.turnLogObserver = new MutationObserver(() => {
+      this.scheduleScrollToBottom()
+    })
+
+    this.turnLogObserver.observe(this.turnLog, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    })
+
+    this.scheduleScrollToBottom()
+  }
+
+  disconnect() {
+    if (this.turnLogObserver) this.turnLogObserver.disconnect()
+    if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame)
+  }
+
   handleSubmit(event) {
     event.preventDefault()
 
@@ -10,13 +34,13 @@ export default class extends Controller {
     if (!action) return
 
     // Append user action as italic message immediately
-    const log = document.getElementById("turn-log")
+    const log = this.turnLog || document.getElementById("turn-log")
     if (log) {
       const userMsg = document.createElement("div")
       userMsg.style.cssText = "font-style:italic;color:#666;border-left:2px solid #444;padding-left:0.75rem;"
       userMsg.textContent = `> ${action}`
       log.appendChild(userMsg)
-      log.scrollTop = log.scrollHeight
+      this.scheduleScrollToBottom()
     }
 
     // Capture form data before disabling (disabled fields are excluded from FormData)
@@ -39,7 +63,7 @@ export default class extends Controller {
       .then(response => response.text())
       .then(html => {
         Turbo.renderStreamMessage(html)
-        if (log) log.scrollTop = log.scrollHeight
+        this.scheduleScrollToBottom()
       })
       .catch(err => {
         console.error("Game submit error:", err)
@@ -51,5 +75,15 @@ export default class extends Controller {
         this.submitTarget.textContent = "→"
         this.inputTarget.focus()
       })
+  }
+
+  scheduleScrollToBottom() {
+    if (!this.turnLog) return
+    if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame)
+
+    this.scrollFrame = requestAnimationFrame(() => {
+      this.turnLog.scrollTop = this.turnLog.scrollHeight
+      this.scrollFrame = null
+    })
   }
 }

@@ -14,6 +14,7 @@ pl:
     games:
       alerts:
         enter_action: "Wpisz działanie."
+        ai_connection_error: "Nie można połączyć się z serwerem AI. Spróbuj ponownie."
         error: "Błąd: %{message}"
     scenario_select:
       alerts:

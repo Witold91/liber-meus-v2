@@ -36,15 +36,15 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     assert_equal 42, tokens
   end
 
-  test "rate returns fallback on API error" do
+  test "rate raises AIConnectionError on API error" do
     OpenAI::Client.expects(:new).raises(StandardError, "network error")
 
-    result, tokens = DifficultyRatingService.rate("Do something", @stage_context, @hero)
-    assert_equal "medium", result["difficulty"]
-    assert_equal 0, tokens
+    assert_raises(::AIConnectionError) do
+      DifficultyRatingService.rate("Do something", @stage_context, @hero)
+    end
   end
 
-  test "rate returns fallback on JSON parse error" do
+  test "rate raises AIConnectionError on JSON parse error" do
     fake_response = {
       "choices" => [ { "message" => { "content" => "not valid json" } } ],
       "usage" => { "total_tokens" => 10 }
@@ -53,8 +53,8 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     client_mock.expects(:chat).returns(fake_response)
     OpenAI::Client.expects(:new).returns(client_mock)
 
-    result, tokens = DifficultyRatingService.rate("Do something", @stage_context, @hero)
-    assert_equal "medium", result["difficulty"]
-    assert_equal 0, tokens
+    assert_raises(::AIConnectionError) do
+      DifficultyRatingService.rate("Do something", @stage_context, @hero)
+    end
   end
 end

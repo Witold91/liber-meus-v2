@@ -1,0 +1,1 @@
+class AIConnectionError < StandardError; end
