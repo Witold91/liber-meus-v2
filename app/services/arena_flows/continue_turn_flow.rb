@@ -23,7 +23,7 @@ module ArenaFlows
       difficulty = rating["difficulty"]
 
       # Step 6: Resolve outcome (deterministic)
-      intent = { difficulty: difficulty }
+      intent = { difficulty: difficulty, relevant: rating["relevant"] != false }
       outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
       resolution_tag = outcome[:resolution_tag]
 
@@ -69,6 +69,20 @@ module ArenaFlows
       end_condition = EndConditionChecker.check(turn_number, world_state, scenario)
       if end_condition
         final_status = end_condition["type"] == "goal" ? "completed" : "failed"
+        ending_turn_content = build_ending_turn_content(end_condition: end_condition)
+
+        TurnPersistenceService.create!(
+          game: game,
+          chapter: chapter,
+          content: ending_turn_content,
+          turn_number: turn_number + 1,
+          options_payload: {
+            "ending" => true,
+            "ending_status" => final_status,
+            "ending_condition_id" => end_condition["id"]
+          }
+        )
+
         game.update!(status: final_status)
         chapter.update!(status: "completed")
       end
@@ -76,5 +90,10 @@ module ArenaFlows
       turn
       end # transaction
     end
+
+    def self.build_ending_turn_content(end_condition:)
+      end_condition["narrative"].to_s.strip
+    end
+    private_class_method :build_ending_turn_content
   end
 end

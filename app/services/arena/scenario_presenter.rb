@@ -58,7 +58,8 @@ module Arena
         stage: { id: stage["id"], name: stage["name"], description: stage["description"] },
         actors: stage_actors,
         objects: stage_objects,
-        exits: stage["exits"] || []
+        exits: stage["exits"] || [],
+        player_inventory: world_state["player_inventory"] || {}
       }
     end
 

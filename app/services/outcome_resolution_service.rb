@@ -4,6 +4,7 @@ class OutcomeResolutionService
   BASE_MOMENTUM = 0
   BASE_ARC_INDEX = 1
 
+  DIFFICULTY_THRESHOLD = { "easy" => 1, "medium" => 4, "hard" => 7 }.freeze
   HEALTH_LOSS = { "easy" => 0, "medium" => 10, "hard" => 25 }.freeze
   DANGER_INCREASE = { "success" => 0, "partial" => 5, "failure" => 15 }.freeze
 
@@ -15,7 +16,8 @@ class OutcomeResolutionService
       "arc_index" => BASE_ARC_INDEX,
       "player_stage" => nil,
       "actors" => {},
-      "objects" => {}
+      "objects" => {},
+      "player_inventory" => {}
     }
   end
 
@@ -24,7 +26,10 @@ class OutcomeResolutionService
     difficulty = intent[:difficulty] || "medium"
     momentum = world_state["momentum"].to_i
 
-    resolution_tag = determine_resolution(difficulty, momentum)
+    roll = rand(1..6)
+    relevant = intent.fetch(:relevant, true)
+    resolution_tag = determine_resolution(difficulty, momentum, roll)
+    resolution_tag = "partial" if resolution_tag == "success" && !relevant
     health_loss = calculate_health_loss(difficulty, resolution_tag)
 
     world_state["health"] = [ (world_state["health"].to_i - health_loss), 0 ].max
@@ -36,21 +41,20 @@ class OutcomeResolutionService
 
     game.update!(world_state: world_state)
 
-    { resolution_tag: resolution_tag, health_loss: health_loss }
+    { resolution_tag: resolution_tag, health_loss: health_loss, roll: roll }
   end
 
   private
 
-  def self.determine_resolution(difficulty, momentum)
-    case difficulty
-    when "easy"
+  def self.determine_resolution(difficulty, momentum, roll)
+    threshold = DIFFICULTY_THRESHOLD.fetch(difficulty, 4)
+    total = roll + momentum
+    if total > threshold
       "success"
-    when "medium"
-      momentum >= 2 ? "success" : (momentum >= 0 ? "partial" : "failure")
-    when "hard"
-      momentum >= 3 ? "partial" : "failure"
-    else
+    elsif total == threshold
       "partial"
+    else
+      "failure"
     end
   end
 

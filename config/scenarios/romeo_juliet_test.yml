@@ -1,0 +1,58 @@
+slug: romeo_juliet_test
+title: "Romeo & Juliet (Tiny Test)"
+description: "Minimal two-stage scenario for fast testing."
+turn_limit: 6
+
+hero:
+  slug: romeo
+  name: "Romeo"
+  description: "A young lover trying to reach Juliet."
+  sex: male
+
+chapters:
+  - number: 1
+    title: "A Short Night"
+    intro: |
+      Night covers Verona.
+      You stand below Juliet's balcony with one rose in your hand.
+    stages:
+      - id: courtyard
+        name: "Courtyard"
+        description: "A quiet stone courtyard beneath the balcony."
+        exits:
+          - to: balcony
+            label: "Climb to the balcony"
+      - id: balcony
+        name: "Balcony"
+        description: "Moonlight spills across the balcony where Juliet waits."
+        exits:
+          - to: courtyard
+            label: "Climb back down"
+
+    actors:
+      - id: juliet
+        name: "Juliet"
+        description: "She watches the courtyard with hopeful eyes."
+        stage: balcony
+        status_options:
+          - waiting
+          - happy
+        default_status: waiting
+
+    objects:
+      - id: rose
+        name: "Rose"
+        stage: courtyard
+        status_options:
+          - fresh
+          - given
+        default_status: fresh
+
+    conditions:
+      - id: reunite_on_balcony
+        description: "Romeo reaches Juliet on the balcony."
+        type: goal
+        check: player_at_stage
+        stage: balcony
+
+    events: []

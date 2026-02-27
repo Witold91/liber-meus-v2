@@ -94,6 +94,10 @@ chapters:
           - to: freedom
             label: "Over the wall"
             arena_exit: true
+      - id: freedom
+        name: "Beyond the Wall"
+        description: "Cold night air and open ground. The prison lights shrink behind you."
+        exits: []
     actors:
       - id: guard_rodriguez
         name: "Guard Rodriguez"
@@ -166,17 +170,20 @@ chapters:
     conditions:
       - id: player_at_exit
         description: "Player reaches the freedom stage"
+        narrative: "You made it. The wall falls away behind you, the prison lights shrink into the dark, and the night stretches open ahead."
         type: goal
         check: player_at_stage
         stage: freedom
       - id: guard_alerted
         description: "Any guard is in alerted status"
+        narrative: "Rodriguez's shout tears through the silence. Alarms flood the block and boots pound from every direction. There is nowhere left to run."
         type: danger
         check: actor_has_status
         actor: guard_rodriguez
         status: alerted
       - id: both_guards_alerted
         description: "Both guards alerted — lockdown imminent"
+        narrative: "Rodriguez and Chen converge from opposite ends of the corridor. Every door slams shut. The prison locks down around you, and the escape is over."
         type: danger
         check: all_actors_have_status
         actors:

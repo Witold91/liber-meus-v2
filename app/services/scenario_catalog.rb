@@ -101,6 +101,14 @@ module ScenarioCatalog
         end
       end
 
+      if overlay_chapter.key?("conditions") && base_chapter.key?("conditions")
+        chapter["conditions"] = merge_by_key(base_chapter["conditions"], overlay_chapter["conditions"], "id") do |base_item, overlay_item|
+          item = base_item.dup
+          item["narrative"] = overlay_item["narrative"] if overlay_item.key?("narrative")
+          item
+        end
+      end
+
       chapter
     end
   end

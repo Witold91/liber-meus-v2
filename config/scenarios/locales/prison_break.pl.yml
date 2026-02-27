@@ -88,6 +88,10 @@ chapters:
             label: "Powrót na dziedziniec"
           - to: freedom
             label: "Na szczyt muru"
+      - id: freedom
+        name: "Poza Murem"
+        description: "Zimne nocne powietrze i otwarta przestrzeń. Światła więzienia maleją za twoimi plecami."
+        exits: []
     actors:
       - id: guard_rodriguez
         name: "Strażnik Rodriguez"
@@ -109,3 +113,10 @@ chapters:
         name: "Główny Panel Drzwi"
       - id: rope
         name: "Związana Lina (ze ściereczek)"
+    conditions:
+      - id: player_at_exit
+        narrative: "Udało się. Mur zostaje za tobą, światła więzienia gasną w ciemności, a noc rozciąga się szeroko przed tobą."
+      - id: guard_alerted
+        narrative: "Krzyk Rodrigueza przeszywa ciszę. Alarmy zalewają blok, a kroki dudnią ze wszystkich stron. Nie ma już dokąd uciec."
+      - id: both_guards_alerted
+        narrative: "Rodriguez i Chen nadchodzą z przeciwnych końców korytarza. Każde drzwi zatrzaskują się. Więzienie zamyka się wokół ciebie i ucieczka dobiegła końca."

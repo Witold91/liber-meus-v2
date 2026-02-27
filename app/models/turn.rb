@@ -3,4 +3,5 @@ class Turn < ApplicationRecord
   belongs_to :chapter
 
   scope :recent, ->(n = 5) { order(turn_number: :desc).limit(n) }
+  scope :ending, -> { where("options_payload @> ?", '{"ending":true}') }
 end

@@ -31,7 +31,12 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       "usage" => { "total_tokens" => 87 }
     }
     client_mock = mock
-    client_mock.expects(:chat).returns(fake_response)
+    client_mock.expects(:chat).with do |request|
+      user_message = request.dig(:parameters, :messages, 1, :content)
+      assert_includes user_message, "[id=cell]"
+      assert_includes user_message, "[id=loose_grate]"
+      true
+    end.returns(fake_response)
     OpenAI::Client.expects(:new).returns(client_mock)
 
     result, tokens = ArenaNarratorService.narrate("Remove the grate", "success", "easy", @stage_context, @recent_turns)

@@ -37,7 +37,11 @@ class ArenaNarratorService
       difficulty: localized_difficulty
     )
     parts << ""
-    parts << I18n.t("services.arena_narrator_service.prompt.current_stage", stage_name: stage_context.dig(:stage, :name))
+    parts << I18n.t(
+      "services.arena_narrator_service.prompt.current_stage",
+      stage_name: stage_context.dig(:stage, :name),
+      stage_id: stage_context.dig(:stage, :id)
+    )
     parts << stage_context.dig(:stage, :description).to_s
     parts << ""
 
@@ -46,6 +50,7 @@ class ArenaNarratorService
       stage_context[:actors].each do |a|
         parts << I18n.t(
           "services.arena_narrator_service.prompt.actor_item",
+          id: a[:id],
           name: a[:name],
           description: a[:description],
           statuses: a[:statuses].join(", ")
@@ -57,7 +62,12 @@ class ArenaNarratorService
     if stage_context[:objects].any?
       parts << I18n.t("services.arena_narrator_service.prompt.objects_present")
       stage_context[:objects].each do |o|
-        parts << I18n.t("services.arena_narrator_service.prompt.object_item", name: o[:name], statuses: o[:statuses].join(", "))
+        parts << I18n.t(
+          "services.arena_narrator_service.prompt.object_item",
+          id: o[:id],
+          name: o[:name],
+          statuses: o[:statuses].join(", ")
+        )
       end
       parts << ""
     end
@@ -65,7 +75,7 @@ class ArenaNarratorService
     if stage_context[:exits].any?
       parts << I18n.t(
         "services.arena_narrator_service.prompt.exits",
-        exits: stage_context[:exits].map { |e| e["label"] }.join(", ")
+        exits: stage_context[:exits].map { |e| "#{e["label"]} (to: #{e["to"]})" }.join(", ")
       )
       parts << ""
     end

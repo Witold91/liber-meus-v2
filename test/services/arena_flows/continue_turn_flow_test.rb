@@ -70,6 +70,50 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     assert_equal 129, turn.tokens_used  # 42 (difficulty) + 87 (narrator)
   end
 
+  test "creates ending sequence turn and marks game completed at goal" do
+    ArenaNarratorService.stubs(:narrate).returns([
+      {
+        "narrative" => "You slip through the last opening.",
+        "diff" => { "player_moved_to" => "freedom" }
+      },
+      87
+    ])
+
+    assert_difference "Turn.count", 2 do
+      ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Climb over the wall")
+    end
+
+    @game.reload
+    assert_equal "completed", @game.status
+
+    ending_turn = @game.turns.order(:turn_number).last
+    assert ending_turn.options_payload["ending"]
+    assert_equal "completed", ending_turn.options_payload["ending_status"]
+    assert_includes ending_turn.content, "The wall falls away behind you"
+  end
+
+  test "creates ending sequence turn and marks game failed on danger condition" do
+    ArenaNarratorService.stubs(:narrate).returns([
+      {
+        "narrative" => "A shadow crosses the bars.",
+        "diff" => { "actor_updates" => { "guard_rodriguez" => { "status" => "alerted" } } }
+      },
+      87
+    ])
+
+    assert_difference "Turn.count", 2 do
+      ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Rattle the door loudly")
+    end
+
+    @game.reload
+    assert_equal "failed", @game.status
+
+    ending_turn = @game.turns.order(:turn_number).last
+    assert ending_turn.options_payload["ending"]
+    assert_equal "failed", ending_turn.options_payload["ending_status"]
+    assert_includes ending_turn.content, "Rodriguez's shout tears through the silence"
+  end
+
   test "raises when no active chapter" do
     chapters(:chapter_one).update!(status: "completed")
     assert_raises(RuntimeError) do

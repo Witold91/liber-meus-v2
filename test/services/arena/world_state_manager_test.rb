@@ -65,6 +65,21 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     assert_nil result.dig("actors", "ghost_actor")
   end
 
+  test "apply_stage_diff resolves localized slug ids to canonical ids" do
+    scenario_pl = ScenarioCatalog.find("prison_break", locale: "pl")
+    diff = {
+      "actor_updates" => { "wiezien_torres" => { "status" => "awake" } },
+      "object_updates" => { "poluzowana_kratka_wentylacyjna" => { "status" => "removed" } },
+      "player_moved_to" => "szyb_wentylacyjny"
+    }
+
+    result = Arena::WorldStateManager.new(@world_state).apply_stage_diff(diff, scenario: scenario_pl)
+
+    assert_equal "awake", result.dig("actors", "inmate_torres", "status")
+    assert_equal "removed", result.dig("objects", "loose_grate", "status")
+    assert_equal "vent_shaft", result["player_stage"]
+  end
+
   test "apply_stage_diff does not mutate original world_state" do
     original = @world_state.dup
     diff = { "player_moved_to" => "vent_shaft" }

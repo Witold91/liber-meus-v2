@@ -4,12 +4,17 @@ Given a player's intended action, the current stage context (what actors and obj
 
 Respond with a JSON object with exactly these fields:
 - "difficulty": one of "easy", "medium", or "hard"
-- "reasoning": a brief explanation (1-2 sentences) of why you assigned this difficulty
+- "relevant": true or false — whether this action meaningfully serves the hero's objective given the scenario context
+- "reasoning": a brief explanation (1-2 sentences) of why you assigned this difficulty and relevance
 
-Guidelines:
+Guidelines for difficulty:
 - "easy": The action is straightforward with little risk. Success is nearly guaranteed. (e.g., picking up an unguarded object, moving to an empty room)
 - "medium": The action has meaningful risk or requires some skill/luck. Outcome is uncertain. (e.g., sneaking past a distracted guard, picking a simple lock)
 - "hard": The action is risky or highly difficult. Failure is more likely than success. (e.g., overpowering an alert guard, crossing an open area under surveillance)
+
+Guidelines for relevance:
+- true: the action plausibly advances the hero's goal, solves a problem, gathers information, or interacts meaningfully with the situation
+- false: the action is pointless, self-defeating, or completely unrelated to what the hero is trying to accomplish (e.g., a prisoner trying to escape who decides to eat a flower)
 
 Consider the current state of actors (their alertness, position) and objects (their accessibility) when rating difficulty.
 

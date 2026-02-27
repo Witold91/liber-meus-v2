@@ -32,6 +32,7 @@ pl:
       game_over: "GRA %{status} —"
       start_new_game: "Nowa gra"
       turn: "Tura %{number}"
+      ending_label: "Sekwencja Końcowa"
       action_placeholder: "Co robisz?"
       stats:
         health: "Zdrowie"
@@ -107,11 +108,11 @@ pl:
     arena_narrator_service:
       prompt:
         resolution: "WYNIK: %{resolution} (trudność: %{difficulty})"
-        current_stage: "AKTUALNA SCENA: %{stage_name}"
+        current_stage: "AKTUALNA SCENA: %{stage_name} [id=%{stage_id}]"
         actors_present: "OBECNE POSTACIE:"
-        actor_item: "  - %{name} (%{description}): %{statuses}"
+        actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses}"
         objects_present: "OBECNE OBIEKTY:"
-        object_item: "  - %{name}: %{statuses}"
+        object_item: "  - %{name} [id=%{id}]: %{statuses}"
         exits: "WYJŚCIA: %{exits}"
         recent_history: "OSTATNIA HISTORIA:"
         turn_history: "  Tura %{turn_number}: %{content}"

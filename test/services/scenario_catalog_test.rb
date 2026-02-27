@@ -103,6 +103,8 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
   test "all returns only base scenarios without locale variants" do
     scenarios = ScenarioCatalog.all
     assert scenarios.all? { |s| s["slug"].present? }
-    assert_equal 1, scenarios.count
+    slugs = scenarios.map { |s| s["slug"] }
+    assert_includes slugs, "prison_break"
+    assert_includes slugs, "romeo_juliet_test"
   end
 end

@@ -27,13 +27,17 @@ class GamesController < ApplicationController
     @scenario = ScenarioCatalog.find(@game.scenario_slug) if @game.arena_scenario?
     @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["chapter_number"] || 1, @game.world_state) if @scenario
     @stage_context = @presenter&.stage_context_for(@game.world_state["player_stage"], @game.world_state)
+    ending_turn = @game.turns.ending.find_by(turn_number: turn.turn_number + 1)
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: [
+        streams = [
           turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: turn }),
+          turbo_stream.replace("hero-stats", partial: "games/hero_stats", locals: { game: @game }),
           turbo_stream.replace("stage-panel", partial: "games/stage_panel", locals: { stage_context: @stage_context, game: @game })
         ]
+        streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: ending_turn }) if ending_turn
+        render turbo_stream: streams
       end
       format.html { redirect_to game_path(@game) }
     end
