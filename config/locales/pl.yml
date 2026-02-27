@@ -1,0 +1,121 @@
+pl:
+  app:
+    name: "Liber Meus"
+    manifest_description: "Gra interaktywnej fikcji."
+    titles:
+      scenario_select: "Wybierz scenariusz — %{app_name}"
+      game: "%{hero_name} — %{app_name}"
+
+  languages:
+    en: "Angielski"
+    pl: "Polski"
+
+  controllers:
+    games:
+      alerts:
+        enter_action: "Wpisz działanie."
+        error: "Błąd: %{message}"
+    scenario_select:
+      alerts:
+        unknown_scenario: "Nieznany scenariusz."
+        could_not_start: "Nie udało się rozpocząć gry: %{message}"
+
+  views:
+    scenario_select:
+      heading: "// LIBER MEUS"
+      subtitle: "Wybierz scenariusz, aby rozpocząć sesję interaktywnej fikcji."
+      empty_state: "Brak dostępnych scenariuszy."
+      language_label: "Język:"
+      begin: "Start →"
+    games:
+      game_over: "GRA %{status} —"
+      start_new_game: "Nowa gra"
+      turn: "Tura %{number}"
+      action_placeholder: "Co robisz?"
+      stats:
+        health: "Zdrowie"
+        danger: "Zagrożenie"
+        momentum: "Tempo"
+    stage_panel:
+      unknown_location: "Nieznana lokacja"
+      hide: "Ukryj"
+      show: "Scena"
+      actors: "Postacie"
+      objects: "Obiekty"
+      exits: "Wyjścia"
+      empty: "Brak informacji o scenie."
+
+  game:
+    statuses:
+      active: "aktywna"
+      completed: "ukończona"
+      failed: "przegrana"
+    resolution_tags:
+      success: "sukces"
+      partial: "częściowy"
+      failure: "porażka"
+    difficulty_values:
+      easy: "łatwa"
+      medium: "średnia"
+      hard: "trudna"
+    status_values:
+      awake: "czujny"
+      distracted: "rozproszony"
+      asleep: "śpi"
+      alerted: "zaalarmowany"
+      sleeping: "śpi"
+      helping: "pomaga"
+      in_place: "na miejscu"
+      removed: "usunięty"
+      on_belt: "na pasku"
+      on_desk: "na biurku"
+      taken: "zabrany"
+      on_shelf: "na półce"
+      worn: "założony"
+      locked: "zamknięty"
+      unlocked: "odblokowany"
+      not_made: "niezrobiona"
+      made: "zrobiona"
+      deployed: "użyta"
+
+  services:
+    game_service:
+      unsupported_scenario: "Obecnie obsługiwane są tylko scenariusze arenowe"
+    scenario_catalog:
+      not_found: "Nie znaleziono scenariusza: %{slug}"
+    arena_flows:
+      start_scenario:
+        intro_fallback: "Twoja przygoda się zaczyna."
+        missing_hero: "Brak bohatera w scenariuszu i nie podano hero_id"
+      continue_turn:
+        no_active_chapter: "Brak aktywnego rozdziału"
+    game_flows:
+      continue_turn:
+        not_implemented: "[Tryb gry poza areną nie jest jeszcze zaimplementowany. Działanie: %{action}]"
+    end_condition_checker:
+      turn_limit_reached: "Czas minął. Nadchodzi świt, a wraz z nim koniec twojej szansy na ucieczkę."
+      health_depleted: "Odniosłeś zbyt wiele obrażeń, by kontynuować."
+    difficulty_rating_service:
+      prompt:
+        hero: "BOHATER: %{name} — %{description}"
+        current_stage: "AKTUALNA SCENA: %{stage_name}"
+        actors_present: "OBECNE POSTACIE:"
+        objects_present: "OBECNE OBIEKTY:"
+        list_item: "  - %{name}: %{statuses}"
+        player_action: "DZIAŁANIE GRACZA: %{action}"
+    arena_narrator_service:
+      prompt:
+        resolution: "WYNIK: %{resolution} (trudność: %{difficulty})"
+        current_stage: "AKTUALNA SCENA: %{stage_name}"
+        actors_present: "OBECNE POSTACIE:"
+        actor_item: "  - %{name} (%{description}): %{statuses}"
+        objects_present: "OBECNE OBIEKTY:"
+        object_item: "  - %{name}: %{statuses}"
+        exits: "WYJŚCIA: %{exits}"
+        recent_history: "OSTATNIA HISTORIA:"
+        turn_history: "  Tura %{turn_number}: %{content}"
+        player_action: "DZIAŁANIE GRACZA: %{action}"
+      fallback:
+        success: "Działasz zdecydowanie. Wynik jest na twoją korzyść."
+        partial: "Coś się udaje, ale nie bez komplikacji."
+        failure: "Twoja próba się nie powiodła. Zbierasz siły i planujesz kolejny ruch."

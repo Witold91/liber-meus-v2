@@ -1,0 +1,5 @@
+convict:
+  slug: convict
+  name: "The Convict"
+  description: "A wrongly imprisoned fighter with nothing to lose."
+  sex: male

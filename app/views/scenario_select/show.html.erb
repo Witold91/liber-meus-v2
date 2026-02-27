@@ -1,0 +1,43 @@
+<% content_for :title, t("app.titles.scenario_select", app_name: t("app.name")) %>
+
+<style>
+  .scenario-header { padding: 2rem 0 1rem; border-bottom: 1px solid #333; margin-bottom: 2rem; }
+  .scenario-header h1 { font-size: 1.8rem; color: #e8e8d4; }
+  .scenario-header p { color: #888; margin-top: 0.5rem; }
+  .scenario-grid { display: grid; gap: 1.5rem; }
+  .scenario-card { border: 1px solid #333; padding: 1.5rem; background: #111; }
+  .scenario-card h2 { font-size: 1.2rem; color: #8ab4a0; margin-bottom: 0.5rem; }
+  .scenario-card p { color: #aaa; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem; }
+  .scenario-form { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .scenario-form label { color: #888; font-size: 0.85rem; }
+  .scenario-form select { background: #0d0d0d; color: #c8c8b4; border: 1px solid #555; padding: 0.4rem 0.6rem; font-family: inherit; }
+  .empty-state { color: #555; text-align: center; padding: 3rem; }
+</style>
+
+<div class="scenario-header">
+  <h1><%= t("views.scenario_select.heading") %></h1>
+  <p><%= t("views.scenario_select.subtitle") %></p>
+</div>
+
+<% if @scenarios.empty? %>
+  <div class="empty-state"><%= t("views.scenario_select.empty_state") %></div>
+<% else %>
+  <div class="scenario-grid">
+    <% @scenarios.each do |scenario| %>
+      <div class="scenario-card">
+        <h2><%= scenario["title"] %></h2>
+        <p><%= scenario["description"] %></p>
+        <%= form_with url: scenario_select_path, method: :post do |f| %>
+          <%= f.hidden_field :scenario_slug, value: scenario["slug"] %>
+          <div class="scenario-form">
+            <div>
+              <%= f.label :game_language, t("views.scenario_select.language_label") %>
+              <%= f.select :game_language, I18n.available_locales.map { |locale| [t("languages.#{locale}"), locale] }, { selected: I18n.locale }, class: "" %>
+            </div>
+            <%= f.submit t("views.scenario_select.begin"), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

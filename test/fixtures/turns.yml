@@ -1,0 +1,6 @@
+intro_turn:
+  game: prison_game
+  chapter: chapter_one
+  content: "The fluorescent lights flicker overhead..."
+  options_payload: '{"prologue":true}'
+  turn_number: 0

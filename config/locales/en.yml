@@ -1,0 +1,121 @@
+en:
+  app:
+    name: "Liber Meus"
+    manifest_description: "Interactive fiction game."
+    titles:
+      scenario_select: "Choose Your Scenario — %{app_name}"
+      game: "%{hero_name} — %{app_name}"
+
+  languages:
+    en: "English"
+    pl: "Polish"
+
+  controllers:
+    games:
+      alerts:
+        enter_action: "Please enter an action."
+        error: "Error: %{message}"
+    scenario_select:
+      alerts:
+        unknown_scenario: "Unknown scenario."
+        could_not_start: "Could not start game: %{message}"
+
+  views:
+    scenario_select:
+      heading: "// LIBER MEUS"
+      subtitle: "Choose a scenario to begin your interactive fiction session."
+      empty_state: "No scenarios available."
+      language_label: "Language:"
+      begin: "Begin →"
+    games:
+      game_over: "GAME %{status} —"
+      start_new_game: "Start New Game"
+      turn: "Turn %{number}"
+      action_placeholder: "What do you do?"
+      stats:
+        health: "Health"
+        danger: "Danger"
+        momentum: "Momentum"
+    stage_panel:
+      unknown_location: "Unknown Location"
+      hide: "Hide"
+      show: "Stage"
+      actors: "Actors"
+      objects: "Objects"
+      exits: "Exits"
+      empty: "No stage information available."
+
+  game:
+    statuses:
+      active: "active"
+      completed: "completed"
+      failed: "failed"
+    resolution_tags:
+      success: "success"
+      partial: "partial"
+      failure: "failure"
+    difficulty_values:
+      easy: "easy"
+      medium: "medium"
+      hard: "hard"
+    status_values:
+      awake: "awake"
+      distracted: "distracted"
+      asleep: "asleep"
+      alerted: "alerted"
+      sleeping: "sleeping"
+      helping: "helping"
+      in_place: "in place"
+      removed: "removed"
+      on_belt: "on belt"
+      on_desk: "on desk"
+      taken: "taken"
+      on_shelf: "on shelf"
+      worn: "worn"
+      locked: "locked"
+      unlocked: "unlocked"
+      not_made: "not made"
+      made: "made"
+      deployed: "deployed"
+
+  services:
+    game_service:
+      unsupported_scenario: "Only arena scenarios are currently supported"
+    scenario_catalog:
+      not_found: "Scenario not found: %{slug}"
+    arena_flows:
+      start_scenario:
+        intro_fallback: "Your adventure begins."
+        missing_hero: "No hero defined in scenario and no hero_id provided"
+      continue_turn:
+        no_active_chapter: "No active chapter"
+    game_flows:
+      continue_turn:
+        not_implemented: "[Non-arena game mode not yet implemented. Action: %{action}]"
+    end_condition_checker:
+      turn_limit_reached: "Time has run out. Dawn arrives and with it, the end of your escape window."
+      health_depleted: "You've suffered too many injuries to continue."
+    difficulty_rating_service:
+      prompt:
+        hero: "HERO: %{name} — %{description}"
+        current_stage: "CURRENT STAGE: %{stage_name}"
+        actors_present: "ACTORS PRESENT:"
+        objects_present: "OBJECTS PRESENT:"
+        list_item: "  - %{name}: %{statuses}"
+        player_action: "PLAYER ACTION: %{action}"
+    arena_narrator_service:
+      prompt:
+        resolution: "RESOLUTION: %{resolution} (difficulty was %{difficulty})"
+        current_stage: "CURRENT STAGE: %{stage_name}"
+        actors_present: "ACTORS PRESENT:"
+        actor_item: "  - %{name} (%{description}): %{statuses}"
+        objects_present: "OBJECTS PRESENT:"
+        object_item: "  - %{name}: %{statuses}"
+        exits: "EXITS: %{exits}"
+        recent_history: "RECENT HISTORY:"
+        turn_history: "  Turn %{turn_number}: %{content}"
+        player_action: "PLAYER ACTION: %{action}"
+      fallback:
+        success: "You act decisively. The outcome is in your favor."
+        partial: "You manage something, but not without complications."
+        failure: "Your attempt fails. You regroup and consider your next move."

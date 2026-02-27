@@ -1,0 +1,71 @@
+<style>
+  .stage-panel { border: 1px solid #333; background: #111; font-size: 0.8rem; }
+  .stage-panel-header { padding: 0.6rem 1rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #141414; }
+  .stage-panel-header h3 { color: #8ab4a0; font-size: 0.85rem; }
+  .stage-toggle-btn { background: transparent; border: 1px solid #444; color: #888; padding: 0.2rem 0.5rem; cursor: pointer; font-family: inherit; font-size: 0.75rem; }
+  .stage-panel-body { padding: 0.75rem 1rem; }
+  .stage-description { color: #777; font-size: 0.8rem; line-height: 1.4; margin-bottom: 0.75rem; border-bottom: 1px solid #222; padding-bottom: 0.5rem; }
+  .stage-section-label { color: #555; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 0.5rem 0 0.25rem; }
+  .actor-item, .object-item, .exit-item { padding: 0.25rem 0; color: #aaa; }
+  .actor-name, .object-name { color: #c8c8b4; }
+  .status-badge { display: inline-block; background: #222; border: 1px solid #444; color: #888; padding: 0 0.3rem; font-size: 0.7rem; margin-left: 0.3rem; }
+  .exit-label { color: #7a9a87; }
+  .exit-arena { color: #c8b860; }
+  .stage-empty { color: #444; font-style: italic; }
+</style>
+
+<div class="stage-panel"
+     data-controller="stage-panel"
+     data-stage-panel-hide-label-value="<%= t('views.stage_panel.hide') %>"
+     data-stage-panel-show-label-value="<%= t('views.stage_panel.show') %>"
+     id="stage-panel">
+  <div class="stage-panel-header">
+    <h3 id="stage-panel-title"><%= stage_context&.dig(:stage, :name) || t("views.stage_panel.unknown_location") %></h3>
+    <button class="stage-toggle-btn" data-action="click->stage-panel#toggle" data-stage-panel-target="toggleBtn">
+      <%= t("views.stage_panel.hide") %>
+    </button>
+  </div>
+
+  <div class="stage-panel-body" data-stage-panel-target="body">
+    <% if stage_context %>
+      <div class="stage-description"><%= stage_context.dig(:stage, :description) %></div>
+
+      <% if stage_context[:actors].any? %>
+        <div class="stage-section-label"><%= t("views.stage_panel.actors") %></div>
+        <% stage_context[:actors].each do |actor| %>
+          <div class="actor-item">
+            <span class="actor-name"><%= actor[:name] %></span>
+            <% actor[:statuses].each do |status| %>
+              <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if stage_context[:objects].any? %>
+        <div class="stage-section-label"><%= t("views.stage_panel.objects") %></div>
+        <% stage_context[:objects].each do |obj| %>
+          <div class="object-item">
+            <span class="object-name"><%= obj[:name] %></span>
+            <% obj[:statuses].each do |status| %>
+              <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if stage_context[:exits].any? %>
+        <div class="stage-section-label"><%= t("views.stage_panel.exits") %></div>
+        <% stage_context[:exits].each do |exit_def| %>
+          <div class="exit-item">
+            <span class="<%= exit_def['arena_exit'] ? 'exit-arena' : 'exit-label' %>">
+              → <%= exit_def['label'] %><%= " ★" if exit_def['arena_exit'] %>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+    <% else %>
+      <div class="stage-empty"><%= t("views.stage_panel.empty") %></div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,220 @@
+slug: prison_break
+title: "Prison Break"
+description: "You must escape from a high-security prison before dawn."
+turn_limit: 20
+
+hero:
+  slug: convict
+  name: "The Convict"
+  description: "A wrongly imprisoned fighter with nothing to lose."
+  sex: male
+
+chapters:
+  - number: 1
+    title: "The Cell Block"
+    intro: |
+      The fluorescent lights flicker overhead as the midnight count concludes.
+      Guard Rodriguez makes his final round, boots echoing on the concrete floor.
+      You have three hours until dawn—and your one shot at freedom.
+      The cell door is locked but you notice the ventilation grate above your bunk looks loose.
+    stages:
+      - id: cell
+        name: "Your Cell"
+        description: "A 6x9 concrete box. Bunk bolted to wall. Toilet. Dim fluorescent light."
+        exits:
+          - to: cell_block
+            label: "Cell door (locked)"
+            locked: true
+          - to: vent_shaft
+            label: "Ventilation grate (above bunk)"
+      - id: vent_shaft
+        name: "Ventilation Shaft"
+        description: "Narrow metal ductwork. Dusty. The sound of the prison hums around you."
+        exits:
+          - to: cell
+            label: "Back to cell"
+          - to: guard_room
+            label: "Shaft exit (guard room)"
+          - to: storage_room
+            label: "Shaft exit (storage)"
+      - id: cell_block
+        name: "Cell Block C"
+        description: "The main corridor. Twenty cells on each side. Emergency lighting only."
+        exits:
+          - to: guard_station
+            label: "Guard station (north)"
+          - to: yard_entrance
+            label: "Yard entrance (south)"
+      - id: guard_room
+        name: "Guard Room"
+        description: "Small break room. Coffee machine, lockers, a guard sleeping at the desk."
+        exits:
+          - to: vent_shaft
+            label: "Back into shaft"
+          - to: cell_block
+            label: "Door to cell block"
+          - to: control_room
+            label: "Control room (locked door)"
+      - id: storage_room
+        name: "Storage Room"
+        description: "Shelves of cleaning supplies, spare uniforms, and maintenance tools."
+        exits:
+          - to: vent_shaft
+            label: "Back into shaft"
+          - to: cell_block
+            label: "Side door to cell block"
+      - id: guard_station
+        name: "Guard Station"
+        description: "Main monitoring desk. Cameras show all areas. One guard on duty."
+        exits:
+          - to: cell_block
+            label: "Back to cell block"
+      - id: control_room
+        name: "Control Room"
+        description: "Electronic door controls. Master key cabinet. Emergency exits panel."
+        exits:
+          - to: guard_room
+            label: "Back to guard room"
+          - to: yard_entrance
+            label: "Emergency exit corridor"
+      - id: yard_entrance
+        name: "Yard Entrance"
+        description: "Heavy steel door leading to the exercise yard. The wall is visible beyond."
+        exits:
+          - to: cell_block
+            label: "Back inside"
+          - to: perimeter_wall
+            label: "Cross the yard"
+      - id: perimeter_wall
+        name: "Perimeter Wall"
+        description: "Twenty feet of concrete topped with razor wire. A watchtower looms to the east."
+        exits:
+          - to: yard_entrance
+            label: "Back to yard"
+          - to: freedom
+            label: "Over the wall"
+            arena_exit: true
+    actors:
+      - id: guard_rodriguez
+        name: "Guard Rodriguez"
+        description: "Heavyset guard, two weeks from retirement. Predictable rounds."
+        stage: cell_block
+        status_options:
+          - awake
+          - distracted
+          - asleep
+          - alerted
+        default_status: awake
+      - id: guard_chen
+        name: "Guard Chen"
+        description: "Young, eager guard stationed at the control room. Sharp eyes."
+        stage: guard_room
+        status_options:
+          - awake
+          - asleep
+          - alerted
+        default_status: asleep
+      - id: inmate_torres
+        name: "Inmate Torres"
+        description: "Old timer who knows every inch of this prison. Owes you a favor."
+        stage: cell
+        status_options:
+          - sleeping
+          - awake
+          - helping
+        default_status: sleeping
+    objects:
+      - id: loose_grate
+        name: "Loose Ventilation Grate"
+        stage: cell
+        status_options:
+          - in_place
+          - removed
+        default_status: in_place
+      - id: guard_keys
+        name: "Guard's Keys"
+        stage: guard_room
+        status_options:
+          - on_belt
+          - on_desk
+          - taken
+        default_status: on_belt
+      - id: uniform
+        name: "Guard Uniform"
+        stage: storage_room
+        status_options:
+          - on_shelf
+          - taken
+          - worn
+        default_status: on_shelf
+      - id: master_switch
+        name: "Master Door Control"
+        stage: control_room
+        status_options:
+          - locked
+          - unlocked
+        default_status: locked
+      - id: rope
+        name: "Knotted Rope (from sheets)"
+        stage: cell
+        status_options:
+          - not_made
+          - made
+          - deployed
+        default_status: not_made
+
+    conditions:
+      - id: player_at_exit
+        description: "Player reaches the freedom stage"
+        type: goal
+        check: player_at_stage
+        stage: freedom
+      - id: guard_alerted
+        description: "Any guard is in alerted status"
+        type: danger
+        check: actor_has_status
+        actor: guard_rodriguez
+        status: alerted
+      - id: both_guards_alerted
+        description: "Both guards alerted — lockdown imminent"
+        type: danger
+        check: all_actors_have_status
+        actors:
+          - guard_rodriguez
+          - guard_chen
+        status: alerted
+
+    events:
+      - id: rodriguez_wakes
+        trigger_turn: 5
+        condition:
+          actor_status:
+            id: guard_rodriguez
+            status: asleep
+        action:
+          type: actor_enters
+          actor_id: guard_rodriguez
+          stage: cell_block
+          new_status: awake
+        description: "Guard Rodriguez wakes from his nap and resumes patrol."
+
+      - id: chen_wakes_early
+        trigger_turn: 8
+        condition:
+          actor_status:
+            id: guard_chen
+            status: asleep
+        action:
+          type: actor_enters
+          actor_id: guard_chen
+          stage: guard_room
+          new_status: awake
+        description: "Guard Chen stirs and checks the monitors."
+
+      - id: dawn_alarm
+        trigger_turn: 18
+        action:
+          type: world_flag
+          flag: dawn_alarm
+          value: true
+        description: "The 5 AM alarm sounds. Guards double their patrols."

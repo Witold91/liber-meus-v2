@@ -1,0 +1,21 @@
+<style>
+  .turn-entry { border-left: 2px solid #333; padding-left: 0.75rem; }
+  .turn-entry.prologue { border-left-color: #8ab4a0; }
+  .turn-entry.success { border-left-color: #60a070; }
+  .turn-entry.partial { border-left-color: #a09040; }
+  .turn-entry.failure { border-left-color: #a04040; }
+  .turn-action { font-style: italic; color: #888; font-size: 0.85rem; margin-bottom: 0.4rem; }
+  .turn-narrative { color: #c8c8b4; line-height: 1.6; font-size: 0.9rem; white-space: pre-wrap; }
+  .turn-meta { font-size: 0.75rem; color: #555; margin-top: 0.3rem; }
+</style>
+
+<div class="turn-entry <%= turn.options_payload["prologue"] ? "prologue" : turn.resolution_tag %>"
+     id="turn-<%= turn.id %>">
+  <% if turn.option_selected.present? %>
+    <div class="turn-action">&gt; <%= turn.option_selected %></div>
+  <% end %>
+  <div class="turn-narrative"><%= turn.content %></div>
+  <% if turn.resolution_tag.present? %>
+    <div class="turn-meta">[<%= t("game.resolution_tags.#{turn.resolution_tag}", default: turn.resolution_tag) %>]</div>
+  <% end %>
+</div>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || t("app.name") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="<%= t('app.name') %>">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'Courier New', Courier, monospace; background: #0d0d0d; color: #c8c8b4; min-height: 100vh; }
+      a { color: #8ab4a0; }
+      .container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+      .btn { display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid #8ab4a0; background: transparent; color: #8ab4a0; cursor: pointer; font-family: inherit; font-size: 0.9rem; text-decoration: none; }
+      .btn:hover { background: #8ab4a0; color: #0d0d0d; }
+      .btn-primary { background: #8ab4a0; color: #0d0d0d; }
+      .btn-primary:hover { background: #6a9480; }
+      .flash-notice { background: #1a3a2a; border: 1px solid #8ab4a0; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+      .flash-alert { background: #3a1a1a; border: 1px solid #a08080; color: #c8a0a0; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+      h1, h2, h3 { color: #e8e8d4; font-weight: normal; letter-spacing: 0.05em; }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <% if notice %>
+        <div class="flash-notice"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div class="flash-alert"><%= alert %></div>
+      <% end %>
+      <div id="flash"></div>
+      <%= yield %>
+    </div>
+  </body>
+</html>
