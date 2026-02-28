@@ -36,8 +36,14 @@ module ArenaFlows
       world_state = game.world_state
 
       # Step 7: Get narration (AI call 2)
-      recent_turns = game.turns.recent(5).to_a
-      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, stage_context, recent_turns, outcome[:health_loss])
+      turn_context = {
+        world_state_delta: presenter.world_state_delta,
+        memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
+                          .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
+        recent_actions: game.turns.recent(3).to_a.reverse
+                            .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
+      }
+      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, stage_context, turn_context, outcome[:health_loss])
 
       # Step 8: Apply world-state diff from narration
       diff = narration["diff"] || {}

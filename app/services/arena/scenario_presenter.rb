@@ -41,6 +41,7 @@ module Arena
 
       actor_states = world_state["actors"] || {}
       object_states = world_state["objects"] || {}
+      improvised = world_state["improvised_objects"] || {}
 
       stage_actors = actors.select { |a| current_actor_stage(a, actor_states) == stage_id }
         .map do |a|
@@ -54,13 +55,63 @@ module Arena
           { id: o["id"], name: o["name"], statuses: statuses }
         end
 
+      # Include improvised objects that are at this stage or carried (no stage set)
+      improvised.each do |item_id, data|
+        item_stage = data["stage"]
+        next unless item_stage == stage_id || item_stage.nil?
+        stage_objects << { id: item_id, name: item_id.gsub("_", " "), statuses: [ data["status"] || "acquired" ] }
+      end
+
       {
         stage: { id: stage["id"], name: stage["name"], description: stage["description"] },
         actors: stage_actors,
         objects: stage_objects,
-        exits: stage["exits"] || [],
-        player_inventory: world_state["player_inventory"] || {}
+        exits: stage["exits"] || []
       }
+    end
+
+    def world_state_delta
+      changes = []
+      actor_states  = @world_state["actors"]  || {}
+      object_states = @world_state["objects"] || {}
+
+      actors.each do |actor|
+        state          = actor_states[actor["id"]] || {}
+        current_status = state["status"] || actor["default_status"]
+        current_stage  = state["stage"]  || actor["stage"]
+
+        status_changed = current_status != actor["default_status"]
+        stage_changed  = current_stage  != actor["stage"]
+        next unless status_changed || stage_changed
+
+        changes << {
+          type:   "actor",
+          id:     actor["id"],
+          name:   actor["name"],
+          status: current_status,
+          stage:  stage_changed ? current_stage : nil
+        }
+      end
+
+      objects.each do |obj|
+        state          = object_states[obj["id"]] || {}
+        current_status = state["status"] || obj["default_status"]
+        current_stage  = state["stage"]  || obj["stage"]
+
+        status_changed = current_status != obj["default_status"]
+        stage_changed  = current_stage  != obj["stage"]
+        next unless status_changed || stage_changed
+
+        changes << {
+          type:   "object",
+          id:     obj["id"],
+          name:   obj["name"],
+          status: current_status,
+          stage:  stage_changed ? current_stage : nil
+        }
+      end
+
+      changes
     end
 
     def adjacent_stage_ids(stage_id)

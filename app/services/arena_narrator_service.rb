@@ -1,12 +1,12 @@
 class ArenaNarratorService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_narrator.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, stage_context, recent_turns, health_loss = 0)
+  def self.narrate(action, resolution_tag, difficulty, stage_context, turn_context, health_loss = 0)
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
     model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
-    user_message = build_user_message(action, resolution_tag, difficulty, stage_context, recent_turns, health_loss)
+    user_message = build_user_message(action, resolution_tag, difficulty, stage_context, turn_context, health_loss)
 
     response = client.chat(
       parameters: {
@@ -27,7 +27,7 @@ class ArenaNarratorService
     raise AIConnectionError, e.message
   end
 
-  def self.build_user_message(action, resolution_tag, difficulty, stage_context, recent_turns, health_loss = 0)
+  def self.build_user_message(action, resolution_tag, difficulty, stage_context, turn_context, health_loss = 0)
     parts = []
     localized_resolution = I18n.t("game.resolution_tags.#{resolution_tag}", default: resolution_tag).upcase
     localized_difficulty = I18n.t("game.difficulty_values.#{difficulty}", default: difficulty)
@@ -80,13 +80,41 @@ class ArenaNarratorService
       parts << ""
     end
 
-    if recent_turns.any?
-      parts << I18n.t("services.arena_narrator_service.prompt.recent_history")
-      recent_turns.reverse.each do |t|
+    delta = turn_context[:world_state_delta] || []
+    if delta.any?
+      parts << I18n.t("services.arena_narrator_service.prompt.world_state_header")
+      delta.each do |d|
+        status_label = I18n.t("game.status_values.#{d[:status]}", default: d[:status].to_s)
+        info = d[:stage] ? "#{status_label} (at #{d[:stage]})" : status_label
         parts << I18n.t(
-          "services.arena_narrator_service.prompt.turn_history",
-          turn_number: t.turn_number,
-          content: t.content.to_s.truncate(200)
+          "services.arena_narrator_service.prompt.world_state_item",
+          name: d[:name],
+          id: d[:id],
+          info: info
+        )
+      end
+      parts << ""
+    end
+
+    memory_notes = turn_context[:memory_notes] || []
+    if memory_notes.any?
+      parts << I18n.t("services.arena_narrator_service.prompt.story_so_far_header")
+      memory_notes.each do |note|
+        parts << I18n.t("services.arena_narrator_service.prompt.memory_note_item", note: note[:note])
+      end
+      parts << ""
+    end
+
+    recent_actions = turn_context[:recent_actions] || []
+    if recent_actions.any?
+      parts << I18n.t("services.arena_narrator_service.prompt.recent_actions_header")
+      recent_actions.each do |ra|
+        localized_res = I18n.t("game.resolution_tags.#{ra[:resolution]}", default: ra[:resolution].to_s)
+        parts << I18n.t(
+          "services.arena_narrator_service.prompt.recent_action_item",
+          turn_number: ra[:turn_number],
+          action: ra[:action],
+          resolution: localized_res
         )
       end
       parts << ""

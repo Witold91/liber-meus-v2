@@ -35,9 +35,9 @@ module Arena
             result["objects"][resolved_object_id] ||= {}
             result["objects"][resolved_object_id]["status"] = updates["status"] if updates["status"]
           else
-            # Object not in scenario — treat as an improvised item the player acquired
-            result["player_inventory"] ||= {}
-            result["player_inventory"][object_id] = updates.slice("status").presence || { "status" => "acquired" }
+            # Object not in scenario — treat as an improvised item (may be stage-bound or carried)
+            result["improvised_objects"] ||= {}
+            result["improvised_objects"][object_id] = updates.slice("status", "stage").presence || { "status" => "acquired" }
           end
         end
       end

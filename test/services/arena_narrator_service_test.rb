@@ -10,7 +10,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       objects: [ { id: "loose_grate", name: "Loose Ventilation Grate", statuses: [ "in_place" ] } ],
       exits: []
     }
-    @recent_turns = []
+    @turn_context = { world_state_delta: [], memory_notes: [], recent_actions: [] }
   end
 
   teardown do
@@ -39,7 +39,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
     end.returns(fake_response)
     OpenAI::Client.expects(:new).returns(client_mock)
 
-    result, tokens = ArenaNarratorService.narrate("Remove the grate", "success", "easy", @stage_context, @recent_turns)
+    result, tokens = ArenaNarratorService.narrate("Remove the grate", "success", "easy", @stage_context, @turn_context)
     assert result.key?("narrative")
     assert result.key?("diff")
     assert_equal "removed", result.dig("diff", "object_updates", "loose_grate", "status")
@@ -59,7 +59,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
     end.returns(fake_response)
     OpenAI::Client.expects(:new).returns(client_mock)
 
-    ArenaNarratorService.narrate("Fight the guard", "failure", "medium", @stage_context, @recent_turns, 18)
+    ArenaNarratorService.narrate("Fight the guard", "failure", "medium", @stage_context, @turn_context, 18)
   end
 
   test "health_loss line is absent when zero" do
@@ -75,14 +75,80 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
     end.returns(fake_response)
     OpenAI::Client.expects(:new).returns(client_mock)
 
-    ArenaNarratorService.narrate("Look around", "success", "trivial", @stage_context, @recent_turns, 0)
+    ArenaNarratorService.narrate("Look around", "success", "trivial", @stage_context, @turn_context, 0)
+  end
+
+  test "world_state_delta is included in user message when present" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => { "narrative" => "You act.", "diff" => {} }.to_json } } ],
+      "usage" => { "total_tokens" => 30 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      user_message = request.dig(:parameters, :messages, 1, :content)
+      assert_includes user_message, "WORLD STATE"
+      assert_includes user_message, "[id=guard_rodriguez]"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    turn_context = {
+      world_state_delta: [ { type: "actor", id: "guard_rodriguez", name: "Guard Rodriguez", status: "distracted", stage: nil } ],
+      memory_notes: [],
+      recent_actions: []
+    }
+    ArenaNarratorService.narrate("Look around", "success", "easy", @stage_context, turn_context)
+  end
+
+  test "memory_notes are included in user message when present" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => { "narrative" => "You act.", "diff" => {} }.to_json } } ],
+      "usage" => { "total_tokens" => 30 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      user_message = request.dig(:parameters, :messages, 1, :content)
+      assert_includes user_message, "STORY SO FAR"
+      assert_includes user_message, "Torres agreed to help"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    turn_context = {
+      world_state_delta: [],
+      memory_notes: [ { turn_number: 1, note: "Torres agreed to help" } ],
+      recent_actions: []
+    }
+    ArenaNarratorService.narrate("Crawl through shaft", "success", "easy", @stage_context, turn_context)
+  end
+
+  test "recent_actions are included in user message when present" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => { "narrative" => "You act.", "diff" => {} }.to_json } } ],
+      "usage" => { "total_tokens" => 30 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      user_message = request.dig(:parameters, :messages, 1, :content)
+      assert_includes user_message, "RECENT ACTIONS"
+      assert_includes user_message, "remove the grate"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    turn_context = {
+      world_state_delta: [],
+      memory_notes: [],
+      recent_actions: [ { turn_number: 1, action: "remove the grate", resolution: "success" } ]
+    }
+    ArenaNarratorService.narrate("Crawl through shaft", "success", "easy", @stage_context, turn_context)
   end
 
   test "narrate raises AIConnectionError on API error" do
     OpenAI::Client.expects(:new).raises(StandardError, "network error")
 
     assert_raises(::AIConnectionError) do
-      ArenaNarratorService.narrate("Do something", "success", "easy", @stage_context, @recent_turns)
+      ArenaNarratorService.narrate("Do something", "success", "easy", @stage_context, @turn_context)
     end
   end
 end

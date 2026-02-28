@@ -71,6 +71,25 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     assert_nil result.dig("actors", "ghost_actor")
   end
 
+  test "apply_stage_diff routes unknown object to improvised_objects" do
+    diff = { "object_updates" => { "improvised_key" => { "status" => "in_hand" } } }
+    result = Arena::WorldStateManager.new(@world_state).apply_stage_diff(diff, scenario: @scenario)
+    assert_equal "in_hand", result.dig("improvised_objects", "improvised_key", "status")
+  end
+
+  test "apply_stage_diff stores stage for stage-bound improvised object" do
+    diff = { "object_updates" => { "campfire" => { "status" => "burning", "stage" => "yard_entrance" } } }
+    result = Arena::WorldStateManager.new(@world_state).apply_stage_diff(diff, scenario: @scenario)
+    assert_equal "burning", result.dig("improvised_objects", "campfire", "status")
+    assert_equal "yard_entrance", result.dig("improvised_objects", "campfire", "stage")
+  end
+
+  test "apply_stage_diff defaults improvised object status to acquired when no status given" do
+    diff = { "object_updates" => { "torn_sheet_rope" => {} } }
+    result = Arena::WorldStateManager.new(@world_state).apply_stage_diff(diff, scenario: @scenario)
+    assert_equal "acquired", result.dig("improvised_objects", "torn_sheet_rope", "status")
+  end
+
   test "apply_stage_diff resolves localized slug ids to canonical ids" do
     scenario_pl = ScenarioCatalog.find("prison_break", locale: "pl")
     diff = {

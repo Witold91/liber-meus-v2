@@ -31,7 +31,7 @@ class OutcomeResolutionService
       "player_stage" => nil,
       "actors" => {},
       "objects" => {},
-      "player_inventory" => {}
+      "improvised_objects" => {}
     }
   end
 
