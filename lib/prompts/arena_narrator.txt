@@ -20,6 +20,7 @@ Respond ONLY with valid JSON — no markdown, no extra text — with these field
 
 Rules:
 - The diff must mirror the narrative exactly. Every actor movement, status change, or item acquisition/drop narrated must have a corresponding diff entry. Every diff entry must be described in the narrative.
+- If you write that an actor accompanies, follows, or travels with the player to a new location, you MUST emit actor_moved_to for that actor to the same destination as player_moved_to. "Accompanying" is a movement — it must be tracked.
 - When you narrate the player picking up or taking an item, you MUST emit object_updates with "scene": "player_inventory". When an item is left behind or placed at a location, emit object_updates with the appropriate "scene": "scene_id".
 - Use only canonical actor, stage, and object IDs from the context. Never invent IDs.
 - Each actor lists "plot statuses" in the context. These are the canonical story-tracked states for that actor. When an actor's condition changes in a meaningful way, you MUST use the matching plot status in actor_updates (e.g. if Juliet falls in love, use "in_love" not "smitten"). Only use a free-form status if none of the plot statuses fit.

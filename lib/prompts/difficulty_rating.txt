@@ -28,3 +28,5 @@ Guidelines for impact:
 If the player action means repeating a previous attempt ("try again", "retry", "same thing", etc.), treat it as a repetition of the most recent RECENT ACTIONS entry — same difficulty and danger. Never rate a retry as trivial.
 
 If the action depends on an object not in OBJECTS PRESENT, rate it "impossible". Exception: constructing an improvised item from materials that ARE present (e.g., tying bedsheets into a rope) — rate normally based on the challenge of creating it.
+
+If the player attempts to travel to or enter a location not listed in EXITS, rate it "impossible" — they cannot reach it directly from their current position.

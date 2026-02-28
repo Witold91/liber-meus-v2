@@ -37,6 +37,7 @@ class GamesController < ApplicationController
     @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     ending_turn = @game.turns.ending.find_by(turn_number: turn.turn_number + 1)
+    prologue_turn = @game.turns.find_by(turn_number: turn.turn_number + 2)
 
     respond_to do |format|
       format.turbo_stream do
@@ -48,6 +49,7 @@ class GamesController < ApplicationController
           turbo_stream.replace("scene-panel", partial: "games/scene_panel", locals: { scene_context: @scene_context, game: @game })
         ]
         streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: ending_turn }) if ending_turn
+        streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: prologue_turn }) if prologue_turn&.options_payload&.dig("prologue")
         render turbo_stream: streams
       end
       format.html { redirect_to game_path(@game) }

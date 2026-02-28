@@ -69,6 +69,6 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
     }
 
     events = ScenarioEventService.events_for_turn(turn_number: 99, act_turn_number: 2, world_state: state)
-    assert events.any? { |e| e["id"] == "act1_opening_brawl" }
+    assert events.any? { |e| e["id"] == "act1_brawl_escalates" }
   end
 end

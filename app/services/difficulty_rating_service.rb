@@ -52,6 +52,12 @@ class DifficultyRatingService
       parts << ""
     end
 
+    if scene_context[:exits].any?
+      exits_str = scene_context[:exits].map { |e| e["label"] }.join(", ")
+      parts << I18n.t("services.difficulty_rating_service.prompt.exits", exits: exits_str)
+      parts << ""
+    end
+
     if recent_actions.any?
       parts << I18n.t("services.difficulty_rating_service.prompt.recent_actions_header")
       recent_actions.each do |ra|

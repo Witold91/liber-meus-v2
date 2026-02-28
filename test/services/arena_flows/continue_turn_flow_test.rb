@@ -73,6 +73,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
   end
 
   test "creates ending sequence turn and marks game completed at goal" do
+    @game.update!(world_state: @game.world_state.merge("player_scene" => "perimeter_wall"))
     ArenaNarratorService.stubs(:narrate).returns([
       {
         "narrative" => "You slip through the last opening.",

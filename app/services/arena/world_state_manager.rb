@@ -57,7 +57,7 @@ module Arena
 
       if (player_moved = diff["player_moved_to"])
         scene_id = resolve_id(player_moved, valid_scene_ids, scene_ids_by_slug)
-        if scene_id
+        if scene_id && presenter.adjacent_scene_ids(result["player_scene"]).include?(scene_id)
           result["player_scene"] = scene_id
         end
       end
