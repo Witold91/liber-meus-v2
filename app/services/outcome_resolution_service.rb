@@ -16,10 +16,10 @@ class OutcomeResolutionService
   DANGER_INCREASE = { "success" => 0, "partial" => 5, "failure" => 15 }.freeze
 
   MOMENTUM_DELTA = {
-    "negative" => { "success" => -1, "partial" => -1, "failure" => -3 },
-    "none"     => { "success" =>  0, "partial" =>  0, "failure" => -1 },
-    "positive" => { "success" => +1, "partial" =>  0, "failure" => -2 },
-    "major"    => { "success" => +2, "partial" => +1, "failure" => -2 }
+    "negative" => { "success" => -1, "partial" => -1, "failure" => -1 },
+    "none"     => { "success" =>  0, "partial" =>  0, "failure" =>  0 },
+    "positive" => { "success" => +1, "partial" =>  0, "failure" => -1 },
+    "major"    => { "success" => +2, "partial" => +1, "failure" => -1 }
   }.freeze
 
   def self.initial_state
@@ -82,6 +82,6 @@ class OutcomeResolutionService
   def self.update_momentum(current, resolution_tag, impact)
     deltas = MOMENTUM_DELTA.fetch(impact, MOMENTUM_DELTA["positive"])
     delta  = deltas.fetch(resolution_tag, 0)
-    [ [ current + delta, -3 ].max, 5 ].min
+    [ [ current + delta, -1 ].max, 2 ].min
   end
 end

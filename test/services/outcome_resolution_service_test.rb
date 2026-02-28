@@ -76,10 +76,17 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     assert_equal 0, @game.world_state["momentum"]
   end
 
-  test "none impact: failure gives only -1 momentum" do
+  test "none impact: failure leaves momentum unchanged" do
     @game.update!(world_state: @game.world_state.merge("momentum" => 0))
     OutcomeResolutionService.stubs(:rand).returns(1)
     OutcomeResolutionService.resolve(@game, "eat the rose", 1, { difficulty: "medium", impact: "none" })
+    @game.reload
+    assert_equal 0, @game.world_state["momentum"]
+  end
+
+  test "positive impact: failure costs -1 momentum" do
+    OutcomeResolutionService.stubs(:rand).returns(1)
+    OutcomeResolutionService.resolve(@game, "climb the wall", 1, { difficulty: "hard", impact: "positive" })
     @game.reload
     assert_equal(-1, @game.world_state["momentum"])
   end

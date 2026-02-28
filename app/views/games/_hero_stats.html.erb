@@ -1,6 +1,34 @@
+<%
+  momentum = game.world_state["momentum"] || 0
+  momentum_pips = [
+    { value: -1, color: "#a04040" },
+    { value:  0, color: "#666666" },
+    { value: +1, color: "#8ab4a0" },
+    { value: +2, color: "#60a070" }
+  ]
+  momentum_label = momentum >= 0 ? "+#{momentum}" : momentum.to_s
+%>
 <div class="hero-stat-bar" id="hero-stats">
-  <div class="stat-row"><span class="stat-label"><%= t("views.games.stats.health") %></span><span class="stat-value"><%= game.world_state["health"] || 100 %>/100</span></div>
+  <div class="stat-row">
+    <span class="stat-label"><%= t("views.games.stats.health") %></span>
+    <span class="stat-value"><%= game.world_state["health"] || 100 %>/100</span>
+  </div>
   <div class="health-bar-outer"><div class="health-bar-inner" style="width: <%= game.world_state["health"] || 100 %>%"></div></div>
-  <div class="stat-row" style="margin-top:0.4rem"><span class="stat-label"><%= t("views.games.stats.danger") %></span><span class="stat-value"><%= game.world_state["danger_level"] || 0 %>%</span></div>
-  <div class="stat-row"><span class="stat-label"><%= t("views.games.stats.momentum") %></span><span class="stat-value"><%= game.world_state["momentum"] || 0 %></span></div>
+
+  <div class="stat-row" style="margin-top:0.4rem">
+    <span class="stat-label"><%= t("views.games.stats.danger") %></span>
+    <span class="stat-value"><%= game.world_state["danger_level"] || 0 %>%</span>
+  </div>
+
+  <div class="stat-row" style="margin-top:0.4rem">
+    <span class="stat-label"><%= t("views.games.stats.momentum") %></span>
+    <span class="stat-value momentum-value"><%= momentum_label %></span>
+  </div>
+  <div class="momentum-track">
+    <% momentum_pips.each do |pip| %>
+      <div class="momentum-pip <%= 'active' if momentum == pip[:value] %>"
+           style="background: <%= pip[:color] %>;"
+           title="<%= pip[:value] >= 0 ? "+#{pip[:value]}" : pip[:value] %>"></div>
+    <% end %>
+  </div>
 </div>
