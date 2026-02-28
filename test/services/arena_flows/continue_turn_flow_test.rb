@@ -36,6 +36,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       },
       87
     ])
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "The story reaches its conclusion." }, 55 ])
   end
 
   test "creates a new turn" do
@@ -79,6 +80,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       },
       87
     ])
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "Freedom stretches out before you." }, 55 ])
 
     assert_difference "Turn.count", 2 do
       ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Climb over the wall")
@@ -90,7 +92,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     ending_turn = @game.turns.order(:turn_number).last
     assert ending_turn.options_payload["ending"]
     assert_equal "completed", ending_turn.options_payload["ending_status"]
-    assert_includes ending_turn.content, "The wall falls away behind you"
+    assert_includes ending_turn.content, "Freedom stretches out before you."
   end
 
   test "advances to next act when act_goal condition is met" do
@@ -132,8 +134,14 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       }
     )
 
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "The chapter draws to a close." }, 55 ])
+    ArenaNarratorService.stubs(:narrate_prologue).returns([
+      { "narrative" => "A new chapter begins.", "memory_note" => "Act II has started." },
+      45
+    ])
+
     assert_difference "Act.count", 1 do
-      assert_difference "Turn.count", 2 do
+      assert_difference "Turn.count", 3 do
         ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Advance the act")
       end
     end
@@ -146,10 +154,18 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     assert_equal "completed", acts(:act_one).reload.status
     assert_equal 2, @game.current_act.number
 
-    transition_turn = @game.turns.order(:turn_number).last
-    assert transition_turn.options_payload["act_transition"]
-    assert_equal 2, transition_turn.options_payload["next_act_number"]
-    assert_includes transition_turn.content, "Act II intro"
+    all_turns = @game.turns.order(:turn_number).to_a
+    closing_turn = all_turns[-2]
+    prologue_turn = all_turns[-1]
+
+    assert closing_turn.options_payload["act_transition"]
+    assert_equal 2, closing_turn.options_payload["next_act_number"]
+    assert_includes closing_turn.content, "The chapter draws to a close."
+
+    assert prologue_turn.options_payload["prologue"]
+    assert_equal 2, prologue_turn.options_payload["act_number"]
+    assert_equal "A new chapter begins.", prologue_turn.content
+    assert_equal "Act II has started.", prologue_turn.llm_memory
   end
 
   test "creates ending sequence turn and marks game failed on danger condition" do
@@ -160,6 +176,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       },
       87
     ])
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "The cell closes around you once more." }, 55 ])
 
     assert_difference "Turn.count", 2 do
       ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Rattle the door loudly")
@@ -171,7 +188,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     ending_turn = @game.turns.order(:turn_number).last
     assert ending_turn.options_payload["ending"]
     assert_equal "failed", ending_turn.options_payload["ending_status"]
-    assert_includes ending_turn.content, "Rodriguez's shout tears through the silence"
+    assert_includes ending_turn.content, "The cell closes around you once more."
   end
 
   test "raises when no active act" do

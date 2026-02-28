@@ -13,6 +13,7 @@
   .turn-action { font-family: 'Lora', Georgia, serif; font-style: italic; color: #5a5040; font-size: 0.84rem; margin-bottom: 0.45rem; }
   .turn-narrative { font-family: var(--theme-font); color: var(--theme-text); line-height: 1.7; font-size: 0.92rem; white-space: pre-wrap; }
   .turn-meta { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.2em; color: #3a3020; margin-top: 0.4rem; text-transform: uppercase; }
+  .act-header { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--theme-accent); text-transform: uppercase; text-align: center; margin-bottom: 0.6rem; opacity: 0.8; }
 </style>
 
 <%
@@ -29,6 +30,9 @@
      id="turn-<%= turn.id %>">
   <% if turn.options_payload["ending"] %>
     <div class="turn-ending-label"><%= t("views.games.ending_label") %></div>
+  <% end %>
+  <% if (act_num = turn.options_payload["act_number"]) %>
+    <div class="act-header">— <%= t("views.games.act_header", number: act_num) %> —</div>
   <% end %>
   <% if turn.option_selected.present? %>
     <div class="turn-action">&gt; <%= turn.option_selected %></div>

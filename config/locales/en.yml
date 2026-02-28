@@ -33,6 +33,7 @@ en:
       start_new_game: "Start New Game"
       turn: "Turn %{number}"
       ending_label: "Final Sequence"
+      act_header: "Act %{number}"
       action_placeholder: "What do you do?"
       stats:
         health: "Health"
@@ -125,6 +126,10 @@ en:
         recent_action_item: "  Turn %{turn_number}: %{action} → %{resolution}"
         health_loss: "HEALTH LOST: %{amount} — the narrative must describe the physical cause of this damage concretely (a blow received, a wound, a fall, exhaustion). Do not skip this."
         player_action: "PLAYER ACTION: %{action}"
+      prologue:
+        intro: "ACT PREMISE:\n%{act_intro}\n\nOPENING SCENE: %{scene_name}\n%{scene_description}"
+      epilogue:
+        intro: "The player has just taken this action: %{action} (outcome: %{resolution})\nThe scene: %{scene_name}\n\nThe story arrives at this conclusion:\n%{ending_narrative}\n\nWrite the closing scene."
       fallback:
         success: "You act decisively. The outcome is in your favor."
         partial: "You manage something, but not without complications."

@@ -84,16 +84,24 @@ module ArenaFlows
         # Step 11: Check end conditions
         end_condition = EndConditionChecker.check(turn_number, world_state, scenario)
         if end_condition
+          epilogue_narration, epilogue_tokens = ArenaNarratorService.narrate_epilogue(
+            scene_context, action, resolution_tag,
+            end_condition["narrative"].to_s,
+            world_context: scenario["world_context"],
+            narrator_style: scenario["narrator_style"]
+          )
+          epilogue_content = epilogue_narration["narrative"].to_s
+
           if transition_to_next_act?(end_condition: end_condition, scenario: scenario, act_number: act_number)
             next_act_number = resolve_next_act_number(end_condition: end_condition, act_number: act_number)
-            advance_act!(game: game, scenario: scenario, world_state: world_state, current_act: act, next_act_number: next_act_number)
-            transition_turn_content = build_transition_turn_content(end_condition: end_condition, scenario: scenario, next_act_number: next_act_number)
 
+            # Act-closing turn (AI epilogue for current act)
             TurnPersistenceService.create!(
               game: game,
               act: act,
-              content: transition_turn_content,
+              content: epilogue_content,
               turn_number: turn_number + 1,
+              tokens_used: epilogue_tokens,
               options_payload: {
                 "ending" => true,
                 "ending_status" => "completed",
@@ -102,15 +110,43 @@ module ArenaFlows
                 "next_act_number" => next_act_number
               }
             )
+
+            advance_act!(game: game, scenario: scenario, world_state: world_state, current_act: act, next_act_number: next_act_number)
+            next_act = game.acts.find_by!(number: next_act_number)
+            game.reload
+            new_world_state = game.world_state
+            new_presenter = Arena::ScenarioPresenter.new(scenario, next_act_number, new_world_state)
+            new_scene_context = new_presenter.scene_context_for(new_world_state["player_scene"], new_world_state)
+            next_act_intro = scenario["acts"]&.find { |a| a["number"] == next_act_number }&.dig("intro").to_s
+
+            act_prologue, act_prologue_tokens = ArenaNarratorService.narrate_prologue(
+              new_scene_context, next_act_intro,
+              world_context: scenario["world_context"],
+              narrator_style: scenario["narrator_style"]
+            )
+
+            # New act prologue turn (AI-generated opening for next act)
+            TurnPersistenceService.create!(
+              game: game,
+              act: next_act,
+              content: act_prologue["narrative"].to_s,
+              llm_memory: act_prologue["memory_note"],
+              turn_number: turn_number + 2,
+              tokens_used: act_prologue_tokens,
+              options_payload: {
+                "prologue" => true,
+                "act_number" => next_act_number
+              }
+            )
           else
             final_status = %w[goal act_goal].include?(end_condition["type"]) ? "completed" : "failed"
-            ending_turn_content = build_ending_turn_content(end_condition: end_condition)
 
             TurnPersistenceService.create!(
               game: game,
               act: act,
-              content: ending_turn_content,
+              content: epilogue_content,
               turn_number: turn_number + 1,
+              tokens_used: epilogue_tokens,
               options_payload: {
                 "ending" => true,
                 "ending_status" => final_status,
@@ -125,15 +161,6 @@ module ArenaFlows
 
         turn
       end # transaction
-    end
-
-    def self.build_ending_turn_content(end_condition:)
-      end_condition["narrative"].to_s.strip
-    end
-
-    def self.build_transition_turn_content(end_condition:, scenario:, next_act_number:)
-      next_intro = scenario["acts"]&.find { |a| a["number"] == next_act_number }&.dig("intro")
-      [ end_condition["narrative"].to_s.strip, next_intro.to_s.strip ].reject(&:blank?).join("\n\n")
     end
 
     def self.transition_to_next_act?(end_condition:, scenario:, act_number:)
@@ -176,7 +203,6 @@ module ArenaFlows
       state
     end
 
-    private_class_method :build_ending_turn_content, :build_transition_turn_content, :transition_to_next_act?,
-      :resolve_next_act_number, :advance_act!, :build_world_state_for_act
+    private_class_method :transition_to_next_act?, :resolve_next_act_number, :advance_act!, :build_world_state_for_act
   end
 end

@@ -1,5 +1,7 @@
 class ArenaNarratorService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_narrator.txt")
+  EPILOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_epilogue.txt")
+  PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
   def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil)
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
@@ -26,6 +28,71 @@ class ArenaNarratorService
     [ JSON.parse(content), tokens ]
   rescue => e
     Rails.logger.error("[ArenaNarratorService] Error: #{e.message}")
+    raise AIConnectionError, e.message
+  end
+
+  def self.narrate_epilogue(scene_context, action, resolution_tag, ending_narrative, world_context: nil, narrator_style: nil)
+    client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
+    model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
+
+    system_prompt = File.read(EPILOGUE_PROMPT_PATH)
+    system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
+    system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
+
+    localized_resolution = I18n.t("game.resolution_tags.#{resolution_tag}", default: resolution_tag).upcase
+    user_message = I18n.t("services.arena_narrator_service.epilogue.intro",
+                          action: action, resolution: localized_resolution,
+                          scene_name: scene_context.dig(:scene, :name),
+                          ending_narrative: ending_narrative)
+
+    response = client.chat(
+      parameters: {
+        model: model,
+        temperature: 0.7,
+        messages: [
+          { role: "system", content: system_prompt },
+          { role: "user", content: user_message }
+        ]
+      }
+    )
+
+    content = response.dig("choices", 0, "message", "content")
+    tokens = response.dig("usage", "total_tokens").to_i
+    [ JSON.parse(content), tokens ]
+  rescue => e
+    Rails.logger.error("[ArenaNarratorService] Epilogue error: #{e.message}")
+    raise AIConnectionError, e.message
+  end
+
+  def self.narrate_prologue(scene_context, act_intro, world_context: nil, narrator_style: nil)
+    client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
+    model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
+
+    system_prompt = File.read(PROLOGUE_PROMPT_PATH)
+    system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
+    system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
+
+    user_message = I18n.t("services.arena_narrator_service.prologue.intro",
+                          act_intro: act_intro,
+                          scene_name: scene_context.dig(:scene, :name),
+                          scene_description: scene_context.dig(:scene, :description).to_s)
+
+    response = client.chat(
+      parameters: {
+        model: model,
+        temperature: 0.7,
+        messages: [
+          { role: "system", content: system_prompt },
+          { role: "user", content: user_message }
+        ]
+      }
+    )
+
+    content = response.dig("choices", 0, "message", "content")
+    tokens = response.dig("usage", "total_tokens").to_i
+    [ JSON.parse(content), tokens ]
+  rescue => e
+    Rails.logger.error("[ArenaNarratorService] Prologue error: #{e.message}")
     raise AIConnectionError, e.message
   end
 

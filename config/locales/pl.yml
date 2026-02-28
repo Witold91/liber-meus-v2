@@ -33,6 +33,7 @@ pl:
       start_new_game: "Nowa gra"
       turn: "Tura %{number}"
       ending_label: "Sekwencja Końcowa"
+      act_header: "Akt %{number}"
       action_placeholder: "Co robisz?"
       stats:
         health: "Zdrowie"
@@ -125,6 +126,10 @@ pl:
         recent_action_item: "  Tura %{turn_number}: %{action} → %{resolution}"
         health_loss: "UTRACONE ZDROWIE: %{amount} — narracja musi opisać fizyczną przyczynę tych obrażeń (otrzymany cios, rana, upadek, wyczerpanie). Nie pomijaj tego."
         player_action: "DZIAŁANIE GRACZA: %{action}"
+      prologue:
+        intro: "PROLOG AKTU:\n%{act_intro}\n\nSCENA OTWIERAJĄCA: %{scene_name}\n%{scene_description}"
+      epilogue:
+        intro: "Gracz właśnie wykonał działanie: %{action} (wynik: %{resolution})\nScena: %{scene_name}\n\nHistoria zmierza do tego zakończenia:\n%{ending_narrative}\n\nNapisz scenę zamykającą."
       fallback:
         success: "Działasz zdecydowanie. Wynik jest na twoją korzyść."
         partial: "Coś się udaje, ale nie bez komplikacji."

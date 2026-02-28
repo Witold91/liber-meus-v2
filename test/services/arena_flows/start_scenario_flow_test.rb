@@ -3,6 +3,10 @@ require "test_helper"
 class ArenaFlows::StartScenarioFlowTest < ActiveSupport::TestCase
   setup do
     ScenarioCatalog.reload!
+    ArenaNarratorService.stubs(:narrate_prologue).returns([
+      { "narrative" => "The prison cell is cold and silent.", "memory_note" => "Escape before dawn." },
+      45
+    ])
   end
 
   test "creates a game with hero, act, and intro turn" do
@@ -48,11 +52,13 @@ class ArenaFlows::StartScenarioFlowTest < ActiveSupport::TestCase
     assert_equal "cell", @game.world_state["player_scene"]
   end
 
-  test "intro turn has prologue flag" do
+  test "intro turn has prologue flag and AI-generated content with memory" do
     @game = ArenaFlows::StartScenarioFlow.call(scenario_slug: "prison_break")
     intro = @game.turns.find_by(turn_number: 0)
     assert_not_nil intro
     assert intro.options_payload["prologue"]
+    assert_equal "The prison cell is cold and silent.", intro.content
+    assert_equal "Escape before dawn.", intro.llm_memory
   end
 
   test "raises for unknown scenario slug" do

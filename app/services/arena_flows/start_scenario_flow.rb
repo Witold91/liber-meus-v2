@@ -21,14 +21,23 @@ module ArenaFlows
         status: "active"
       )
 
-      act_data = scenario["acts"]&.first
-      intro_content = act_data&.dig("intro") || I18n.t("services.arena_flows.start_scenario.intro_fallback")
+      presenter = Arena::ScenarioPresenter.new(scenario, 1, world_state)
+      scene_context = presenter.scene_context_for(world_state["player_scene"], world_state)
+      act_intro = scenario["acts"]&.first&.dig("intro").to_s
+
+      prologue, prologue_tokens = ArenaNarratorService.narrate_prologue(
+        scene_context, act_intro,
+        world_context: scenario["world_context"],
+        narrator_style: scenario["narrator_style"]
+      )
 
       TurnPersistenceService.create!(
         game: game,
         act: act,
-        content: intro_content.strip,
+        content: prologue["narrative"].to_s,
+        llm_memory: prologue["memory_note"],
         turn_number: 0,
+        tokens_used: prologue_tokens,
         options_payload: { "prologue" => true }
       )
 
