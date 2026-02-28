@@ -13,7 +13,7 @@ hero:
   name: "Romeo Monteki"
   description: "Młody szlachcic rozdarty między miłością, lojalnością i zgubnym impulsem."
 
-chapters:
+acts:
   - number: 1
     title: "Akt I - Waśń i pierwsze spojrzenie"
     intro: |
@@ -22,7 +22,7 @@ chapters:
       Nocą miasto zmienia ton: sala Kapuletów rozbłyska ucztą masek, muzyki i politycznych spojrzeń.
       Jesteś Romeem Montekim - niespokojnym i porywczym - i właśnie wchodzisz na teren wroga, gdzie jedno spotkanie może naraz rozpalić miłość i zapowiedzieć zgubę.
       Aktualna sytuacja: Jesteś na placu w Weronie, obok ciebie są Merkucjo i Benwolio, a słudzy obu rodów zaczynają kolejną prowokację.
-    stages:
+    scenes:
       - id: verona_square
         name: "Plac w Weronie (Akt I)"
         description: "Publiczny plac, gdzie słudzy prowokują się nawzajem, a możni bronią honoru rodu."

@@ -1,6 +1,6 @@
 class EndConditionChecker
   def self.check(turn_number, world_state, scenario)
-    presenter = Arena::ScenarioPresenter.new(scenario, world_state["chapter_number"] || 1, world_state)
+    presenter = Arena::ScenarioPresenter.new(scenario, world_state["act_number"] || 1, world_state)
     turn_limit = presenter.turn_limit
 
     # Auto condition: turn limit reached
@@ -34,8 +34,8 @@ class EndConditionChecker
 
   def self.evaluate_condition(condition, world_state)
     case condition["check"]
-    when "player_at_stage"
-      world_state["player_stage"] == condition["stage"]
+    when "player_at_scene"
+      world_state["player_scene"] == condition["scene"]
     when "actor_has_status"
       actor_state = world_state.dig("actors", condition["actor"])
       status = actor_state&.dig("status") || actor_state&.dig("statuses")&.first

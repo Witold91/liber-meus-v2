@@ -4,12 +4,12 @@ module Arena
       @world_state = world_state.deep_dup
     end
 
-    def apply_stage_diff(diff, scenario:)
-      presenter = ScenarioPresenter.new(scenario, @world_state["chapter_number"] || 1, @world_state)
-      valid_stage_ids = presenter.stages.map { |s| s["id"] } + [ "offstage" ]
+    def apply_scene_diff(diff, scenario:)
+      presenter = ScenarioPresenter.new(scenario, @world_state["act_number"] || 1, @world_state)
+      valid_scene_ids = presenter.scenes.map { |s| s["id"] } + [ "offstage" ]
       valid_actor_ids = presenter.actors.map { |a| a["id"] }
       valid_object_ids = presenter.objects.map { |o| o["id"] }
-      stage_ids_by_slug = build_slug_map(presenter.stages)
+      scene_ids_by_slug = build_slug_map(presenter.scenes)
       actor_ids_by_slug = build_slug_map(presenter.actors)
       object_ids_by_slug = build_slug_map(presenter.objects)
 
@@ -35,29 +35,29 @@ module Arena
             result["objects"][resolved_object_id] ||= {}
             result["objects"][resolved_object_id]["status"] = updates["status"] if updates["status"]
           else
-            # Object not in scenario — treat as an improvised item (may be stage-bound or carried)
+            # Object not in scenario — treat as an improvised item (may be scene-bound or carried)
             result["improvised_objects"] ||= {}
-            result["improvised_objects"][object_id] = updates.slice("status", "stage").presence || { "status" => "acquired" }
+            result["improvised_objects"][object_id] = updates.slice("status", "scene").presence || { "status" => "acquired" }
           end
         end
       end
 
       if (actor_moved = diff["actor_moved_to"])
-        actor_moved.each do |actor_id, stage_id|
+        actor_moved.each do |actor_id, scene_id|
           resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug)
-          resolved_stage_id = resolve_id(stage_id, valid_stage_ids, stage_ids_by_slug)
+          resolved_scene_id = resolve_id(scene_id, valid_scene_ids, scene_ids_by_slug)
           next unless resolved_actor_id
-          next unless resolved_stage_id
+          next unless resolved_scene_id
           result["actors"] ||= {}
           result["actors"][resolved_actor_id] ||= {}
-          result["actors"][resolved_actor_id]["stage"] = resolved_stage_id
+          result["actors"][resolved_actor_id]["scene"] = resolved_scene_id
         end
       end
 
       if (player_moved = diff["player_moved_to"])
-        stage_id = resolve_id(player_moved, valid_stage_ids, stage_ids_by_slug)
-        if stage_id
-          result["player_stage"] = stage_id
+        scene_id = resolve_id(player_moved, valid_scene_ids, scene_ids_by_slug)
+        if scene_id
+          result["player_scene"] = scene_id
         end
       end
 

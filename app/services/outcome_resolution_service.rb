@@ -28,7 +28,7 @@ class OutcomeResolutionService
       "danger_level" => BASE_DANGER,
       "momentum" => BASE_MOMENTUM,
       "arc_index" => BASE_ARC_INDEX,
-      "player_stage" => nil,
+      "player_scene" => nil,
       "actors" => {},
       "objects" => {},
       "improvised_objects" => {}

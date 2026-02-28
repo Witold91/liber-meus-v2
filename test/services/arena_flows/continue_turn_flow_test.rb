@@ -8,22 +8,23 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       "health" => 100,
       "danger_level" => 40,
       "momentum" => 0,
-      "arc_index" => 1,
+      "act_number" => 1,
+      "act_turn" => 0,
       "scenario_slug" => "prison_break",
-      "chapter_number" => 1,
-      "player_stage" => "cell",
+      "player_scene" => "cell",
       "actors" => {
-        "guard_rodriguez" => { "stage" => "cell_block", "status" => "awake" },
-        "guard_chen" => { "stage" => "guard_room", "status" => "asleep" },
-        "inmate_torres" => { "stage" => "cell", "status" => "sleeping" }
+        "guard_rodriguez" => { "scene" => "cell_block", "status" => "awake" },
+        "guard_chen" => { "scene" => "guard_room", "status" => "asleep" },
+        "inmate_torres" => { "scene" => "cell", "status" => "sleeping" }
       },
       "objects" => {
-        "loose_grate" => { "stage" => "cell", "status" => "in_place" },
-        "guard_keys" => { "stage" => "guard_room", "status" => "on_belt" },
-        "uniform" => { "stage" => "storage_room", "status" => "on_shelf" },
-        "master_switch" => { "stage" => "control_room", "status" => "locked" },
-        "rope" => { "stage" => "cell", "status" => "not_made" }
-      }
+        "loose_grate" => { "scene" => "cell", "status" => "in_place" },
+        "guard_keys" => { "scene" => "guard_room", "status" => "on_belt" },
+        "uniform" => { "scene" => "storage_room", "status" => "on_shelf" },
+        "master_switch" => { "scene" => "control_room", "status" => "locked" },
+        "rope" => { "scene" => "cell", "status" => "not_made" }
+      },
+      "improvised_objects" => {}
     })
 
     # Stub AI calls
@@ -92,17 +93,17 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     assert_includes ending_turn.content, "The wall falls away behind you"
   end
 
-  test "advances to next chapter when chapter_goal condition is met" do
-    two_chapter_scenario = {
+  test "advances to next act when act_goal condition is met" do
+    two_act_scenario = {
       "slug" => "prison_break",
       "world_context" => "",
       "narrator_style" => "",
       "turn_limit" => 20,
-      "chapters" => [
+      "acts" => [
         {
           "number" => 1,
           "intro" => "Act I intro",
-          "stages" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
           "actors" => [],
           "objects" => [],
           "conditions" => [],
@@ -111,7 +112,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
         {
           "number" => 2,
           "intro" => "Act II intro",
-          "stages" => [ { "id" => "balcony", "name" => "Balcony", "description" => "", "exits" => [] } ],
+          "scenes" => [ { "id" => "balcony", "name" => "Balcony", "description" => "", "exits" => [] } ],
           "actors" => [],
           "objects" => [],
           "conditions" => [],
@@ -120,18 +121,18 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       ]
     }
 
-    ScenarioCatalog.stubs(:find!).returns(two_chapter_scenario)
-    ScenarioCatalog.stubs(:find).returns(two_chapter_scenario)
+    ScenarioCatalog.stubs(:find!).returns(two_act_scenario)
+    ScenarioCatalog.stubs(:find).returns(two_act_scenario)
     EndConditionChecker.stubs(:check).returns(
       {
         "id" => "act1_complete",
-        "type" => "chapter_goal",
-        "next_chapter" => 2,
+        "type" => "act_goal",
+        "next_act" => 2,
         "narrative" => "Act I closes."
       }
     )
 
-    assert_difference "Chapter.count", 1 do
+    assert_difference "Act.count", 1 do
       assert_difference "Turn.count", 2 do
         ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Advance the act")
       end
@@ -139,15 +140,15 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
     @game.reload
     assert_equal "active", @game.status
-    assert_equal 2, @game.world_state["chapter_number"]
-    assert_equal 0, @game.world_state["chapter_turn"]
-    assert_equal "balcony", @game.world_state["player_stage"]
-    assert_equal "completed", chapters(:chapter_one).reload.status
-    assert_equal 2, @game.current_chapter.number
+    assert_equal 2, @game.world_state["act_number"]
+    assert_equal 0, @game.world_state["act_turn"]
+    assert_equal "balcony", @game.world_state["player_scene"]
+    assert_equal "completed", acts(:act_one).reload.status
+    assert_equal 2, @game.current_act.number
 
     transition_turn = @game.turns.order(:turn_number).last
-    assert transition_turn.options_payload["chapter_transition"]
-    assert_equal 2, transition_turn.options_payload["next_chapter_number"]
+    assert transition_turn.options_payload["act_transition"]
+    assert_equal 2, transition_turn.options_payload["next_act_number"]
     assert_includes transition_turn.content, "Act II intro"
   end
 
@@ -173,8 +174,8 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     assert_includes ending_turn.content, "Rodriguez's shout tears through the silence"
   end
 
-  test "raises when no active chapter" do
-    chapters(:chapter_one).update!(status: "completed")
+  test "raises when no active act" do
+    acts(:act_one).update!(status: "completed")
     assert_raises(RuntimeError) do
       ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Do something")
     end

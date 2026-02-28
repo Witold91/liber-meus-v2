@@ -38,14 +38,14 @@ en:
         health: "Health"
         danger: "Danger"
         momentum: "Momentum"
-    stage_panel:
+    scene_panel:
       unknown_location: "Unknown Location"
       hide: "Hide"
-      show: "Stage"
+      show: "Scene"
       actors: "Actors"
       objects: "Objects"
       exits: "Exits"
-      empty: "No stage information available."
+      empty: "No scene information available."
 
   game:
     statuses:
@@ -90,7 +90,7 @@ en:
         intro_fallback: "Your adventure begins."
         missing_hero: "No hero defined in scenario and no hero_id provided"
       continue_turn:
-        no_active_chapter: "No active chapter"
+        no_active_act: "No active act"
     game_flows:
       continue_turn:
         not_implemented: "[Non-arena game mode not yet implemented. Action: %{action}]"
@@ -100,7 +100,7 @@ en:
     difficulty_rating_service:
       prompt:
         hero: "HERO: %{name} — %{description}"
-        current_stage: "CURRENT STAGE: %{stage_name}"
+        current_scene: "CURRENT SCENE: %{scene_name}"
         actors_present: "ACTORS PRESENT:"
         objects_present: "OBJECTS PRESENT:"
         list_item: "  - %{name}: %{statuses}"
@@ -111,7 +111,7 @@ en:
       prompt:
         resolution: "RESOLUTION: %{resolution} (difficulty was %{difficulty})"
         rating_reasoning: "DIFFICULTY REASONING: %{reasoning}"
-        current_stage: "CURRENT STAGE: %{stage_name} [id=%{stage_id}]"
+        current_scene: "CURRENT SCENE: %{scene_name} [id=%{scene_id}]"
         actors_present: "ACTORS PRESENT:"
         actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses}"
         objects_present: "OBJECTS PRESENT:"

@@ -1,4 +1,4 @@
-class Chapter < ApplicationRecord
+class Act < ApplicationRecord
   belongs_to :game
   has_many :turns, dependent: :destroy
 

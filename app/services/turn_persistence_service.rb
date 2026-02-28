@@ -1,8 +1,8 @@
 class TurnPersistenceService
-  def self.create!(game:, chapter:, content:, turn_number:, options_payload: {}, llm_memory: nil, resolution_tag: nil, option_selected: nil, tokens_used: 0)
+  def self.create!(game:, act:, content:, turn_number:, options_payload: {}, llm_memory: nil, resolution_tag: nil, option_selected: nil, tokens_used: 0)
     Turn.create!(
       game: game,
-      chapter: chapter,
+      act: act,
       content: content,
       turn_number: turn_number,
       options_payload: options_payload,

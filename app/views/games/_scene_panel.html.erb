@@ -1,0 +1,71 @@
+<style>
+  .scene-panel { border: 1px solid #333; background: #111; font-size: 0.8rem; }
+  .scene-panel-header { padding: 0.6rem 1rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #141414; }
+  .scene-panel-header h3 { color: var(--theme-accent); font-size: 0.85rem; }
+  .scene-toggle-btn { background: transparent; border: 1px solid #444; color: #888; padding: 0.2rem 0.5rem; cursor: pointer; font-family: inherit; font-size: 0.75rem; }
+  .scene-panel-body { padding: 0.75rem 1rem; }
+  .scene-description { color: #777; font-size: 0.8rem; line-height: 1.4; margin-bottom: 0.75rem; border-bottom: 1px solid #222; padding-bottom: 0.5rem; }
+  .scene-section-label { color: #555; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 0.5rem 0 0.25rem; }
+  .actor-item, .object-item, .exit-item { padding: 0.25rem 0; color: #aaa; }
+  .actor-name, .object-name { color: var(--theme-text); }
+  .status-badge { display: inline-block; background: #222; border: 1px solid #444; color: #888; padding: 0 0.3rem; font-size: 0.7rem; margin-left: 0.3rem; }
+  .exit-label { color: #7a9a87; }
+  .exit-arena { color: #c8b860; }
+  .scene-empty { color: #444; font-style: italic; }
+</style>
+
+<div class="scene-panel"
+     data-controller="scene-panel"
+     data-scene-panel-hide-label-value="<%= t('views.scene_panel.hide') %>"
+     data-scene-panel-show-label-value="<%= t('views.scene_panel.show') %>"
+     id="scene-panel">
+  <div class="scene-panel-header">
+    <h3 id="scene-panel-title"><%= scene_context&.dig(:scene, :name) || t("views.scene_panel.unknown_location") %></h3>
+    <button class="scene-toggle-btn" data-action="click->scene-panel#toggle" data-scene-panel-target="toggleBtn">
+      <%= t("views.scene_panel.hide") %>
+    </button>
+  </div>
+
+  <div class="scene-panel-body" data-scene-panel-target="body">
+    <% if scene_context %>
+      <div class="scene-description"><%= scene_context.dig(:scene, :description) %></div>
+
+      <% if scene_context[:actors].any? %>
+        <div class="scene-section-label"><%= t("views.scene_panel.actors") %></div>
+        <% scene_context[:actors].each do |actor| %>
+          <div class="actor-item">
+            <span class="actor-name"><%= actor[:name] %></span>
+            <% actor[:statuses].each do |status| %>
+              <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if scene_context[:objects].any? %>
+        <div class="scene-section-label"><%= t("views.scene_panel.objects") %></div>
+        <% scene_context[:objects].each do |obj| %>
+          <div class="object-item">
+            <span class="object-name"><%= obj[:name] %></span>
+            <% obj[:statuses].each do |status| %>
+              <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if scene_context[:exits].any? %>
+        <div class="scene-section-label"><%= t("views.scene_panel.exits") %></div>
+        <% scene_context[:exits].each do |exit_def| %>
+          <div class="exit-item">
+            <span class="<%= exit_def['arena_exit'] ? 'exit-arena' : 'exit-label' %>">
+              → <%= exit_def['label'] %><%= " ★" if exit_def['arena_exit'] %>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+    <% else %>
+      <div class="scene-empty"><%= t("views.scene_panel.empty") %></div>
+    <% end %>
+  </div>
+</div>

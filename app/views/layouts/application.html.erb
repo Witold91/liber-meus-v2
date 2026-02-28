@@ -9,8 +9,6 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= yield :head %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
@@ -20,18 +18,40 @@
     <%= javascript_importmap_tags %>
 
     <style>
+      :root {
+        --theme-bg: #0d0d0d;
+        --theme-text: #c8c8b4;
+        --theme-accent: #8ab4a0;
+        --theme-font: 'Courier New', Courier, monospace;
+        --theme-bg-image: none;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: var(--theme-bg-image);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.12;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .container { position: relative; z-index: 1; }
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: 'Courier New', Courier, monospace; background: #0d0d0d; color: #c8c8b4; min-height: 100vh; }
-      a { color: #8ab4a0; }
+      body { font-family: var(--theme-font); background: var(--theme-bg); color: var(--theme-text); min-height: 100vh; }
+      a { color: var(--theme-accent); }
       .container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
-      .btn { display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid #8ab4a0; background: transparent; color: #8ab4a0; cursor: pointer; font-family: inherit; font-size: 0.9rem; text-decoration: none; }
-      .btn:hover { background: #8ab4a0; color: #0d0d0d; }
-      .btn-primary { background: #8ab4a0; color: #0d0d0d; }
+      .btn { display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid var(--theme-accent); background: transparent; color: var(--theme-accent); cursor: pointer; font-family: inherit; font-size: 0.9rem; text-decoration: none; }
+      .btn:hover { background: var(--theme-accent); color: var(--theme-bg); }
+      .btn-primary { background: var(--theme-accent); color: var(--theme-bg); }
       .btn-primary:hover { background: #6a9480; }
-      .flash-notice { background: #1a3a2a; border: 1px solid #8ab4a0; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+      .flash-notice { background: #1a3a2a; border: 1px solid var(--theme-accent); padding: 0.75rem 1rem; margin-bottom: 1rem; }
       .flash-alert { background: #3a1a1a; border: 1px solid #a08080; color: #c8a0a0; padding: 0.75rem 1rem; margin-bottom: 1rem; }
       h1, h2, h3 { color: #e8e8d4; font-weight: normal; letter-spacing: 0.05em; }
     </style>
+
+    <%= yield :head %>
   </head>
 
   <body>

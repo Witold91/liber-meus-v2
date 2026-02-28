@@ -10,18 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_27_163956) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_28_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "chapters", force: :cascade do |t|
+  create_table "acts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "game_id", null: false
     t.integer "number", default: 1, null: false
     t.string "status", default: "active", null: false
     t.datetime "updated_at", null: false
-    t.index ["game_id", "number"], name: "index_chapters_on_game_id_and_number", unique: true
-    t.index ["game_id"], name: "index_chapters_on_game_id"
+    t.index ["game_id", "number"], name: "index_acts_on_game_id_and_number", unique: true
+    t.index ["game_id"], name: "index_acts_on_game_id"
   end
 
   create_table "games", force: :cascade do |t|
@@ -47,7 +47,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_163956) do
   end
 
   create_table "turns", force: :cascade do |t|
-    t.bigint "chapter_id", null: false
+    t.bigint "act_id", null: false
     t.text "content"
     t.datetime "created_at", null: false
     t.bigint "game_id", null: false
@@ -58,7 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_163956) do
     t.integer "tokens_used", default: 0, null: false
     t.integer "turn_number", default: 0, null: false
     t.datetime "updated_at", null: false
-    t.index ["chapter_id"], name: "index_turns_on_chapter_id"
+    t.index ["act_id"], name: "index_turns_on_act_id"
     t.index ["game_id", "turn_number"], name: "index_turns_on_game_id_and_turn_number"
     t.index ["game_id"], name: "index_turns_on_game_id"
   end

@@ -5,8 +5,8 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     @original_key = ENV["OPENAI_API_KEY"]
     ENV["OPENAI_API_KEY"] = "test-key-placeholder"
     @hero = heroes(:convict)
-    @stage_context = {
-      stage: { id: "cell", name: "Your Cell", description: "A 6x9 concrete box." },
+    @scene_context = {
+      scene: { id: "cell", name: "Your Cell", description: "A 6x9 concrete box." },
       actors: [],
       objects: [ { id: "loose_grate", name: "Loose Ventilation Grate", statuses: [ "in_place" ] } ],
       exits: [ { "label" => "Ventilation grate (above bunk)", "to" => "vent_shaft" } ]
@@ -30,7 +30,7 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     client_mock.expects(:chat).returns(fake_response)
     OpenAI::Client.expects(:new).returns(client_mock)
 
-    result, tokens = DifficultyRatingService.rate("Remove the grate", @stage_context, @hero)
+    result, tokens = DifficultyRatingService.rate("Remove the grate", @scene_context, @hero)
     assert_equal "easy", result["difficulty"]
     assert result.key?("reasoning")
     assert_equal 42, tokens
@@ -52,14 +52,14 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     OpenAI::Client.expects(:new).returns(client_mock)
 
     recent = [ { turn_number: 1, action: "climb to balcony", resolution: "failure" } ]
-    DifficultyRatingService.rate("try again", @stage_context, @hero, recent)
+    DifficultyRatingService.rate("try again", @scene_context, @hero, recent)
   end
 
   test "rate raises AIConnectionError on API error" do
     OpenAI::Client.expects(:new).raises(StandardError, "network error")
 
     assert_raises(::AIConnectionError) do
-      DifficultyRatingService.rate("Do something", @stage_context, @hero)
+      DifficultyRatingService.rate("Do something", @scene_context, @hero)
     end
   end
 
@@ -73,7 +73,7 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     OpenAI::Client.expects(:new).returns(client_mock)
 
     assert_raises(::AIConnectionError) do
-      DifficultyRatingService.rate("Do something", @stage_context, @hero)
+      DifficultyRatingService.rate("Do something", @scene_context, @hero)
     end
   end
 end

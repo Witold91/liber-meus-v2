@@ -15,18 +15,18 @@ module ArenaFlows
         status: "active"
       )
 
-      chapter = Chapter.create!(
+      act = Act.create!(
         game: game,
         number: 1,
         status: "active"
       )
 
-      chapter_data = scenario["chapters"]&.first
-      intro_content = chapter_data&.dig("intro") || I18n.t("services.arena_flows.start_scenario.intro_fallback")
+      act_data = scenario["acts"]&.first
+      intro_content = act_data&.dig("intro") || I18n.t("services.arena_flows.start_scenario.intro_fallback")
 
       TurnPersistenceService.create!(
         game: game,
-        chapter: chapter,
+        act: act,
         content: intro_content.strip,
         turn_number: 0,
         options_payload: { "prologue" => true }
@@ -57,7 +57,7 @@ module ArenaFlows
       actors = {}
       presenter.actors.each do |actor|
         actors[actor["id"]] = {
-          "stage" => actor["stage"],
+          "scene" => actor["scene"],
           "status" => actor["default_status"]
         }
       end
@@ -65,18 +65,18 @@ module ArenaFlows
       objects = {}
       presenter.objects.each do |obj|
         objects[obj["id"]] = {
-          "stage" => obj["stage"],
+          "scene" => obj["scene"],
           "status" => obj["default_status"]
         }
       end
 
-      first_stage = presenter.stages.first&.dig("id")
+      first_scene = presenter.scenes.first&.dig("id")
 
       base.merge(
         "scenario_slug" => scenario_slug,
-        "chapter_number" => 1,
-        "chapter_turn" => 0,
-        "player_stage" => first_stage,
+        "act_number" => 1,
+        "act_turn" => 0,
+        "player_scene" => first_scene,
         "actors" => actors,
         "objects" => objects
       )

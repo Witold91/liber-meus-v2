@@ -1,12 +1,21 @@
 class GamesController < ApplicationController
+  DEFAULT_THEME = {
+    "bg_color"     => "#0d0d0d",
+    "text_color"   => "#c8c8b4",
+    "accent_color" => "#8ab4a0",
+    "font_family"  => "'Courier New', Courier, monospace",
+    "bg_image"     => nil
+  }.freeze
+
   before_action :set_game
   before_action :set_game_locale
+  before_action :set_theme
 
   def show
     @recent_turns = @game.turns.order(:turn_number)
     @scenario = ScenarioCatalog.find(@game.scenario_slug) if @game.arena_scenario?
-    @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["chapter_number"] || 1, @game.world_state) if @scenario
-    @stage_context = @presenter&.stage_context_for(@game.world_state["player_stage"], @game.world_state)
+    @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
+    @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
   end
 
   def continue
@@ -25,8 +34,8 @@ class GamesController < ApplicationController
     @game.reload
 
     @scenario = ScenarioCatalog.find(@game.scenario_slug) if @game.arena_scenario?
-    @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["chapter_number"] || 1, @game.world_state) if @scenario
-    @stage_context = @presenter&.stage_context_for(@game.world_state["player_stage"], @game.world_state)
+    @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
+    @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     ending_turn = @game.turns.ending.find_by(turn_number: turn.turn_number + 1)
 
     respond_to do |format|
@@ -35,7 +44,7 @@ class GamesController < ApplicationController
           turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: turn }),
           turbo_stream.replace("turn-counter", html: helpers.content_tag(:span, t("views.games.turn", number: turn.turn_number), class: "console-status", id: "turn-counter")),
           turbo_stream.replace("hero-stats", partial: "games/hero_stats", locals: { game: @game }),
-          turbo_stream.replace("stage-panel", partial: "games/stage_panel", locals: { stage_context: @stage_context, game: @game })
+          turbo_stream.replace("scene-panel", partial: "games/scene_panel", locals: { scene_context: @scene_context, game: @game })
         ]
         streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: ending_turn }) if ending_turn
         render turbo_stream: streams
@@ -61,6 +70,12 @@ class GamesController < ApplicationController
 
   def set_game
     @game = Game.find(params[:id])
+  end
+
+  def set_theme
+    scenario = ScenarioCatalog.find(@game.scenario_slug)
+    raw_theme = scenario&.dig("theme") || {}
+    @theme = DEFAULT_THEME.merge(raw_theme)
   end
 
   def set_game_locale

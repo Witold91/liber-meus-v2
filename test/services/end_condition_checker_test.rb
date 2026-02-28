@@ -5,9 +5,9 @@ class EndConditionCheckerTest < ActiveSupport::TestCase
     ScenarioCatalog.reload!
     @scenario = ScenarioCatalog.find("prison_break")
     @world_state = {
-      "chapter_number" => 1,
+      "act_number" => 1,
       "health" => 100,
-      "player_stage" => "cell",
+      "player_scene" => "cell",
       "actors" => {},
       "objects" => {}
     }
@@ -36,8 +36,8 @@ class EndConditionCheckerTest < ActiveSupport::TestCase
     assert_equal "health_depleted", result["id"]
   end
 
-  test "returns goal condition when player at exit stage" do
-    state = @world_state.merge("player_stage" => "freedom")
+  test "returns goal condition when player at exit scene" do
+    state = @world_state.merge("player_scene" => "freedom")
     result = EndConditionChecker.check(5, state, @scenario)
     assert_not_nil result
     assert_equal "player_at_exit", result["id"]

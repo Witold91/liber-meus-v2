@@ -11,13 +11,20 @@ narrator_style: |
   Keep the tone tragic, immediate, and vivid. Use clear modern prose with occasional Shakespearean flavor.
   Emphasize consequence, pressure, and emotional stakes. 30-60 words.
 
+theme:
+  bg_color: "#0e0a08"
+  text_color: "#d4c8b0"
+  accent_color: "#c8844a"
+  font_family: "'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif"
+  bg_image: "romeo_juliet.jpg"
+
 hero:
   slug: romeo
   name: "Romeo Montague"
   description: "A young nobleman torn between love, loyalty, and fatal impulse."
   sex: male
 
-chapters:
+acts:
   - number: 1
     title: "Act I - Feud and First Sight"
     intro: |
@@ -26,7 +33,7 @@ chapters:
       By night, the city turns from brawl to celebration as Capulet Hall opens for a masked feast filled with politics, flirtation, and dangerous curiosity.
       You are Romeo Montague: restless, impulsive, and walking directly into enemy territory where one meeting can ignite love and ruin in the same breath.
       Current situation: You are in Verona Square with Mercutio and Benvolio nearby as servants from both houses trade provocations.
-    stages:
+    scenes:
       - id: verona_square
         name: "Verona Square"
         description: "A public square where servants provoke one another and nobles rush to defend family honor."
@@ -44,97 +51,97 @@ chapters:
       - id: sampson
         name: "Sampson"
         description: "A Capulet servant eager for provocation."
-        stage: verona_square
+        scene: verona_square
         status_options: [taunting, brawling, scattered]
         default_status: taunting
       - id: gregory
         name: "Gregory"
         description: "Another Capulet servant, loud in quarrel and quick to follow."
-        stage: verona_square
+        scene: verona_square
         status_options: [taunting, brawling, scattered]
         default_status: taunting
       - id: abram
         name: "Abram"
         description: "A Montague servant pulled into the first clash."
-        stage: verona_square
+        scene: verona_square
         status_options: [wary, brawling, scattered]
         default_status: wary
       - id: benvolio
         name: "Benvolio"
         description: "Romeo's cousin, always trying to cool hot blood."
-        stage: verona_square
+        scene: verona_square
         status_options: [calm, warning, alarmed]
         default_status: calm
       - id: mercutio
         name: "Mercutio"
         description: "Brilliant and reckless friend of Romeo."
-        stage: verona_square
+        scene: verona_square
         status_options: [witty, taunting, dueling, dead]
         default_status: witty
       - id: tybalt
         name: "Tybalt"
         description: "Juliet's cousin, proud and dangerous in defense of Capulet honor."
-        stage: capulet_hall
+        scene: capulet_hall
         status_options: [proud, enraged, dueling, dead]
         default_status: proud
       - id: juliet
         name: "Juliet Capulet"
         description: "A young noblewoman whose courage deepens as danger grows."
-        stage: capulet_hall
+        scene: capulet_hall
         status_options: [sheltered, curious, in_love, wed, desperate, entombed, awakened, dead]
         default_status: sheltered
       - id: nurse
         name: "Nurse"
         description: "Juliet's caretaker, practical and fiercely devoted."
-        stage: capulet_hall
+        scene: capulet_hall
         status_options: [watchful, calling, worried, grieving]
         default_status: watchful
       - id: lord_capulet
         name: "Lord Capulet"
         description: "Juliet's father, balancing pride, affection, and social pressure."
-        stage: capulet_hall
+        scene: capulet_hall
         status_options: [hosting, commanding, furious, mourning]
         default_status: hosting
       - id: lady_capulet
         name: "Lady Capulet"
         description: "Juliet's mother, formal and loyal to family standing."
-        stage: capulet_hall
+        scene: capulet_hall
         status_options: [observing, urging, grieving]
         default_status: observing
       - id: paris
         name: "Count Paris"
         description: "A polished noble suitor favored by Capulet."
-        stage: capulet_hall
+        scene: capulet_hall
         status_options: [courtly, betrothed, mourning, dead]
         default_status: courtly
       - id: prince_escalus
         name: "Prince Escalus"
         description: "Ruler of Verona, determined to end public bloodshed."
-        stage: verona_square
+        scene: verona_square
         status_options: [stern, condemning, sentencing, grieving]
         default_status: stern
       - id: lord_montague
         name: "Lord Montague"
         description: "Romeo's father, burdened by the feud."
-        stage: verona_square
+        scene: verona_square
         status_options: [concerned, defensive, mourning]
         default_status: concerned
       - id: lady_montague
         name: "Lady Montague"
         description: "Romeo's mother, fearful for her son."
-        stage: verona_square
+        scene: verona_square
         status_options: [concerned, fearful, mourning]
         default_status: concerned
 
     objects:
       - id: capulet_guest_list
         name: "Capulet Guest List"
-        stage: verona_square
+        scene: verona_square
         status_options: [carried, read, lost]
         default_status: carried
       - id: masquerade_mask
         name: "Masquerade Mask"
-        stage: capulet_hall
+        scene: capulet_hall
         status_options: [unused, worn, discarded]
         default_status: unused
 
@@ -142,8 +149,8 @@ chapters:
       - id: act1_love_ignites
         description: "The first spark between Romeo and Juliet is set."
         narrative: "Music fades, but the look remains. One glance has crossed an old war, and nothing in Verona will stay simple again."
-        type: chapter_goal
-        next_chapter: 2
+        type: act_goal
+        next_act: 2
         check: actor_has_status
         actor: juliet
         status: in_love
@@ -157,27 +164,27 @@ chapters:
 
     events:
       - id: act1_opening_brawl
-        chapter_turn: 1
+        act_turn: 1
         action:
           type: actor_enters
           actor_id: tybalt
-          stage: verona_square
+          scene: verona_square
           new_status: enraged
         description: "Tybalt joins the street clash and raises the stakes."
       - id: act1_prince_decree
-        chapter_turn: 2
+        act_turn: 2
         action:
           type: actor_enters
           actor_id: prince_escalus
-          stage: verona_square
+          scene: verona_square
           new_status: condemning
         description: "The Prince intervenes and warns both houses."
       - id: act1_first_sight
-        chapter_turn: 3
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: juliet
-          stage: capulet_hall
+          scene: capulet_hall
           new_status: in_love
         description: "At the feast, Juliet and Romeo recognize each other as fate."
 
@@ -189,7 +196,7 @@ chapters:
       The Nurse runs messages, the night shortens, and every delay raises the chance that rumor outruns truth.
       In Friar Laurence's cell, love can be made lawful in secret, but secrecy itself becomes a fuse that will burn through every later act.
       Current situation: You are in the Capulet Orchard beneath Juliet's balcony, with Juliet and her Nurse close enough that one wrong move can expose you.
-    stages:
+    scenes:
       - id: capulet_orchard
         name: "Capulet Orchard"
         description: "Moonlit stone and ivy below Juliet's balcony."
@@ -207,26 +214,26 @@ chapters:
       - id: juliet
         name: "Juliet Capulet"
         description: "Now resolute, willing to defy her house for love."
-        stage: capulet_orchard
+        scene: capulet_orchard
         status_options: [in_love, promised, wed, desperate, dead]
         default_status: in_love
       - id: nurse
         name: "Nurse"
         description: "A loyal go-between carrying urgent messages."
-        stage: capulet_orchard
+        scene: capulet_orchard
         status_options: [watchful, calling, worried, grieving]
         default_status: watchful
       - id: friar_lawrence
         name: "Friar Laurence"
         description: "A learned friar hoping to turn private love into public peace."
-        stage: friar_cell
+        scene: friar_cell
         status_options: [contemplative, advising, marrying, desperate]
         default_status: contemplative
 
     objects:
       - id: wedding_vows
         name: "Wedding Vows"
-        stage: friar_cell
+        scene: friar_cell
         status_options: [unspoken, spoken, broken]
         default_status: unspoken
 
@@ -234,8 +241,8 @@ chapters:
       - id: act2_secret_marriage
         description: "The secret marriage is completed."
         narrative: "In a dim cell, two voices make one oath. Love has become a bond, and the feud now has a hidden fault line."
-        type: chapter_goal
-        next_chapter: 3
+        type: act_goal
+        next_act: 3
         check: actor_has_status
         actor: juliet
         status: wed
@@ -249,27 +256,27 @@ chapters:
 
     events:
       - id: act2_balcony_vow
-        chapter_turn: 1
+        act_turn: 1
         action:
           type: actor_enters
           actor_id: juliet
-          stage: capulet_orchard
+          scene: capulet_orchard
           new_status: promised
         description: "The balcony vows bind Romeo and Juliet to each other."
       - id: act2_nurse_interrupts
-        chapter_turn: 2
+        act_turn: 2
         action:
           type: actor_enters
           actor_id: nurse
-          stage: capulet_orchard
+          scene: capulet_orchard
           new_status: calling
         description: "The Nurse calls Juliet back inside."
       - id: act2_wedding
-        chapter_turn: 3
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: juliet
-          stage: friar_cell
+          scene: friar_cell
           new_status: wed
         description: "Friar Laurence completes the secret marriage rites."
 
@@ -281,7 +288,7 @@ chapters:
       Romeo now stands between sworn friendship and secret marriage, trying to keep peace in a city that rewards retaliation.
       Once blood is spilled, judgment will be swift: the Prince's sentence can separate lovers faster than any wall.
       Current situation: You are in the Dueling Square with Mercutio, Tybalt, and Benvolio present, and the crowd is seconds away from violence.
-    stages:
+    scenes:
       - id: dueling_square
         name: "Dueling Square"
         description: "A crowded Verona street where honor and anger turn lethal."
@@ -309,50 +316,50 @@ chapters:
       - id: mercutio
         name: "Mercutio"
         description: "Romeo's fierce friend, wounded by feud and pride."
-        stage: dueling_square
+        scene: dueling_square
         status_options: [taunting, dueling, wounded, dead]
         default_status: taunting
       - id: tybalt
         name: "Tybalt"
         description: "Capulet champion demanding satisfaction."
-        stage: dueling_square
+        scene: dueling_square
         status_options: [enraged, dueling, dead]
         default_status: enraged
       - id: benvolio
         name: "Benvolio"
         description: "Voice of restraint amid rising violence."
-        stage: dueling_square
+        scene: dueling_square
         status_options: [warning, alarmed]
         default_status: warning
       - id: juliet
         name: "Juliet Capulet"
         description: "Trapped between marriage vows and family war."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [wed, distraught, desperate, dead]
         default_status: wed
       - id: nurse
         name: "Nurse"
         description: "Bearer of grim news."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [worried, grieving]
         default_status: worried
       - id: prince_escalus
         name: "Prince Escalus"
         description: "Judge of Verona's blood feud."
-        stage: dueling_square
+        scene: dueling_square
         status_options: [condemning, sentencing, grieving]
         default_status: condemning
       - id: balthasar
         name: "Balthasar"
         description: "Romeo's servant and messenger."
-        stage: mantua_road
+        scene: mantua_road
         status_options: [searching, loyal, grieving]
         default_status: searching
 
     objects:
       - id: prince_banishment_edict
         name: "Banishment Edict"
-        stage: dueling_square
+        scene: dueling_square
         status_options: [unissued, proclaimed, ignored]
         default_status: unissued
 
@@ -360,8 +367,8 @@ chapters:
       - id: act3_banishment
         description: "The Prince's sentence forces Romeo into exile."
         narrative: "The Prince's word lands heavier than steel: banishment. Love must now survive distance, fear, and the speed of rumor."
-        type: chapter_goal
-        next_chapter: 4
+        type: act_goal
+        next_act: 4
         check: actor_has_status
         actor: prince_escalus
         status: sentencing
@@ -375,43 +382,43 @@ chapters:
 
     events:
       - id: act3_duel_begins_mercutio
-        chapter_turn: 1
+        act_turn: 1
         action:
           type: actor_enters
           actor_id: mercutio
-          stage: dueling_square
+          scene: dueling_square
           new_status: dueling
         description: "Mercutio answers Tybalt's challenge."
       - id: act3_duel_begins_tybalt
-        chapter_turn: 1
+        act_turn: 1
         action:
           type: actor_enters
           actor_id: tybalt
-          stage: dueling_square
+          scene: dueling_square
           new_status: dueling
         description: "Tybalt presses the duel in open street."
       - id: act3_mercutio_falls
-        chapter_turn: 2
+        act_turn: 2
         action:
           type: actor_enters
           actor_id: mercutio
-          stage: offstage
+          scene: offstage
           new_status: dead
         description: "Mercutio is killed in the chaos."
       - id: act3_tybalt_falls
-        chapter_turn: 3
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: tybalt
-          stage: offstage
+          scene: offstage
           new_status: dead
         description: "Tybalt is slain in revenge."
       - id: act3_prince_sentences
-        chapter_turn: 3
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: prince_escalus
-          stage: dueling_square
+          scene: dueling_square
           new_status: sentencing
         description: "The Prince pronounces banishment."
 
@@ -423,7 +430,7 @@ chapters:
       Juliet seeks Friar Laurence not for comfort but for a plan that can outwit family power, church timing, and public ceremony.
       One vial now carries impossible hope: to appear dead long enough to escape a living prison.
       Current situation: You are in Juliet's Chamber, where Juliet, the Nurse, Paris, and the Capulets are pressing competing demands on every moment.
-    stages:
+    scenes:
       - id: juliet_chamber
         name: "Juliet's Chamber"
         description: "A private room where Juliet resists her family's plans."
@@ -449,55 +456,55 @@ chapters:
       - id: juliet
         name: "Juliet Capulet"
         description: "Driven to a final gamble between obedience and self-determination."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [desperate, resolved, entombed, dead]
         default_status: desperate
       - id: nurse
         name: "Nurse"
         description: "Distraught witness to Juliet's escalating crisis."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [worried, grieving]
         default_status: worried
       - id: lord_capulet
         name: "Lord Capulet"
         description: "Impatient to secure Juliet's marriage to Paris."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [commanding, furious, mourning]
         default_status: commanding
       - id: lady_capulet
         name: "Lady Capulet"
         description: "Presses Juliet toward the arranged match."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [urging, grieving]
         default_status: urging
       - id: paris
         name: "Count Paris"
         description: "Confident that the wedding will proceed."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [betrothed, mourning, dead]
         default_status: betrothed
       - id: friar_lawrence
         name: "Friar Laurence"
         description: "Architect of a perilous rescue plan."
-        stage: friar_cell
+        scene: friar_cell
         status_options: [advising, desperate]
         default_status: advising
       - id: peter
         name: "Peter"
         description: "The Nurse's servant, running errands amid confusion."
-        stage: juliet_chamber
+        scene: juliet_chamber
         status_options: [attending, searching, confused]
         default_status: attending
 
     objects:
       - id: sleeping_draught
         name: "Sleeping Draught"
-        stage: friar_cell
+        scene: friar_cell
         status_options: [prepared, taken, spent]
         default_status: prepared
       - id: friar_letter
         name: "Letter to Romeo"
-        stage: friar_cell
+        scene: friar_cell
         status_options: [sealed, delayed, delivered]
         default_status: sealed
 
@@ -505,8 +512,8 @@ chapters:
       - id: act4_feigned_death
         description: "Juliet's sleeping plan reaches the crypt."
         narrative: "Juliet lies cold to all appearances, and Verona mourns what is not yet truly lost. The last act begins in the dark."
-        type: chapter_goal
-        next_chapter: 5
+        type: act_goal
+        next_act: 5
         check: actor_has_status
         actor: juliet
         status: entombed
@@ -520,27 +527,27 @@ chapters:
 
     events:
       - id: act4_family_pressure
-        chapter_turn: 1
+        act_turn: 1
         action:
           type: actor_enters
           actor_id: lord_capulet
-          stage: juliet_chamber
+          scene: juliet_chamber
           new_status: furious
         description: "Capulet forces the marriage timetable."
       - id: act4_friar_counsel
-        chapter_turn: 2
+        act_turn: 2
         action:
           type: actor_enters
           actor_id: friar_lawrence
-          stage: friar_cell
+          scene: friar_cell
           new_status: advising
         description: "Friar Laurence presents the sleeping-draught plan."
       - id: act4_entombed
-        chapter_turn: 3
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: juliet
-          stage: capulet_crypt
+          scene: capulet_crypt
           new_status: entombed
         description: "Juliet is laid in the Capulet crypt."
 
@@ -552,7 +559,7 @@ chapters:
       At the Capulet crypt, grief, misunderstanding, and haste converge in the final darkness of the play.
       Dawn will bring the Prince, both houses, and the last accounting of love, blame, and peace bought at terrible cost.
       Current situation: You are on Mantua Street with Balthasar and an impoverished Apothecary nearby, deciding whether to trust rumor or wait for proof.
-    stages:
+    scenes:
       - id: mantua_street
         name: "Mantua Street"
         description: "A poor quarter where exile is bitter and law is easy to break for money."
@@ -585,77 +592,77 @@ chapters:
       - id: juliet
         name: "Juliet Capulet"
         description: "Between apparent death and final awakening."
-        stage: capulet_crypt
+        scene: capulet_crypt
         status_options: [entombed, awakened, dead]
         default_status: entombed
       - id: paris
         name: "Count Paris"
         description: "Mourner at the Capulet tomb."
-        stage: capulet_crypt
+        scene: capulet_crypt
         status_options: [mourning, dead]
         default_status: mourning
       - id: balthasar
         name: "Balthasar"
         description: "Bearer of terrible news."
-        stage: mantua_street
+        scene: mantua_street
         status_options: [searching, grieving]
         default_status: searching
       - id: friar_john
         name: "Friar John"
         description: "Messenger whose delay proves fatal."
-        stage: friar_cell_dawn
+        scene: friar_cell_dawn
         status_options: [dutiful, delayed, apologetic]
         default_status: dutiful
       - id: friar_lawrence
         name: "Friar Laurence"
         description: "Racing against consequences he helped set in motion."
-        stage: friar_cell_dawn
+        scene: friar_cell_dawn
         status_options: [desperate, grieving]
         default_status: desperate
       - id: apothecary
         name: "Apothecary"
         description: "A poor seller willing to break the law for coin."
-        stage: mantua_street
+        scene: mantua_street
         status_options: [desperate, bargaining, bribed]
         default_status: desperate
       - id: prince_escalus
         name: "Prince Escalus"
         description: "Summons both houses for final reckoning."
-        stage: prince_court
+        scene: prince_court
         status_options: [stern, grieving, sentencing]
         default_status: stern
       - id: lord_capulet
         name: "Lord Capulet"
         description: "Arrives in court broken by loss."
-        stage: prince_court
+        scene: prince_court
         status_options: [mourning]
         default_status: mourning
       - id: lord_montague
         name: "Lord Montague"
         description: "Comes to court ready to end the feud at last."
-        stage: prince_court
+        scene: prince_court
         status_options: [mourning]
         default_status: mourning
 
     objects:
       - id: poison_vial
         name: "Poison Vial"
-        stage: mantua_street
+        scene: mantua_street
         status_options: [unavailable, purchased, emptied]
         default_status: unavailable
       - id: juliet_dagger
         name: "Juliet's Dagger"
-        stage: capulet_crypt
+        scene: capulet_crypt
         status_options: [sheathed, drawn, bloodied]
         default_status: sheathed
       - id: torch
         name: "Crypt Torch"
-        stage: capulet_crypt
+        scene: capulet_crypt
         status_options: [lit, flickering, extinguished]
         default_status: lit
       - id: family_peace_pledge
         name: "Montague-Capulet Peace Pledge"
-        stage: prince_court
+        scene: prince_court
         status_options: [unspoken, sworn]
         default_status: unspoken
 
@@ -664,8 +671,8 @@ chapters:
         description: "Romeo reaches the Prince's Court before irreversible collapse."
         narrative: "In dawn's hard light, both houses stand before the Prince and swear the feud will end. Peace arrives scarred, but alive."
         type: goal
-        check: player_at_stage
-        stage: prince_court
+        check: player_at_scene
+        scene: prince_court
       - id: act5_juliet_dead
         description: "Juliet dies in the crypt."
         narrative: "By the time truth catches up, the tomb is already final. Love and feud end together, and Verona learns mercy too late."
@@ -676,42 +683,42 @@ chapters:
 
     events:
       - id: act5_letter_delayed
-        chapter_turn: 1
+        act_turn: 1
         action:
           type: actor_enters
           actor_id: friar_john
-          stage: friar_cell_dawn
+          scene: friar_cell_dawn
           new_status: delayed
         description: "The friar's letter is delayed and fails to reach Romeo in time."
       - id: act5_false_news
-        chapter_turn: 1
+        act_turn: 1
         action:
           type: actor_enters
           actor_id: balthasar
-          stage: mantua_street
+          scene: mantua_street
           new_status: grieving
         description: "Balthasar reports Juliet as dead."
       - id: act5_poison_purchase
-        chapter_turn: 2
+        act_turn: 2
         action:
           type: actor_enters
           actor_id: apothecary
-          stage: mantua_street
+          scene: mantua_street
           new_status: bribed
         description: "The Apothecary yields poison for coin."
       - id: act5_juliet_wakes
-        chapter_turn: 3
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: juliet
-          stage: capulet_crypt
+          scene: capulet_crypt
           new_status: awakened
         description: "Juliet wakes in the crypt."
       - id: act5_tragic_close
-        chapter_turn: 4
+        act_turn: 4
         action:
           type: actor_enters
           actor_id: juliet
-          stage: offstage
+          scene: offstage
           new_status: dead
         description: "The tragedy reaches its canonical end."

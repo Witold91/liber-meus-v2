@@ -38,7 +38,7 @@ pl:
         health: "Zdrowie"
         danger: "Zagrożenie"
         momentum: "Tempo"
-    stage_panel:
+    scene_panel:
       unknown_location: "Nieznana lokacja"
       hide: "Ukryj"
       show: "Scena"
@@ -90,7 +90,7 @@ pl:
         intro_fallback: "Twoja przygoda się zaczyna."
         missing_hero: "Brak bohatera w scenariuszu i nie podano hero_id"
       continue_turn:
-        no_active_chapter: "Brak aktywnego rozdziału"
+        no_active_act: "Brak aktywnego aktu"
     game_flows:
       continue_turn:
         not_implemented: "[Tryb gry poza areną nie jest jeszcze zaimplementowany. Działanie: %{action}]"
@@ -100,7 +100,7 @@ pl:
     difficulty_rating_service:
       prompt:
         hero: "BOHATER: %{name} — %{description}"
-        current_stage: "AKTUALNA SCENA: %{stage_name}"
+        current_scene: "AKTUALNA SCENA: %{scene_name}"
         actors_present: "OBECNE POSTACIE:"
         objects_present: "OBECNE OBIEKTY:"
         list_item: "  - %{name}: %{statuses}"
@@ -111,7 +111,7 @@ pl:
       prompt:
         resolution: "WYNIK: %{resolution} (trudność: %{difficulty})"
         rating_reasoning: "UZASADNIENIE TRUDNOŚCI: %{reasoning}"
-        current_stage: "AKTUALNA SCENA: %{stage_name} [id=%{stage_id}]"
+        current_scene: "AKTUALNA SCENA: %{scene_name} [id=%{scene_id}]"
         actors_present: "OBECNE POSTACIE:"
         actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses}"
         objects_present: "OBECNE OBIEKTY:"

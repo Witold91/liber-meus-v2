@@ -1,14 +1,14 @@
 class ArenaNarratorService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_narrator.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, stage_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil)
+  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil)
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
     model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
     system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
-    user_message = build_user_message(action, resolution_tag, difficulty, stage_context, turn_context, health_loss)
+    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss)
 
     response = client.chat(
       parameters: {
@@ -29,7 +29,7 @@ class ArenaNarratorService
     raise AIConnectionError, e.message
   end
 
-  def self.build_user_message(action, resolution_tag, difficulty, stage_context, turn_context, health_loss = 0)
+  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0)
     parts = []
     localized_resolution = I18n.t("game.resolution_tags.#{resolution_tag}", default: resolution_tag).upcase
     localized_difficulty = I18n.t("game.difficulty_values.#{difficulty}", default: difficulty)
@@ -43,16 +43,16 @@ class ArenaNarratorService
     end
     parts << ""
     parts << I18n.t(
-      "services.arena_narrator_service.prompt.current_stage",
-      stage_name: stage_context.dig(:stage, :name),
-      stage_id: stage_context.dig(:stage, :id)
+      "services.arena_narrator_service.prompt.current_scene",
+      scene_name: scene_context.dig(:scene, :name),
+      scene_id: scene_context.dig(:scene, :id)
     )
-    parts << stage_context.dig(:stage, :description).to_s
+    parts << scene_context.dig(:scene, :description).to_s
     parts << ""
 
-    if stage_context[:actors].any?
+    if scene_context[:actors].any?
       parts << I18n.t("services.arena_narrator_service.prompt.actors_present")
-      stage_context[:actors].each do |a|
+      scene_context[:actors].each do |a|
         parts << I18n.t(
           "services.arena_narrator_service.prompt.actor_item",
           id: a[:id],
@@ -64,9 +64,9 @@ class ArenaNarratorService
       parts << ""
     end
 
-    if stage_context[:objects].any?
+    if scene_context[:objects].any?
       parts << I18n.t("services.arena_narrator_service.prompt.objects_present")
-      stage_context[:objects].each do |o|
+      scene_context[:objects].each do |o|
         parts << I18n.t(
           "services.arena_narrator_service.prompt.object_item",
           id: o[:id],
@@ -77,10 +77,10 @@ class ArenaNarratorService
       parts << ""
     end
 
-    if stage_context[:exits].any?
+    if scene_context[:exits].any?
       parts << I18n.t(
         "services.arena_narrator_service.prompt.exits",
-        exits: stage_context[:exits].map { |e| "#{e["label"]} (to: #{e["to"]})" }.join(", ")
+        exits: scene_context[:exits].map { |e| "#{e["label"]} (to: #{e["to"]})" }.join(", ")
       )
       parts << ""
     end
@@ -90,7 +90,7 @@ class ArenaNarratorService
       parts << I18n.t("services.arena_narrator_service.prompt.world_state_header")
       delta.each do |d|
         status_label = I18n.t("game.status_values.#{d[:status]}", default: d[:status].to_s)
-        info = d[:stage] ? "#{status_label} (at #{d[:stage]})" : status_label
+        info = d[:scene] ? "#{status_label} (at #{d[:scene]})" : status_label
         parts << I18n.t(
           "services.arena_narrator_service.prompt.world_state_item",
           name: d[:name],

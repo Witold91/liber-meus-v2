@@ -5,7 +5,7 @@ hero:
   name: "Skazaniec"
   description: "Niesłusznie uwięziony wojownik, który nie ma nic do stracenia."
 
-chapters:
+acts:
   - number: 1
     title: "Blok Cel"
     intro: |
@@ -13,7 +13,7 @@ chapters:
       Strażnik Rodriguez odbywa ostatni obchód, a buty dudnią na betonowej podłodze.
       Masz trzy godziny do świtu — i jedną szansę na wolność.
       Drzwi celi są zamknięte, ale zauważasz, że kratka wentylacyjna nad pryczą wygląda na luźną.
-    stages:
+    scenes:
       - id: cell
         name: "Twoja Cela"
         description: "Betonowa skrzynka 2x3 metry. Prycza przykręcona do ściany. Toaleta. Słabe światło fluorescencyjne."

@@ -5,9 +5,9 @@ class ArenaFlows::StartScenarioFlowTest < ActiveSupport::TestCase
     ScenarioCatalog.reload!
   end
 
-  test "creates a game with hero, chapter, and intro turn" do
+  test "creates a game with hero, act, and intro turn" do
     assert_difference "Game.count", 1 do
-      assert_difference "Chapter.count", 1 do
+      assert_difference "Act.count", 1 do
         assert_difference "Turn.count", 1 do
           @game = ArenaFlows::StartScenarioFlow.call(scenario_slug: "prison_break")
         end
@@ -38,14 +38,14 @@ class ArenaFlows::StartScenarioFlowTest < ActiveSupport::TestCase
     assert ws.key?("health")
     assert ws.key?("danger_level")
     assert ws.key?("momentum")
-    assert ws.key?("player_stage")
+    assert ws.key?("player_scene")
     assert ws.key?("actors")
     assert ws.key?("objects")
   end
 
-  test "world_state player_stage set to first stage" do
+  test "world_state player_scene set to first scene" do
     @game = ArenaFlows::StartScenarioFlow.call(scenario_slug: "prison_break")
-    assert_equal "cell", @game.world_state["player_stage"]
+    assert_equal "cell", @game.world_state["player_scene"]
   end
 
   test "intro turn has prologue flag" do

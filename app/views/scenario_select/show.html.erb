@@ -6,7 +6,7 @@
   .scenario-header p { color: #888; margin-top: 0.5rem; }
   .scenario-grid { display: grid; gap: 1.5rem; }
   .scenario-card { border: 1px solid #333; padding: 1.5rem; background: #111; }
-  .scenario-card h2 { font-size: 1.2rem; color: #8ab4a0; margin-bottom: 0.5rem; }
+  .scenario-card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
   .scenario-card p { color: #aaa; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem; }
   .scenario-form { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
   .scenario-form label { color: #888; font-size: 0.85rem; }
@@ -25,7 +25,7 @@
   <div class="scenario-grid">
     <% @scenarios.each do |scenario| %>
       <div class="scenario-card">
-        <h2><%= scenario["title"] %></h2>
+        <h2 style="color: <%= scenario.dig('theme', 'accent_color') || '#8ab4a0' %>;"><%= scenario["title"] %></h2>
         <p><%= scenario["description"] %></p>
         <%= form_with url: scenario_select_path, method: :post do |f| %>
           <%= f.hidden_field :scenario_slug, value: scenario["slug"] %>

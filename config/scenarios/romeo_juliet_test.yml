@@ -1,6 +1,6 @@
 slug: romeo_juliet_test
 title: "Romeo & Juliet (Tiny Test)"
-description: "Minimal two-stage scenario for fast testing."
+description: "Minimal two-scene scenario for fast testing."
 turn_limit: 6
 world_context: |
   Renaissance Verona at night. The Montague-Capulet feud makes every move risky.
@@ -15,13 +15,13 @@ hero:
   description: "A young lover trying to reach Juliet."
   sex: male
 
-chapters:
+acts:
   - number: 1
     title: "A Short Night"
     intro: |
       Night covers Verona.
       You stand below Juliet's balcony with one rose in your hand.
-    stages:
+    scenes:
       - id: courtyard
         name: "Courtyard"
         description: "A quiet stone courtyard beneath the balcony."
@@ -39,7 +39,7 @@ chapters:
       - id: juliet
         name: "Juliet"
         description: "She watches the courtyard with hopeful eyes."
-        stage: balcony
+        scene: balcony
         status_options:
           - waiting
           - happy
@@ -48,7 +48,7 @@ chapters:
     objects:
       - id: rose
         name: "Rose"
-        stage: courtyard
+        scene: courtyard
         status_options:
           - fresh
           - given
@@ -58,7 +58,7 @@ chapters:
       - id: reunite_on_balcony
         description: "Romeo reaches Juliet on the balcony."
         type: goal
-        check: player_at_stage
-        stage: balcony
+        check: player_at_scene
+        scene: balcony
 
     events: []

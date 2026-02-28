@@ -1,17 +1,17 @@
 <style>
   .turn-entry { border-left: 2px solid #333; padding-left: 0.75rem; }
-  .turn-entry.prologue { border-left-color: #8ab4a0; }
+  .turn-entry.prologue { border-left-color: var(--theme-accent); }
   .turn-entry.success { border-left-color: #60a070; }
   .turn-entry.partial { border-left-color: #a09040; }
   .turn-entry.failure { border-left-color: #a04040; }
   .turn-entry.ending { border-left-color: #8a7a40; background: linear-gradient(180deg, rgba(138, 122, 64, 0.16), rgba(10, 10, 10, 0)); padding: 0.8rem 0.75rem; border-radius: 4px; }
-  .turn-entry.ending.completed { border-left-color: #8ab4a0; background: linear-gradient(180deg, rgba(138, 180, 160, 0.16), rgba(10, 10, 10, 0)); }
+  .turn-entry.ending.completed { border-left-color: var(--theme-accent); background: linear-gradient(180deg, color-mix(in srgb, var(--theme-accent) 16%, transparent), rgba(10, 10, 10, 0)); }
   .turn-entry.ending.failed { border-left-color: #a04040; background: linear-gradient(180deg, rgba(160, 64, 64, 0.16), rgba(10, 10, 10, 0)); }
   .turn-ending-label { color: #c8b860; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; margin-bottom: 0.5rem; }
-  .turn-entry.ending.completed .turn-ending-label { color: #8ab4a0; }
+  .turn-entry.ending.completed .turn-ending-label { color: var(--theme-accent); }
   .turn-entry.ending.failed .turn-ending-label { color: #d48a8a; }
   .turn-action { font-style: italic; color: #888; font-size: 0.85rem; margin-bottom: 0.4rem; }
-  .turn-narrative { color: #c8c8b4; line-height: 1.6; font-size: 0.9rem; white-space: pre-wrap; }
+  .turn-narrative { color: var(--theme-text); line-height: 1.6; font-size: 0.9rem; white-space: pre-wrap; }
   .turn-meta { font-size: 0.75rem; color: #555; margin-top: 0.3rem; }
 </style>
 

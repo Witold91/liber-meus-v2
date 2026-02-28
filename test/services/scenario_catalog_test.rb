@@ -42,16 +42,16 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert scenario.key?("title")
     assert scenario.key?("description")
     assert scenario.key?("turn_limit")
-    assert scenario.key?("chapters")
+    assert scenario.key?("acts")
     assert scenario.key?("hero")
   end
 
-  test "prison_break chapter has stages and actors" do
+  test "prison_break act has scenes and actors" do
     scenario = ScenarioCatalog.find("prison_break")
-    chapter = scenario["chapters"].first
-    assert chapter["stages"].any?
-    assert chapter["actors"].any?
-    assert chapter["objects"].any?
+    act = scenario["acts"].first
+    assert act["scenes"].any?
+    assert act["actors"].any?
+    assert act["objects"].any?
   end
 
   test "find with locale pl returns Polish title" do
@@ -66,29 +66,29 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert_equal "Romeo i Julia", scenario["title"]
   end
 
-  test "find with locale pl merges stage name" do
+  test "find with locale pl merges scene name" do
     scenario = ScenarioCatalog.find("prison_break", locale: "pl")
-    chapter = scenario["chapters"].first
-    cell_stage = chapter["stages"].find { |s| s["id"] == "cell" }
-    assert_not_nil cell_stage
-    assert_equal "Twoja Cela", cell_stage["name"]
+    act = scenario["acts"].first
+    cell_scene = act["scenes"].find { |s| s["id"] == "cell" }
+    assert_not_nil cell_scene
+    assert_equal "Twoja Cela", cell_scene["name"]
   end
 
   test "find with locale pl merges exit label" do
     scenario = ScenarioCatalog.find("prison_break", locale: "pl")
-    chapter = scenario["chapters"].first
-    cell_stage = chapter["stages"].find { |s| s["id"] == "cell" }
-    exit_to_vent = cell_stage["exits"].find { |e| e["to"] == "vent_shaft" }
+    act = scenario["acts"].first
+    cell_scene = act["scenes"].find { |s| s["id"] == "cell" }
+    exit_to_vent = cell_scene["exits"].find { |e| e["to"] == "vent_shaft" }
     assert_not_nil exit_to_vent
     assert_equal "Kratka wentylacyjna (nad pryczą)", exit_to_vent["label"]
   end
 
-  test "find with locale pl merges stage name for romeo_juliet" do
+  test "find with locale pl merges scene name for romeo_juliet" do
     scenario = ScenarioCatalog.find("romeo_juliet", locale: "pl")
-    chapter = scenario["chapters"].first
-    stage = chapter["stages"].find { |s| s["id"] == "verona_square" }
-    assert_not_nil stage
-    assert_equal "Plac w Weronie (Akt I)", stage["name"]
+    act = scenario["acts"].first
+    scene = act["scenes"].find { |s| s["id"] == "verona_square" }
+    assert_not_nil scene
+    assert_equal "Plac w Weronie (Akt I)", scene["name"]
   end
 
   test "find with unsupported locale falls back to English" do
@@ -105,11 +105,11 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
 
   test "find with locale pl preserves structural fields from base" do
     scenario = ScenarioCatalog.find("prison_break", locale: "pl")
-    chapter = scenario["chapters"].first
-    cell_stage = chapter["stages"].find { |s| s["id"] == "cell" }
-    exit_to_cell_block = cell_stage["exits"].find { |e| e["to"] == "cell_block" }
+    act = scenario["acts"].first
+    cell_scene = act["scenes"].find { |s| s["id"] == "cell" }
+    exit_to_cell_block = cell_scene["exits"].find { |e| e["to"] == "cell_block" }
     assert_equal true, exit_to_cell_block["locked"]
-    actor = chapter["actors"].find { |a| a["id"] == "guard_rodriguez" }
+    actor = act["actors"].find { |a| a["id"] == "guard_rodriguez" }
     assert_equal "awake", actor["default_status"]
     assert_includes actor["status_options"], "alerted"
   end

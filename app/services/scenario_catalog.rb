@@ -60,31 +60,31 @@ module ScenarioCatalog
       result["hero"] = hero
     end
 
-    if overlay.key?("chapters") && base.key?("chapters")
-      result["chapters"] = merge_chapters(base["chapters"], overlay["chapters"])
+    if overlay.key?("acts") && base.key?("acts")
+      result["acts"] = merge_acts(base["acts"], overlay["acts"])
     end
 
     result
   end
 
-  def self.merge_chapters(base_chapters, overlay_chapters)
-    overlay_by_number = overlay_chapters.index_by { |c| c["number"] }
+  def self.merge_acts(base_acts, overlay_acts)
+    overlay_by_number = overlay_acts.index_by { |a| a["number"] }
 
-    base_chapters.map do |base_chapter|
-      overlay_chapter = overlay_by_number[base_chapter["number"]]
-      next base_chapter unless overlay_chapter
+    base_acts.map do |base_act|
+      overlay_act = overlay_by_number[base_act["number"]]
+      next base_act unless overlay_act
 
-      chapter = base_chapter.dup
+      act = base_act.dup
       %w[title intro].each do |key|
-        chapter[key] = overlay_chapter[key] if overlay_chapter.key?(key)
+        act[key] = overlay_act[key] if overlay_act.key?(key)
       end
 
-      if overlay_chapter.key?("stages") && base_chapter.key?("stages")
-        chapter["stages"] = merge_stages(base_chapter["stages"], overlay_chapter["stages"])
+      if overlay_act.key?("scenes") && base_act.key?("scenes")
+        act["scenes"] = merge_scenes(base_act["scenes"], overlay_act["scenes"])
       end
 
-      if overlay_chapter.key?("actors") && base_chapter.key?("actors")
-        chapter["actors"] = merge_by_key(base_chapter["actors"], overlay_chapter["actors"], "id") do |base_item, overlay_item|
+      if overlay_act.key?("actors") && base_act.key?("actors")
+        act["actors"] = merge_by_key(base_act["actors"], overlay_act["actors"], "id") do |base_item, overlay_item|
           item = base_item.dup
           %w[name description].each do |key|
             item[key] = overlay_item[key] if overlay_item.key?(key)
@@ -93,42 +93,42 @@ module ScenarioCatalog
         end
       end
 
-      if overlay_chapter.key?("objects") && base_chapter.key?("objects")
-        chapter["objects"] = merge_by_key(base_chapter["objects"], overlay_chapter["objects"], "id") do |base_item, overlay_item|
+      if overlay_act.key?("objects") && base_act.key?("objects")
+        act["objects"] = merge_by_key(base_act["objects"], overlay_act["objects"], "id") do |base_item, overlay_item|
           item = base_item.dup
           item["name"] = overlay_item["name"] if overlay_item.key?("name")
           item
         end
       end
 
-      if overlay_chapter.key?("conditions") && base_chapter.key?("conditions")
-        chapter["conditions"] = merge_by_key(base_chapter["conditions"], overlay_chapter["conditions"], "id") do |base_item, overlay_item|
+      if overlay_act.key?("conditions") && base_act.key?("conditions")
+        act["conditions"] = merge_by_key(base_act["conditions"], overlay_act["conditions"], "id") do |base_item, overlay_item|
           item = base_item.dup
           item["narrative"] = overlay_item["narrative"] if overlay_item.key?("narrative")
           item
         end
       end
 
-      chapter
+      act
     end
   end
 
-  def self.merge_stages(base_stages, overlay_stages)
-    merge_by_key(base_stages, overlay_stages, "id") do |base_stage, overlay_stage|
-      stage = base_stage.dup
+  def self.merge_scenes(base_scenes, overlay_scenes)
+    merge_by_key(base_scenes, overlay_scenes, "id") do |base_scene, overlay_scene|
+      scene = base_scene.dup
       %w[name description].each do |key|
-        stage[key] = overlay_stage[key] if overlay_stage.key?(key)
+        scene[key] = overlay_scene[key] if overlay_scene.key?(key)
       end
 
-      if overlay_stage.key?("exits") && base_stage.key?("exits")
-        stage["exits"] = merge_by_key(base_stage["exits"], overlay_stage["exits"], "to") do |base_exit, overlay_exit|
+      if overlay_scene.key?("exits") && base_scene.key?("exits")
+        scene["exits"] = merge_by_key(base_scene["exits"], overlay_scene["exits"], "to") do |base_exit, overlay_exit|
           exit_item = base_exit.dup
           exit_item["label"] = overlay_exit["label"] if overlay_exit.key?("label")
           exit_item
         end
       end
 
-      stage
+      scene
     end
   end
 

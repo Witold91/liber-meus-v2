@@ -1,13 +1,13 @@
 class DifficultyRatingService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "difficulty_rating.txt")
 
-  def self.rate(action, stage_context, hero, recent_actions = [], world_context: nil)
+  def self.rate(action, scene_context, hero, recent_actions = [], world_context: nil)
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
     model = ENV.fetch("AI_DIFFICULTY_MODEL", "gpt-4o-mini")
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
-    user_message = build_user_message(action, stage_context, hero, recent_actions)
+    user_message = build_user_message(action, scene_context, hero, recent_actions)
 
     response = client.chat(
       parameters: {
@@ -28,25 +28,25 @@ class DifficultyRatingService
     raise AIConnectionError, e.message
   end
 
-  def self.build_user_message(action, stage_context, hero, recent_actions = [])
+  def self.build_user_message(action, scene_context, hero, recent_actions = [])
     parts = []
     parts << I18n.t("services.difficulty_rating_service.prompt.hero", name: hero.name, description: hero.description)
     parts << ""
-    parts << I18n.t("services.difficulty_rating_service.prompt.current_stage", stage_name: stage_context.dig(:stage, :name))
-    parts << stage_context.dig(:stage, :description).to_s
+    parts << I18n.t("services.difficulty_rating_service.prompt.current_scene", scene_name: scene_context.dig(:scene, :name))
+    parts << scene_context.dig(:scene, :description).to_s
     parts << ""
 
-    if stage_context[:actors].any?
+    if scene_context[:actors].any?
       parts << I18n.t("services.difficulty_rating_service.prompt.actors_present")
-      stage_context[:actors].each do |a|
+      scene_context[:actors].each do |a|
         parts << I18n.t("services.difficulty_rating_service.prompt.list_item", name: a[:name], statuses: a[:statuses].join(", "))
       end
       parts << ""
     end
 
-    if stage_context[:objects].any?
+    if scene_context[:objects].any?
       parts << I18n.t("services.difficulty_rating_service.prompt.objects_present")
-      stage_context[:objects].each do |o|
+      scene_context[:objects].each do |o|
         parts << I18n.t("services.difficulty_rating_service.prompt.list_item", name: o[:name], statuses: o[:statuses].join(", "))
       end
       parts << ""

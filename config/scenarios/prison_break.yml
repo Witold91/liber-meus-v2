@@ -7,13 +7,20 @@ world_context: |
 narrator_style: |
   Write in a terse, urgent style. Sentences are short and punchy. Favour concrete sensory detail over atmosphere — the scrape of metal, the smell of sweat, the sound of boots. Paragraphs should be brief. Avoid flowery language. The tone is grim, tense, and immediate. 20-50 words.
 
+theme:
+  bg_color: "#0d0d0d"
+  text_color: "#c8c8b4"
+  accent_color: "#8ab4a0"
+  font_family: "'Courier New', Courier, monospace"
+  bg_image: ~
+
 hero:
   slug: convict
   name: "The Convict"
   description: "A wrongly imprisoned fighter with nothing to lose."
   sex: male
 
-chapters:
+acts:
   - number: 1
     title: "The Cell Block"
     intro: |
@@ -21,7 +28,7 @@ chapters:
       Guard Rodriguez makes his final round, boots echoing on the concrete floor.
       You have three hours until dawn—and your one shot at freedom.
       The cell door is locked but you notice the ventilation grate above your bunk looks loose.
-    stages:
+    scenes:
       - id: cell
         name: "Your Cell"
         description: "A 6x9 concrete box. Bunk bolted to wall. Toilet. Dim fluorescent light."
@@ -106,7 +113,7 @@ chapters:
       - id: guard_rodriguez
         name: "Guard Rodriguez"
         description: "Heavyset guard, two weeks from retirement. Predictable rounds."
-        stage: cell_block
+        scene: cell_block
         status_options:
           - awake
           - distracted
@@ -116,7 +123,7 @@ chapters:
       - id: guard_chen
         name: "Guard Chen"
         description: "Young, eager guard stationed at the control room. Sharp eyes."
-        stage: guard_room
+        scene: guard_room
         status_options:
           - awake
           - asleep
@@ -125,7 +132,7 @@ chapters:
       - id: inmate_torres
         name: "Inmate Torres"
         description: "Old timer who knows every inch of this prison. Owes you a favor."
-        stage: cell
+        scene: cell
         status_options:
           - sleeping
           - awake
@@ -134,14 +141,14 @@ chapters:
     objects:
       - id: loose_grate
         name: "Loose Ventilation Grate"
-        stage: cell
+        scene: cell
         status_options:
           - in_place
           - removed
         default_status: in_place
       - id: guard_keys
         name: "Guard's Keys"
-        stage: guard_room
+        scene: guard_room
         status_options:
           - on_belt
           - on_desk
@@ -149,7 +156,7 @@ chapters:
         default_status: on_belt
       - id: uniform
         name: "Guard Uniform"
-        stage: storage_room
+        scene: storage_room
         status_options:
           - on_shelf
           - taken
@@ -157,14 +164,14 @@ chapters:
         default_status: on_shelf
       - id: master_switch
         name: "Master Door Control"
-        stage: control_room
+        scene: control_room
         status_options:
           - locked
           - unlocked
         default_status: locked
       - id: rope
         name: "Knotted Rope (from sheets)"
-        stage: cell
+        scene: cell
         status_options:
           - not_made
           - made
@@ -176,8 +183,8 @@ chapters:
         description: "Player reaches the freedom stage"
         narrative: "You made it. The wall falls away behind you, the prison lights shrink into the dark, and the night stretches open ahead."
         type: goal
-        check: player_at_stage
-        stage: freedom
+        check: player_at_scene
+        scene: freedom
       - id: guard_alerted
         description: "Any guard is in alerted status"
         narrative: "Rodriguez's shout tears through the silence. Alarms flood the block and boots pound from every direction. There is nowhere left to run."
@@ -205,7 +212,7 @@ chapters:
         action:
           type: actor_enters
           actor_id: guard_rodriguez
-          stage: cell_block
+          scene: cell_block
           new_status: awake
         description: "Guard Rodriguez wakes from his nap and resumes patrol."
 
@@ -218,7 +225,7 @@ chapters:
         action:
           type: actor_enters
           actor_id: guard_chen
-          stage: guard_room
+          scene: guard_room
           new_status: awake
         description: "Guard Chen stirs and checks the monitors."
 
