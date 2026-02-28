@@ -1,12 +1,12 @@
 class ArenaNarratorService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_narrator.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, stage_context, recent_turns)
+  def self.narrate(action, resolution_tag, difficulty, stage_context, recent_turns, health_loss = 0)
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
     model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
-    user_message = build_user_message(action, resolution_tag, difficulty, stage_context, recent_turns)
+    user_message = build_user_message(action, resolution_tag, difficulty, stage_context, recent_turns, health_loss)
 
     response = client.chat(
       parameters: {
@@ -27,7 +27,7 @@ class ArenaNarratorService
     raise AIConnectionError, e.message
   end
 
-  def self.build_user_message(action, resolution_tag, difficulty, stage_context, recent_turns)
+  def self.build_user_message(action, resolution_tag, difficulty, stage_context, recent_turns, health_loss = 0)
     parts = []
     localized_resolution = I18n.t("game.resolution_tags.#{resolution_tag}", default: resolution_tag).upcase
     localized_difficulty = I18n.t("game.difficulty_values.#{difficulty}", default: difficulty)
@@ -89,6 +89,11 @@ class ArenaNarratorService
           content: t.content.to_s.truncate(200)
         )
       end
+      parts << ""
+    end
+
+    if health_loss > 0
+      parts << I18n.t("services.arena_narrator_service.prompt.health_loss", amount: health_loss)
       parts << ""
     end
 

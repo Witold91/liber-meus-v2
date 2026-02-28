@@ -46,6 +46,38 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
     assert_equal 87, tokens
   end
 
+  test "health_loss is included in user message when non-zero" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => { "narrative" => "You are struck.", "diff" => {} }.to_json } } ],
+      "usage" => { "total_tokens" => 50 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      user_message = request.dig(:parameters, :messages, 1, :content)
+      assert_includes user_message, "HEALTH LOST: 18"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    ArenaNarratorService.narrate("Fight the guard", "failure", "medium", @stage_context, @recent_turns, 18)
+  end
+
+  test "health_loss line is absent when zero" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => { "narrative" => "You look around.", "diff" => {} }.to_json } } ],
+      "usage" => { "total_tokens" => 40 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      user_message = request.dig(:parameters, :messages, 1, :content)
+      assert_not_includes user_message, "HEALTH LOST"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    ArenaNarratorService.narrate("Look around", "success", "trivial", @stage_context, @recent_turns, 0)
+  end
+
   test "narrate raises AIConnectionError on API error" do
     OpenAI::Client.expects(:new).raises(StandardError, "network error")
 

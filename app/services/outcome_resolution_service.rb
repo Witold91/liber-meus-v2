@@ -5,7 +5,14 @@ class OutcomeResolutionService
   BASE_ARC_INDEX = 1
 
   DIFFICULTY_THRESHOLD = { "easy" => 1, "medium" => 4, "hard" => 7 }.freeze
-  HEALTH_LOSS = { "trivial" => 0, "easy" => 0, "medium" => 10, "hard" => 25, "impossible" => 30 }.freeze
+
+  HEALTH_LOSS = {
+    "none"   => { "success" => 0, "partial" =>  0, "failure" =>  0 },
+    "low"    => { "success" => 0, "partial" =>  0, "failure" =>  8 },
+    "medium" => { "success" => 0, "partial" =>  5, "failure" => 18 },
+    "high"   => { "success" => 0, "partial" => 12, "failure" => 35 }
+  }.freeze
+
   DANGER_INCREASE = { "success" => 0, "partial" => 5, "failure" => 15 }.freeze
 
   MOMENTUM_DELTA = {
@@ -31,11 +38,12 @@ class OutcomeResolutionService
   def self.resolve(game, action, turn_number, intent)
     world_state = game.world_state.dup
     difficulty = intent[:difficulty] || "medium"
+    danger     = intent[:danger]     || "none"
     impact     = intent[:impact]     || "positive"
     momentum   = world_state["momentum"].to_i
 
     roll, resolution_tag = determine_resolution(difficulty, momentum)
-    health_loss = calculate_health_loss(difficulty, resolution_tag)
+    health_loss = calculate_health_loss(danger, resolution_tag)
 
     world_state["health"] = [ (world_state["health"].to_i - health_loss), 0 ].max
     world_state["danger_level"] = [
@@ -67,14 +75,8 @@ class OutcomeResolutionService
     [ roll, tag ]
   end
 
-  def self.calculate_health_loss(difficulty, resolution_tag)
-    base = HEALTH_LOSS.fetch(difficulty, 10)
-    case resolution_tag
-    when "success" then 0
-    when "partial" then base / 2
-    when "failure" then base
-    else 0
-    end
+  def self.calculate_health_loss(danger, resolution_tag)
+    HEALTH_LOSS.fetch(danger, HEALTH_LOSS["none"]).fetch(resolution_tag, 0)
   end
 
   def self.update_momentum(current, resolution_tag, impact)

@@ -116,6 +116,7 @@ pl:
         exits: "WYJŚCIA: %{exits}"
         recent_history: "OSTATNIA HISTORIA:"
         turn_history: "  Tura %{turn_number}: %{content}"
+        health_loss: "UTRACONE ZDROWIE: %{amount} — narracja musi opisać fizyczną przyczynę tych obrażeń (otrzymany cios, rana, upadek, wyczerpanie). Nie pomijaj tego."
         player_action: "DZIAŁANIE GRACZA: %{action}"
       fallback:
         success: "Działasz zdecydowanie. Wynik jest na twoją korzyść."

@@ -23,6 +23,7 @@ Rules:
 - For improvised items (player acquires something not in the scenario), use object_updates with a descriptive snake_case id — any status string is valid for improvised items.
 - Only move actors/player to valid stage IDs from the scenario
 - When narrating a success for an improvised item, always emit the corresponding object_updates entry so the acquisition is tracked mechanically.
+- If HEALTH LOST appears in the context, you must describe its physical cause in the narrative — what struck the player, how they were wounded, what exhausted them. This is mandatory; do not omit it.
 - The narrative should not contradict the resolution_tag
 - Write in present tense, second person ("You reach for the grate...")
 

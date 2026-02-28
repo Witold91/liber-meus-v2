@@ -116,6 +116,7 @@ en:
         exits: "EXITS: %{exits}"
         recent_history: "RECENT HISTORY:"
         turn_history: "  Turn %{turn_number}: %{content}"
+        health_loss: "HEALTH LOST: %{amount} — the narrative must describe the physical cause of this damage concretely (a blow received, a wound, a fall, exhaustion). Do not skip this."
         player_action: "PLAYER ACTION: %{action}"
       fallback:
         success: "You act decisively. The outcome is in your favor."

@@ -4,8 +4,9 @@ Given a player's intended action, the current stage context (what actors and obj
 
 Respond with a JSON object with exactly these fields:
 - "difficulty": one of "trivial", "easy", "medium", "hard", "impossible"
+- "danger": one of "none", "low", "medium", "high"
 - "impact": one of "negative", "none", "positive", "major"
-- "reasoning": a brief explanation (1-2 sentences) of why you assigned this difficulty and impact
+- "reasoning": a brief explanation (1-2 sentences) of why you assigned this difficulty, danger, and impact
 
 Guidelines for difficulty:
 - "trivial": The action requires no meaningful effort and cannot fail. (e.g., looking around a room, picking up an object right in front of you, speaking to someone present)
@@ -13,6 +14,12 @@ Guidelines for difficulty:
 - "medium": The action has meaningful risk or requires some skill/luck. Outcome is uncertain. (e.g., sneaking past a distracted guard, picking a simple lock)
 - "hard": The action is risky or highly difficult. Failure is more likely than success. (e.g., overpowering an alert guard, crossing an open area under surveillance)
 - "impossible": The action cannot succeed under any circumstances given the current situation. (e.g., breaking through a reinforced steel door with bare hands, flying without equipment)
+
+Guidelines for danger (physical risk to the hero if the action goes wrong — independent of difficulty):
+- "none": No physical risk. Failure has no bodily consequences. (e.g., picking a lock alone in an empty room, searching a shelf)
+- "low": Minor physical risk. Failure may cause a small injury. (e.g., climbing a low fence, a brief shove from a guard)
+- "medium": Significant physical risk. Failure is likely to cause real harm. (e.g., a fist fight, falling from height, a chase through obstacles)
+- "high": Severe physical risk. Failure may be life-threatening. (e.g., full combat with an armed alert enemy, crossing a live electrical panel)
 
 Guidelines for impact:
 - "negative": The action is unambiguously self-destructive or directly works against the hero's goal with no plausible strategic reading. (e.g., deliberately alerting guards for no reason, destroying a key item needed for the objective). Only use this when intent to harm the hero's own cause is clear.
