@@ -39,6 +39,8 @@ pl:
         health: "Zdrowie"
         danger: "Zagrożenie"
         momentum: "Tempo"
+      inventory:
+        title: "Ekwipunek"
     scene_panel:
       unknown_location: "Nieznana lokacja"
       hide: "Ukryj"
@@ -117,6 +119,8 @@ pl:
         actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses} [statusy fabularne: %{status_options}]"
         objects_present: "OBECNE OBIEKTY:"
         object_item: "  - %{name} [id=%{id}]: %{statuses}"
+        inventory_header: "EKWIPUNEK GRACZA (przedmioty, które niesie):"
+        inventory_item: "  - %{name} [id=%{id}]: %{statuses}"
         exits: "WYJŚCIA: %{exits}"
         world_state_header: "STAN ŚWIATA (zmiany od początku scenariusza):"
         world_state_item: "  - %{name} [id=%{id}]: %{info}"

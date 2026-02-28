@@ -39,6 +39,8 @@ en:
         health: "Health"
         danger: "Danger"
         momentum: "Momentum"
+      inventory:
+        title: "Inventory"
     scene_panel:
       unknown_location: "Unknown Location"
       hide: "Hide"
@@ -117,6 +119,8 @@ en:
         actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses} [plot statuses: %{status_options}]"
         objects_present: "OBJECTS PRESENT:"
         object_item: "  - %{name} [id=%{id}]: %{statuses}"
+        inventory_header: "PLAYER INVENTORY (items the player is carrying):"
+        inventory_item: "  - %{name} [id=%{id}]: %{statuses}"
         exits: "EXITS: %{exits}"
         world_state_header: "WORLD STATE (changes from scenario start):"
         world_state_item: "  - %{name} [id=%{id}]: %{info}"

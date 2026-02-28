@@ -1,0 +1,17 @@
+<% if inventory.any? %>
+<div class="scene-panel">
+  <div class="scene-panel-header">
+    <h3><%= t("views.games.inventory.title") %></h3>
+  </div>
+  <div class="scene-panel-body">
+    <% inventory.each do |item| %>
+      <div class="object-item">
+        <span class="object-name"><%= item[:name] %></span>
+        <% item[:statuses].each do |status| %>
+          <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<% end %>

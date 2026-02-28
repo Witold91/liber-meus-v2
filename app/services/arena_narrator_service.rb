@@ -145,6 +145,20 @@ class ArenaNarratorService
       parts << ""
     end
 
+    inventory = scene_context[:inventory] || []
+    if inventory.any?
+      parts << I18n.t("services.arena_narrator_service.prompt.inventory_header")
+      inventory.each do |item|
+        parts << I18n.t(
+          "services.arena_narrator_service.prompt.inventory_item",
+          id: item[:id],
+          name: item[:name],
+          statuses: item[:statuses].join(", ")
+        )
+      end
+      parts << ""
+    end
+
     if scene_context[:exits].any?
       parts << I18n.t(
         "services.arena_narrator_service.prompt.exits",

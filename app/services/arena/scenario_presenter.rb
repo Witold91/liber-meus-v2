@@ -55,10 +55,10 @@ module Arena
           { id: o["id"], name: o["name"], statuses: statuses }
         end
 
-      # Include improvised objects that are at this scene or carried (no scene set)
+      # Include improvised objects that are at this specific scene only
       improvised.each do |item_id, data|
         item_scene = data["scene"]
-        next unless item_scene == scene_id || item_scene.nil?
+        next unless item_scene == scene_id
         scene_objects << { id: item_id, name: item_id.gsub("_", " "), statuses: [ data["status"] || "acquired" ] }
       end
 
@@ -66,7 +66,8 @@ module Arena
         scene: { id: scene["id"], name: scene["name"], description: scene["description"] },
         actors: scene_actors,
         objects: scene_objects,
-        exits: scene["exits"] || []
+        exits: scene["exits"] || [],
+        inventory: player_inventory(world_state)
       }
     end
 
@@ -127,6 +128,27 @@ module Arena
     end
 
     private
+
+    def player_inventory(world_state)
+      object_states = world_state["objects"] || {}
+      improvised    = world_state["improvised_objects"] || {}
+      items = []
+
+      objects.each do |obj|
+        state = object_states[obj["id"]] || {}
+        next unless state["scene"] == "player_inventory"
+        statuses = Array(state["status"] || obj["default_status"])
+        items << { id: obj["id"], name: obj["name"], statuses: statuses }
+      end
+
+      improvised.each do |item_id, data|
+        item_scene = data["scene"]
+        next unless item_scene.nil? || item_scene == "player_inventory"
+        items << { id: item_id, name: item_id.gsub("_", " "), statuses: [ data["status"] || "acquired" ] }
+      end
+
+      items
+    end
 
     def current_actor_scene(actor, actor_states)
       actor_states.dig(actor["id"], "scene") || actor["scene"]

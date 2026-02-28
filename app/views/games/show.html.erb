@@ -180,6 +180,10 @@
       </div>
       <%= render "games/hero_stats", game: @game %>
 
+      <div id="inventory-panel">
+        <%= render "games/inventory", inventory: @scene_context&.dig(:inventory) || [] %>
+      </div>
+
       <div id="scene-panel">
         <%= render "games/scene_panel", scene_context: @scene_context, game: @game %>
       </div>

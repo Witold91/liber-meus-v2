@@ -13,13 +13,14 @@ Respond ONLY with valid JSON — no markdown, no extra text — with these field
 - "narrative": 2-4 paragraphs of immersive fiction, present tense, second person ("You reach for the grate…"). Match tone to resolution: success is satisfying, partial has complications, failure has consequences. Do not break the fourth wall.
 - "diff": a world-state diff with any of these optional keys:
   - "actor_updates": { "actor_id": { "status": "new_status" } }
-  - "object_updates": { "object_id": { "status": "new_status" } } — for scenario objects use canonical IDs; for improvised items (not in the scenario) use a descriptive snake_case id (e.g. "torn_sheet_rope"). Include "stage": "stage_id" if the item is tied to a location; omit if the player carries it.
+  - "object_updates": { "object_id": { "status": "new_status" } } — for scenario objects use canonical IDs; for improvised items (not in the scenario) use a descriptive snake_case id (e.g. "torn_sheet_rope"). To place an item in the player's inventory (they pick it up), include "scene": "player_inventory". To leave it at a specific location, include "scene": "scene_id". Omit "scene" for improvised items already in inventory.
   - "actor_moved_to": { "actor_id": "stage_id" } — use "offstage" to remove
   - "player_moved_to": "stage_id"
 - "memory_note": 1-sentence note about a significant story development (omit if nothing notable happened)
 
 Rules:
-- The diff must mirror the narrative exactly. Every actor movement, status change, or item acquisition narrated must have a corresponding diff entry. Every diff entry must be described in the narrative.
+- The diff must mirror the narrative exactly. Every actor movement, status change, or item acquisition/drop narrated must have a corresponding diff entry. Every diff entry must be described in the narrative.
+- When you narrate the player picking up or taking an item, you MUST emit object_updates with "scene": "player_inventory". When an item is left behind or placed at a location, emit object_updates with the appropriate "scene": "scene_id".
 - Use only canonical actor, stage, and object IDs from the context. Never invent IDs.
 - Each actor lists "plot statuses" in the context. These are the canonical story-tracked states for that actor. When an actor's condition changes in a meaningful way, you MUST use the matching plot status in actor_updates (e.g. if Juliet falls in love, use "in_love" not "smitten"). Only use a free-form status if none of the plot statuses fit.
 - For scenario objects, any descriptive status is valid (e.g. "eaten", "broken"). Any status string is valid for improvised items.

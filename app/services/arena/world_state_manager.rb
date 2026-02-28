@@ -34,6 +34,7 @@ module Arena
             result["objects"] ||= {}
             result["objects"][resolved_object_id] ||= {}
             result["objects"][resolved_object_id]["status"] = updates["status"] if updates["status"]
+            result["objects"][resolved_object_id]["scene"] = updates["scene"] if updates.key?("scene")
           else
             # Object not in scenario — treat as an improvised item (may be scene-bound or carried)
             result["improvised_objects"] ||= {}

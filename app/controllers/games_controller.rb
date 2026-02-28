@@ -44,6 +44,7 @@ class GamesController < ApplicationController
           turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: turn }),
           turbo_stream.replace("turn-counter", html: helpers.content_tag(:span, t("views.games.turn", number: turn.turn_number), class: "console-status", id: "turn-counter")),
           turbo_stream.replace("hero-stats", partial: "games/hero_stats", locals: { game: @game }),
+          turbo_stream.replace("inventory-panel", partial: "games/inventory", locals: { inventory: @scene_context&.dig(:inventory) || [] }),
           turbo_stream.replace("scene-panel", partial: "games/scene_panel", locals: { scene_context: @scene_context, game: @game })
         ]
         streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: ending_turn }) if ending_turn
