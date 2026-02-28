@@ -6,38 +6,84 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     @game.update!(world_state: OutcomeResolutionService.initial_state.merge("chapter_number" => 1))
   end
 
-  test "irrelevant action cannot succeed — best outcome is partial" do
-    # Roll 6, easy threshold 1: 6 > 1 would normally be success
-    OutcomeResolutionService.stubs(:rand).returns(6)
-    outcome = OutcomeResolutionService.resolve(@game, "eat the rose", 1, { difficulty: "easy", relevant: false })
-    assert_equal "partial", outcome[:resolution_tag]
-  end
+  # --- trivial / impossible ---
 
-  test "irrelevant action can still fail on a bad roll" do
-    # momentum -3, roll 1: total -2 < threshold 1 → failure even for irrelevant action
-    @game.update!(world_state: @game.world_state.merge("momentum" => -3))
-    OutcomeResolutionService.stubs(:rand).returns(1)
-    outcome = OutcomeResolutionService.resolve(@game, "eat the rose", 1, { difficulty: "easy", relevant: false })
-    assert_equal "failure", outcome[:resolution_tag]
-  end
-
-  test "relevant action can fully succeed" do
-    OutcomeResolutionService.stubs(:rand).returns(6)
-    outcome = OutcomeResolutionService.resolve(@game, "remove the grate", 1, { difficulty: "easy", relevant: true })
+  test "trivial difficulty always succeeds without a roll" do
+    outcome = OutcomeResolutionService.resolve(@game, "look around", 1, { difficulty: "trivial", impact: "positive" })
     assert_equal "success", outcome[:resolution_tag]
+    assert_nil outcome[:roll]
   end
 
-  test "relevant defaults to true when omitted" do
+  test "impossible difficulty always fails without a roll" do
+    outcome = OutcomeResolutionService.resolve(@game, "punch through steel wall", 1, { difficulty: "impossible", impact: "positive" })
+    assert_equal "failure", outcome[:resolution_tag]
+    assert_nil outcome[:roll]
+  end
+
+  test "trivial action deals no health loss" do
+    outcome = OutcomeResolutionService.resolve(@game, "look around", 1, { difficulty: "trivial", impact: "positive" })
+    assert_equal 0, outcome[:health_loss]
+  end
+
+  test "impossible action deals maximum health loss" do
+    outcome = OutcomeResolutionService.resolve(@game, "punch through steel wall", 1, { difficulty: "impossible", impact: "positive" })
+    assert_equal 30, outcome[:health_loss]
+  end
+
+  # --- impact on momentum ---
+
+  test "positive impact: success gives +1 momentum" do
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    OutcomeResolutionService.resolve(@game, "remove the grate", 1, { difficulty: "easy", impact: "positive" })
+    @game.reload
+    assert_equal 1, @game.world_state["momentum"]
+  end
+
+  test "none impact: success gives no momentum" do
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    OutcomeResolutionService.resolve(@game, "eat the rose", 1, { difficulty: "easy", impact: "none" })
+    @game.reload
+    assert_equal 0, @game.world_state["momentum"]
+  end
+
+  test "none impact: failure gives only -1 momentum" do
+    @game.update!(world_state: @game.world_state.merge("momentum" => 0))
+    OutcomeResolutionService.stubs(:rand).returns(1)
+    OutcomeResolutionService.resolve(@game, "eat the rose", 1, { difficulty: "medium", impact: "none" })
+    @game.reload
+    assert_equal(-1, @game.world_state["momentum"])
+  end
+
+  test "negative impact: success still costs momentum" do
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    OutcomeResolutionService.resolve(@game, "alert the guard", 1, { difficulty: "easy", impact: "negative" })
+    @game.reload
+    assert_equal(-1, @game.world_state["momentum"])
+  end
+
+  test "major impact: success gives +2 momentum" do
+    # roll 6 + momentum 0 = 6 > medium threshold 4 → success
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    OutcomeResolutionService.resolve(@game, "unlock master control", 1, { difficulty: "medium", impact: "major" })
+    @game.reload
+    assert_equal 2, @game.world_state["momentum"]
+  end
+
+  test "major impact: partial gives +1 momentum" do
+    # roll 4 + momentum 0 = 4 == medium threshold 4 → partial
+    OutcomeResolutionService.stubs(:rand).returns(4)
+    OutcomeResolutionService.resolve(@game, "unlock master control", 1, { difficulty: "medium", impact: "major" })
+    @game.reload
+    assert_equal 1, @game.world_state["momentum"]
+  end
+
+  # --- defaults ---
+
+  test "impact defaults to positive when omitted" do
     OutcomeResolutionService.stubs(:rand).returns(6)
     outcome = OutcomeResolutionService.resolve(@game, "remove the grate", 1, { difficulty: "easy" })
     assert_equal "success", outcome[:resolution_tag]
-  end
-
-  test "irrelevant success gives no momentum gain" do
-    initial_momentum = @game.world_state["momentum"]
-    OutcomeResolutionService.stubs(:rand).returns(6)
-    OutcomeResolutionService.resolve(@game, "eat the rose", 1, { difficulty: "easy", relevant: false })
     @game.reload
-    assert_equal initial_momentum, @game.world_state["momentum"]
+    assert_equal 1, @game.world_state["momentum"]
   end
 end

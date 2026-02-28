@@ -23,10 +23,10 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     assert_equal "alerted", result.dig("actors", "guard_rodriguez", "status")
   end
 
-  test "apply_stage_diff ignores invalid actor status" do
-    diff = { "actor_updates" => { "guard_rodriguez" => { "status" => "invisible" } } }
+  test "apply_stage_diff allows any status on a known actor" do
+    diff = { "actor_updates" => { "guard_rodriguez" => { "status" => "unconscious" } } }
     result = Arena::WorldStateManager.new(@world_state).apply_stage_diff(diff, scenario: @scenario)
-    assert_equal "awake", result.dig("actors", "guard_rodriguez", "status")
+    assert_equal "unconscious", result.dig("actors", "guard_rodriguez", "status")
   end
 
   test "apply_stage_diff updates object status" do
@@ -57,6 +57,12 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     diff = { "player_moved_to" => "moon" }
     result = Arena::WorldStateManager.new(@world_state).apply_stage_diff(diff, scenario: @scenario)
     assert_equal "cell", result["player_stage"]
+  end
+
+  test "apply_stage_diff allows any status on a known object" do
+    diff = { "object_updates" => { "loose_grate" => { "status" => "buried" } } }
+    result = Arena::WorldStateManager.new(@world_state).apply_stage_diff(diff, scenario: @scenario)
+    assert_equal "buried", result.dig("objects", "loose_grate", "status")
   end
 
   test "apply_stage_diff ignores unknown actors" do

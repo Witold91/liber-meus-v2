@@ -21,13 +21,7 @@ module Arena
           next unless resolved_actor_id
           result["actors"] ||= {}
           result["actors"][resolved_actor_id] ||= {}
-          actor_def = presenter.actors.find { |a| a["id"] == resolved_actor_id }
-          if updates["status"]
-            valid_statuses = actor_def&.dig("status_options") || []
-            if valid_statuses.empty? || valid_statuses.include?(updates["status"])
-              result["actors"][resolved_actor_id]["status"] = updates["status"]
-            end
-          end
+          result["actors"][resolved_actor_id]["status"] = updates["status"] if updates["status"]
           result["actors"][resolved_actor_id].merge!(updates.except("status")) if updates.key?("notes")
         end
       end
@@ -39,13 +33,7 @@ module Arena
           if resolved_object_id
             result["objects"] ||= {}
             result["objects"][resolved_object_id] ||= {}
-            obj_def = presenter.objects.find { |o| o["id"] == resolved_object_id }
-            if updates["status"]
-              valid_statuses = obj_def&.dig("status_options") || []
-              if valid_statuses.empty? || valid_statuses.include?(updates["status"])
-                result["objects"][resolved_object_id]["status"] = updates["status"]
-              end
-            end
+            result["objects"][resolved_object_id]["status"] = updates["status"] if updates["status"]
           else
             # Object not in scenario — treat as an improvised item the player acquired
             result["player_inventory"] ||= {}

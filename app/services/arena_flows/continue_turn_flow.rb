@@ -23,7 +23,7 @@ module ArenaFlows
       difficulty = rating["difficulty"]
 
       # Step 6: Resolve outcome (deterministic)
-      intent = { difficulty: difficulty, relevant: rating["relevant"] != false }
+      intent = { difficulty: difficulty, impact: rating["impact"] || "positive" }
       outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
       resolution_tag = outcome[:resolution_tag]
 

@@ -19,7 +19,7 @@ Your response must be a JSON object with these fields:
 Rules:
 - Only include diff keys that actually change something
 - For scenario actor/stage IDs use exact canonical IDs from the context. Never invent actor or stage IDs.
-- For scenario objects use canonical IDs and only valid status values as defined in the scenario.
+- For scenario objects use canonical IDs. The status_options listed in context are story-significant states the scenario tracks, but you may use any descriptive status for actions the player takes (e.g., "eaten", "buried", "destroyed", "broken").
 - For improvised items (player acquires something not in the scenario), use object_updates with a descriptive snake_case id — any status string is valid for improvised items.
 - Only move actors/player to valid stage IDs from the scenario
 - When narrating a success for an improvised item, always emit the corresponding object_updates entry so the acquisition is tracked mechanically.
