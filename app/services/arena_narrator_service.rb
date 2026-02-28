@@ -125,7 +125,8 @@ class ArenaNarratorService
           id: a[:id],
           name: a[:name],
           description: a[:description],
-          statuses: a[:statuses].join(", ")
+          statuses: a[:statuses].join(", "),
+          status_options: a[:status_options].join(", ")
         )
       end
       parts << ""

@@ -114,7 +114,7 @@ en:
         rating_reasoning: "DIFFICULTY REASONING: %{reasoning}"
         current_scene: "CURRENT SCENE: %{scene_name} [id=%{scene_id}]"
         actors_present: "ACTORS PRESENT:"
-        actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses}"
+        actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses} [plot statuses: %{status_options}]"
         objects_present: "OBJECTS PRESENT:"
         object_item: "  - %{name} [id=%{id}]: %{statuses}"
         exits: "EXITS: %{exits}"

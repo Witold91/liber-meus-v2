@@ -46,7 +46,7 @@ module Arena
       scene_actors = actors.select { |a| current_actor_scene(a, actor_states) == scene_id }
         .map do |a|
           statuses = Array(actor_states.dig(a["id"], "statuses") || [ actor_states.dig(a["id"], "status") || a["default_status"] ])
-          { id: a["id"], name: a["name"], description: a["description"], statuses: statuses }
+          { id: a["id"], name: a["name"], description: a["description"], statuses: statuses, status_options: a["status_options"] || [] }
         end
 
       scene_objects = objects.select { |o| current_object_scene(o, object_states) == scene_id }

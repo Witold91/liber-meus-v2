@@ -21,6 +21,7 @@ Respond ONLY with valid JSON — no markdown, no extra text — with these field
 Rules:
 - The diff must mirror the narrative exactly. Every actor movement, status change, or item acquisition narrated must have a corresponding diff entry. Every diff entry must be described in the narrative.
 - Use only canonical actor, stage, and object IDs from the context. Never invent IDs.
-- For scenario objects, status_options are story-significant states, but any descriptive status is valid (e.g. "eaten", "broken"). Any status string is valid for improvised items.
+- Each actor lists "plot statuses" in the context. These are the canonical story-tracked states for that actor. When an actor's condition changes in a meaningful way, you MUST use the matching plot status in actor_updates (e.g. if Juliet falls in love, use "in_love" not "smitten"). Only use a free-form status if none of the plot statuses fit.
+- For scenario objects, any descriptive status is valid (e.g. "eaten", "broken"). Any status string is valid for improvised items.
 - If DIFFICULTY REASONING states the player lacks an item, the narrative must reflect that — they reach for something that isn't there. Never depict the player using an object they don't possess.
 - If HEALTH LOST appears in the context, you must describe its physical cause in the narrative (what struck them, how they were wounded). Mandatory.
