@@ -110,6 +110,7 @@ pl:
     arena_narrator_service:
       prompt:
         resolution: "WYNIK: %{resolution} (trudność: %{difficulty})"
+        rating_reasoning: "UZASADNIENIE TRUDNOŚCI: %{reasoning}"
         current_stage: "AKTUALNA SCENA: %{stage_name} [id=%{stage_id}]"
         actors_present: "OBECNE POSTACIE:"
         actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses}"

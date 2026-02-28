@@ -21,8 +21,9 @@ module ArenaFlows
       # Step 5: Rate difficulty (AI call 1)
       recent_actions = game.turns.recent(3).to_a.reverse
                            .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
-      rating, difficulty_tokens = DifficultyRatingService.rate(action, stage_context, game.hero, recent_actions)
+      rating, difficulty_tokens = DifficultyRatingService.rate(action, stage_context, game.hero, recent_actions, world_context: scenario["world_context"])
       difficulty = rating["difficulty"]
+      rating_reasoning = rating["reasoning"]
 
       # Step 6: Resolve outcome (deterministic)
       intent = {
@@ -42,9 +43,10 @@ module ArenaFlows
         world_state_delta: presenter.world_state_delta,
         memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
                           .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
-        recent_actions: recent_actions
+        recent_actions: recent_actions,
+        rating_reasoning: rating_reasoning
       }
-      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, stage_context, turn_context, outcome[:health_loss], narrator_style: scenario["narrator_style"])
+      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, stage_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"])
 
       # Step 8: Apply world-state diff from narration
       diff = narration["diff"] || {}

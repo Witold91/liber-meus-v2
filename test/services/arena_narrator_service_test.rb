@@ -144,6 +144,28 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
     ArenaNarratorService.narrate("Crawl through shaft", "success", "easy", @stage_context, turn_context)
   end
 
+  test "world_context is prepended to system prompt before style directive" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => { "narrative" => "You act.", "diff" => {} }.to_json } } ],
+      "usage" => { "total_tokens" => 30 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      system_prompt = request.dig(:parameters, :messages, 0, :content)
+      assert_includes system_prompt, "WORLD CONTEXT"
+      assert_includes system_prompt, "Renaissance Verona"
+      world_pos = system_prompt.index("WORLD CONTEXT")
+      style_pos = system_prompt.index("STYLE DIRECTIVE")
+      assert world_pos < style_pos, "WORLD CONTEXT should appear before STYLE DIRECTIVE"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    ArenaNarratorService.narrate("Look around", "success", "trivial", @stage_context, @turn_context, 0,
+      world_context: "Renaissance Verona, late at night.",
+      narrator_style: "Write tersely.")
+  end
+
   test "narrator_style is appended to system prompt when provided" do
     fake_response = {
       "choices" => [ { "message" => { "content" => { "narrative" => "You act.", "diff" => {} }.to_json } } ],

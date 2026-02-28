@@ -32,4 +32,6 @@ When uncertain about impact, default to "positive" — the hero deserves the ben
 
 If the player action is a meta-phrase that means repeating a previous attempt ("try again", "retry", "keep trying", "do it again", "once more", "same thing", etc.), look at the most recent entry in RECENT ACTIONS and treat this as a repetition of that action — assign the same difficulty and danger. Never rate a retry as trivial just because the phrase itself is short.
 
+If the player's action depends on possessing or using a specific object that does not appear in OBJECTS PRESENT, rate the action as "impossible" — the player cannot invent items they have not acquired through play. Exception: if the player is constructing an improvised item from materials that ARE present (e.g., tying bedsheets into a rope, sharpening a spoon into a shiv), rate that normally based on the challenge of creating it.
+
 Respond ONLY with valid JSON. No markdown, no extra text.

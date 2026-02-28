@@ -19,6 +19,7 @@ Your response must be a JSON object with these fields:
 - "memory_note": a brief (1 sentence) note for the LLM's memory about a significant story development (optional, omit if nothing notable happened)
 
 Rules:
+- If DIFFICULTY REASONING is present, use it to ground the narrative. If it states the player lacks an item, the narrative must reflect that they don't have it — they reach for something that isn't there, realise they never had it, etc. Never depict the player using an object that DIFFICULTY REASONING says they don't possess.
 - Only include diff keys that actually change something
 - For scenario actor/stage IDs use exact canonical IDs from the context. Never invent actor or stage IDs.
 - For scenario objects use canonical IDs. The status_options listed in context are story-significant states the scenario tracks, but you may use any descriptive status for actions the player takes (e.g., "eaten", "buried", "destroyed", "broken").

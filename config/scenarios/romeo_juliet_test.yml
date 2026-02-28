@@ -2,6 +2,12 @@ slug: romeo_juliet_test
 title: "Romeo & Juliet (Tiny Test)"
 description: "Minimal two-stage scenario for fast testing."
 turn_limit: 6
+world_context: |
+  Renaissance Verona at night. The Montague-Capulet feud makes every move risky.
+  The world is realistic: no magic, no modern technology, no supernatural events.
+  Romeo begins below Juliet's balcony carrying a single rose.
+narrator_style: |
+  20-50 words.
 
 hero:
   slug: romeo
