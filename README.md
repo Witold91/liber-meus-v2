@@ -183,6 +183,8 @@ lib/prompts/
 2. The scenario is auto-loaded at boot (or call `ScenarioCatalog.reload!` in the console)
 3. No code changes required — the engine adapts to any stage/actor/object layout
 
+For full authoring details (multi-chapter acts, endings, events, localization, and validation), see [`SCENARIO_MANUAL.md`](SCENARIO_MANUAL.md).
+
 ---
 
 ## Deployment

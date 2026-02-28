@@ -60,6 +60,12 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert_equal "Ucieczka z Więzienia", scenario["title"]
   end
 
+  test "find with locale pl returns Polish title for romeo_juliet" do
+    scenario = ScenarioCatalog.find("romeo_juliet", locale: "pl")
+    assert_not_nil scenario
+    assert_equal "Romeo i Julia", scenario["title"]
+  end
+
   test "find with locale pl merges stage name" do
     scenario = ScenarioCatalog.find("prison_break", locale: "pl")
     chapter = scenario["chapters"].first
@@ -75,6 +81,14 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     exit_to_vent = cell_stage["exits"].find { |e| e["to"] == "vent_shaft" }
     assert_not_nil exit_to_vent
     assert_equal "Kratka wentylacyjna (nad pryczą)", exit_to_vent["label"]
+  end
+
+  test "find with locale pl merges stage name for romeo_juliet" do
+    scenario = ScenarioCatalog.find("romeo_juliet", locale: "pl")
+    chapter = scenario["chapters"].first
+    stage = chapter["stages"].find { |s| s["id"] == "verona_square" }
+    assert_not_nil stage
+    assert_equal "Plac w Weronie (Akt I)", stage["name"]
   end
 
   test "find with unsupported locale falls back to English" do
@@ -105,6 +119,7 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert scenarios.all? { |s| s["slug"].present? }
     slugs = scenarios.map { |s| s["slug"] }
     assert_includes slugs, "prison_break"
+    assert_includes slugs, "romeo_juliet"
     assert_includes slugs, "romeo_juliet_test"
   end
 end

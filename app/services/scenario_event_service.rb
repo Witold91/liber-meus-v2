@@ -1,5 +1,5 @@
 class ScenarioEventService
-  def self.events_for_turn(turn_number:, world_state:)
+  def self.events_for_turn(turn_number:, world_state:, chapter_turn_number: nil)
     scenario_slug = world_state["scenario_slug"]
     return [] unless scenario_slug
 
@@ -9,7 +9,14 @@ class ScenarioEventService
     presenter = Arena::ScenarioPresenter.new(scenario, world_state["chapter_number"] || 1, world_state)
 
     presenter.events.select do |event|
-      next false unless event["trigger_turn"].to_i == turn_number
+      target_turn = if event.key?("chapter_turn")
+        chapter_turn_number
+      else
+        turn_number
+      end
+      trigger = event["chapter_turn"] || event["trigger_turn"]
+
+      next false unless trigger.to_i == target_turn.to_i
       condition_met?(event["condition"], world_state)
     end
   end

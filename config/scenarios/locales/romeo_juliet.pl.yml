@@ -1,0 +1,73 @@
+title: "Romeo i Julia"
+description: "Tragedia w pięciu aktach w Weronie, odwzorowana jako pięć grywalnych aktów (rozdziałów)."
+world_context: |
+  Werona, schyłek XVI wieku. Dwa możne rody, Monteki i Kapuleci, tkwią w dawnej krwawej waśni.
+  Honor, reputacja i obowiązek wobec rodziny kształtują każdą decyzję. Publiczna przemoc grozi szybką karą.
+  Świat jest realistyczny i historyczny: bez magii, bez nowoczesnej technologii, bez zjawisk nadnaturalnych.
+  Wcielasz się w Romea Montekiego i przechodzisz przez wszystkie pięć aktów tragedii.
+narrator_style: |
+  Utrzymuj ton tragiczny, bezpośredni i obrazowy. Pisz klarownie, z lekkim szekspirowskim posmakiem.
+  Podkreślaj konsekwencje, presję społeczną i emocjonalną stawkę. 35-90 słów.
+
+hero:
+  name: "Romeo Monteki"
+  description: "Młody szlachcic rozdarty między miłością, lojalnością i zgubnym impulsem."
+
+chapters:
+  - number: 1
+    title: "Akt I - Waśń i pierwsze spojrzenie"
+    intro: |
+      Werona budzi się przemocą i dumą: słudzy Kapuletów i Montekich są gotowi lać krew za dawne obelgi, których nikt już porządnie nie pamięta.
+      Książę wielokrotnie groził obu rodom karą, ale gniew bywa szybszy od prawa, a każda uliczna bójka tylko pogłębia konflikt.
+      Nocą miasto zmienia ton: sala Kapuletów rozbłyska ucztą masek, muzyki i politycznych spojrzeń.
+      Jesteś Romeem Montekim - niespokojnym i porywczym - i właśnie wchodzisz na teren wroga, gdzie jedno spotkanie może naraz rozpalić miłość i zapowiedzieć zgubę.
+      Aktualna sytuacja: Jesteś na placu w Weronie, obok ciebie są Merkucjo i Benwolio, a słudzy obu rodów zaczynają kolejną prowokację.
+    stages:
+      - id: verona_square
+        name: "Plac w Weronie (Akt I)"
+        description: "Publiczny plac, gdzie słudzy prowokują się nawzajem, a możni bronią honoru rodu."
+        exits:
+          - to: capulet_hall
+            label: "Przemknij do sali Kapuletów"
+      - id: capulet_hall
+        name: "Sala Kapuletów"
+        description: "Tłumna uczta pełna lampionów, muzyki, masek i czujnych spojrzeń."
+        exits:
+          - to: verona_square
+            label: "Wróć na plac"
+
+  - number: 2
+    title: "Akt II - Balkon i przysięgi"
+    intro: |
+      Uczta dobiegła końca, ale najważniejsze słowa dopiero mają paść.
+      Pod balkonem Julii pragnienie walczy ze strachem: nazwiska rodów, czujne uszy służby i pewność, że wykrycie oznacza katastrofę.
+      Piastunka przenosi sekrety między domem a ogrodem, a z każdą minutą rośnie ryzyko, że plotka wyprzedzi prawdę.
+      W celi Ojca Laurentego miłość może zostać potajemnie uświęcona, lecz sama tajemnica staje się lontem dla całej dalszej tragedii.
+      Aktualna sytuacja: Jesteś w sadzie Kapuletów pod balkonem Julii; Julia i Piastunka są blisko, więc jeden błąd może zdradzić wasz sekret.
+
+  - number: 3
+    title: "Akt III - Pojedynek i wygnanie"
+    intro: |
+      Południe w Weronie jest duszne i nerwowe; wystarczy jedna obelga, by ulica zamieniła się w plac śmierci.
+      Tybalt żąda honoru, Merkucjo odpowiada szyderstwem, a Benwolio już widzi, że wszystko zmierza ku nieszczęściu.
+      Romeo stoi między lojalnością wobec przyjaciół a tajemnym małżeństwem i próbuje ocalić pokój w mieście, które nagradza odwet.
+      Kiedy poleje się krew, wyrok przyjdzie szybko: słowo Księcia potrafi rozdzielić kochanków skuteczniej niż jakikolwiek mur.
+      Aktualna sytuacja: Jesteś na placu pojedynków z Merkucjem, Tybaltem i Benwoliem; tłum gęstnieje i do przemocy brakuje już tylko chwili.
+
+  - number: 4
+    title: "Akt IV - Napój nasenny"
+    intro: |
+      Wygnanie wyrwało Romea z Werony, a pod jego nieobecność Kapuleci przyspieszają ślub Julii z Parysem.
+      W domu posłuszeństwo staje się rozkazem, a każdy kolejny głos dorosłych zamyka Julii następną drogę ucieczki.
+      Julia szuka u Ojca Laurentego nie pocieszenia, lecz planu, który przechytrzy rodzinę, obyczaj i kalendarz ceremonii.
+      Jedna fiolka niesie nierealną nadzieję: wyglądać na martwą wystarczająco długo, by uniknąć życia w cudzej woli.
+      Aktualna sytuacja: Jesteś w komnacie Julii, gdzie Julia, Piastunka, Parys i Kapuleci naciskają jednocześnie, a czasu na decyzję prawie nie ma.
+
+  - number: 5
+    title: "Akt V - Grobowiec i rozrachunek"
+    intro: |
+      W Mantui Romeo dostaje wiadomość przed prawdą: Julia rzekomo nie żyje, a czas nagle kurczy się do jednej rozpaczliwej decyzji.
+      List zakonnika nie dociera na czas, ostrzeżenie ginie po drodze, a trucizna aptekarza okazuje się łatwiejsza do zdobycia niż cierpliwość.
+      W krypcie Kapuletów spotkają się żałoba, pomyłka i pośpiech - trzy siły, które zamykają tragedię.
+      O świcie przyjdą Książę i oba rody, by policzyć winy, straty i cenę pokoju kupionego zbyt późno.
+      Aktualna sytuacja: Jesteś na ulicy w Mantui, obok są Baltazar i ubogi Aptekarz, a ty musisz zdecydować, czy wierzyć wieści, czy czekać na dowód.

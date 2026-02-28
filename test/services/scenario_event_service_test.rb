@@ -58,4 +58,17 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
     events = ScenarioEventService.events_for_turn(turn_number: 5, world_state: state)
     assert_equal [], events
   end
+
+  test "supports chapter_turn triggers for multi-act scenarios" do
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "chapter_number" => 1,
+      "player_stage" => "verona_square",
+      "actors" => {},
+      "objects" => {}
+    }
+
+    events = ScenarioEventService.events_for_turn(turn_number: 99, chapter_turn_number: 1, world_state: state)
+    assert events.any? { |e| e["id"] == "act1_opening_brawl" }
+  end
 end

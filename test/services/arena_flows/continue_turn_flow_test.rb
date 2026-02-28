@@ -92,6 +92,65 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     assert_includes ending_turn.content, "The wall falls away behind you"
   end
 
+  test "advances to next chapter when chapter_goal condition is met" do
+    two_chapter_scenario = {
+      "slug" => "prison_break",
+      "world_context" => "",
+      "narrator_style" => "",
+      "turn_limit" => 20,
+      "chapters" => [
+        {
+          "number" => 1,
+          "intro" => "Act I intro",
+          "stages" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "actors" => [],
+          "objects" => [],
+          "conditions" => [],
+          "events" => []
+        },
+        {
+          "number" => 2,
+          "intro" => "Act II intro",
+          "stages" => [ { "id" => "balcony", "name" => "Balcony", "description" => "", "exits" => [] } ],
+          "actors" => [],
+          "objects" => [],
+          "conditions" => [],
+          "events" => []
+        }
+      ]
+    }
+
+    ScenarioCatalog.stubs(:find!).returns(two_chapter_scenario)
+    ScenarioCatalog.stubs(:find).returns(two_chapter_scenario)
+    EndConditionChecker.stubs(:check).returns(
+      {
+        "id" => "act1_complete",
+        "type" => "chapter_goal",
+        "next_chapter" => 2,
+        "narrative" => "Act I closes."
+      }
+    )
+
+    assert_difference "Chapter.count", 1 do
+      assert_difference "Turn.count", 2 do
+        ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Advance the act")
+      end
+    end
+
+    @game.reload
+    assert_equal "active", @game.status
+    assert_equal 2, @game.world_state["chapter_number"]
+    assert_equal 0, @game.world_state["chapter_turn"]
+    assert_equal "balcony", @game.world_state["player_stage"]
+    assert_equal "completed", chapters(:chapter_one).reload.status
+    assert_equal 2, @game.current_chapter.number
+
+    transition_turn = @game.turns.order(:turn_number).last
+    assert transition_turn.options_payload["chapter_transition"]
+    assert_equal 2, transition_turn.options_payload["next_chapter_number"]
+    assert_includes transition_turn.content, "Act II intro"
+  end
+
   test "creates ending sequence turn and marks game failed on danger condition" do
     ArenaNarratorService.stubs(:narrate).returns([
       {

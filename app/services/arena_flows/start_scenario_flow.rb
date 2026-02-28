@@ -75,6 +75,7 @@ module ArenaFlows
       base.merge(
         "scenario_slug" => scenario_slug,
         "chapter_number" => 1,
+        "chapter_turn" => 0,
         "player_stage" => first_stage,
         "actors" => actors,
         "objects" => objects
