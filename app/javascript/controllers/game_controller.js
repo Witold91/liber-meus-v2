@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "submit"]
+  static targets = ["input", "submit", "worldPanel", "worldBtn"]
 
   connect() {
     this.turnLog = document.getElementById("turn-log")
@@ -75,6 +75,13 @@ export default class extends Controller {
         this.submitTarget.textContent = "→"
         this.inputTarget.focus()
       })
+  }
+
+  toggleWorldInfo() {
+    const open = this.worldPanelTarget.classList.toggle("mobile-open")
+    if (this.hasWorldBtnTarget) {
+      this.worldBtnTarget.textContent = open ? "✕" : "World"
+    }
   }
 
   scheduleScrollToBottom() {

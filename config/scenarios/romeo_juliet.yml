@@ -13,7 +13,7 @@ narrator_style: |
 
 theme:
   bg_color: "#0e0a08"
-  text_color: "#d4c8b0"
+  text_color: "#ffffff"
   accent_color: "#c8844a"
   font_family: "'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif"
   bg_image: "romeo_juliet.jpg"
@@ -164,7 +164,7 @@ acts:
 
     events:
       - id: act1_opening_brawl
-        act_turn: 1
+        act_turn: 2
         action:
           type: actor_enters
           actor_id: tybalt
@@ -172,21 +172,13 @@ acts:
           new_status: enraged
         description: "Tybalt joins the street clash and raises the stakes."
       - id: act1_prince_decree
-        act_turn: 2
+        act_turn: 5
         action:
           type: actor_enters
           actor_id: prince_escalus
           scene: verona_square
           new_status: condemning
         description: "The Prince intervenes and warns both houses."
-      - id: act1_first_sight
-        act_turn: 3
-        action:
-          type: actor_enters
-          actor_id: juliet
-          scene: capulet_hall
-          new_status: in_love
-        description: "At the feast, Juliet and Romeo recognize each other as fate."
 
   - number: 2
     title: "Act II - Balcony and Vows"

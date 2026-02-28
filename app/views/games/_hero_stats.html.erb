@@ -11,16 +11,16 @@
 <div class="hero-stat-bar" id="hero-stats">
   <div class="stat-row">
     <span class="stat-label"><%= t("views.games.stats.health") %></span>
-    <span class="stat-value"><%= game.world_state["health"] || 100 %>/100</span>
+    <span class="stat-value"><%= game.world_state["health"] || 100 %>&thinsp;/&thinsp;100</span>
   </div>
   <div class="health-bar-outer"><div class="health-bar-inner" style="width: <%= game.world_state["health"] || 100 %>%"></div></div>
 
-  <div class="stat-row" style="margin-top:0.4rem">
+  <div class="stat-row" style="margin-top:0.5rem">
     <span class="stat-label"><%= t("views.games.stats.danger") %></span>
     <span class="stat-value"><%= game.world_state["danger_level"] || 0 %>%</span>
   </div>
 
-  <div class="stat-row" style="margin-top:0.4rem">
+  <div class="stat-row" style="margin-top:0.5rem">
     <span class="stat-label"><%= t("views.games.stats.momentum") %></span>
     <span class="stat-value momentum-value"><%= momentum_label %></span>
   </div>

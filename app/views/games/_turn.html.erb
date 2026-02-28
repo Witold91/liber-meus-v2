@@ -1,18 +1,18 @@
 <style>
-  .turn-entry { border-left: 2px solid #333; padding-left: 0.75rem; }
+  .turn-entry { border-left: 2px solid #2a2318; padding-left: 0.75rem; }
   .turn-entry.prologue { border-left-color: var(--theme-accent); }
-  .turn-entry.success { border-left-color: #60a070; }
-  .turn-entry.partial { border-left-color: #a09040; }
-  .turn-entry.failure { border-left-color: #a04040; }
-  .turn-entry.ending { border-left-color: #8a7a40; background: linear-gradient(180deg, rgba(138, 122, 64, 0.16), rgba(10, 10, 10, 0)); padding: 0.8rem 0.75rem; border-radius: 4px; }
-  .turn-entry.ending.completed { border-left-color: var(--theme-accent); background: linear-gradient(180deg, color-mix(in srgb, var(--theme-accent) 16%, transparent), rgba(10, 10, 10, 0)); }
-  .turn-entry.ending.failed { border-left-color: #a04040; background: linear-gradient(180deg, rgba(160, 64, 64, 0.16), rgba(10, 10, 10, 0)); }
-  .turn-ending-label { color: #c8b860; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; margin-bottom: 0.5rem; }
+  .turn-entry.success { border-left-color: #507a60; }
+  .turn-entry.partial { border-left-color: #907830; }
+  .turn-entry.failure { border-left-color: #903030; }
+  .turn-entry.ending { border-left-color: #8a7a40; background: linear-gradient(180deg, rgba(138, 122, 64, 0.12), transparent); padding: 0.8rem 0.75rem; border-radius: 2px; }
+  .turn-entry.ending.completed { border-left-color: var(--theme-accent); background: linear-gradient(180deg, color-mix(in srgb, var(--theme-accent) 12%, transparent), transparent); }
+  .turn-entry.ending.failed { border-left-color: #903030; background: linear-gradient(180deg, rgba(144, 48, 48, 0.12), transparent); }
+  .turn-ending-label { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.3em; color: #c8b860; text-transform: uppercase; margin-bottom: 0.6rem; }
   .turn-entry.ending.completed .turn-ending-label { color: var(--theme-accent); }
-  .turn-entry.ending.failed .turn-ending-label { color: #d48a8a; }
-  .turn-action { font-style: italic; color: #888; font-size: 0.85rem; margin-bottom: 0.4rem; }
-  .turn-narrative { color: var(--theme-text); line-height: 1.6; font-size: 0.9rem; white-space: pre-wrap; }
-  .turn-meta { font-size: 0.75rem; color: #555; margin-top: 0.3rem; }
+  .turn-entry.ending.failed .turn-ending-label { color: #c87878; }
+  .turn-action { font-family: 'Lora', Georgia, serif; font-style: italic; color: #5a5040; font-size: 0.84rem; margin-bottom: 0.45rem; }
+  .turn-narrative { font-family: var(--theme-font); color: var(--theme-text); line-height: 1.7; font-size: 0.92rem; white-space: pre-wrap; }
+  .turn-meta { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.2em; color: #3a3020; margin-top: 0.4rem; text-transform: uppercase; }
 </style>
 
 <%

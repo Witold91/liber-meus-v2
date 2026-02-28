@@ -1,17 +1,38 @@
 <style>
-  .scene-panel { border: 1px solid #333; background: #111; font-size: 0.8rem; }
-  .scene-panel-header { padding: 0.6rem 1rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #141414; }
-  .scene-panel-header h3 { color: var(--theme-accent); font-size: 0.85rem; }
-  .scene-toggle-btn { background: transparent; border: 1px solid #444; color: #888; padding: 0.2rem 0.5rem; cursor: pointer; font-family: inherit; font-size: 0.75rem; }
+  .scene-panel { border: 1px solid #2a2318; background: #0f0d09; font-size: 0.8rem; }
+  .scene-panel-header { padding: 0.55rem 1rem; border-bottom: 1px solid #2a2318; display: flex; justify-content: space-between; align-items: center; background: #0c0a07; }
+  .scene-panel-header h3 { font-family: 'Cinzel', 'Palatino Linotype', serif; font-size: 0.72rem; font-weight: 400; letter-spacing: 0.12em; color: var(--theme-accent); }
+  .scene-toggle-btn { background: transparent; border: 1px solid #2a2318; color: #4a4030; padding: 0.18rem 0.45rem; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.1em; }
+  .scene-toggle-btn:hover { color: #6a6050; border-color: #3a3020; }
   .scene-panel-body { padding: 0.75rem 1rem; }
-  .scene-description { color: #777; font-size: 0.8rem; line-height: 1.4; margin-bottom: 0.75rem; border-bottom: 1px solid #222; padding-bottom: 0.5rem; }
-  .scene-section-label { color: #555; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 0.5rem 0 0.25rem; }
-  .actor-item, .object-item, .exit-item { padding: 0.25rem 0; color: #aaa; }
-  .actor-name, .object-name { color: var(--theme-text); }
-  .status-badge { display: inline-block; background: #222; border: 1px solid #444; color: #888; padding: 0 0.3rem; font-size: 0.7rem; margin-left: 0.3rem; }
-  .exit-label { color: #7a9a87; }
-  .exit-arena { color: #c8b860; }
-  .scene-empty { color: #444; font-style: italic; }
+  .scene-description { font-family: 'Lora', Georgia, serif; font-style: italic; color: #5a5040; font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.75rem; border-bottom: 1px solid #1e1810; padding-bottom: 0.5rem; }
+  .scene-section-label { font-family: 'Cinzel', serif; color: #3a3020; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.2em; margin: 0.6rem 0 0.2rem; }
+  .actor-item, .object-item, .exit-item { padding: 0.22rem 0; color: #7a6a58; }
+  .actor-name, .object-name { color: #b0a890; }
+  .status-badge { display: inline-block; background: #1a1610; border: 1px solid #2e2418; color: #5a5040; padding: 0 0.3rem; font-size: 0.65rem; margin-left: 0.3rem; font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
+  .exit-label { color: #6a8a78; }
+  .exit-arena { color: #b8a850; }
+  .scene-empty { font-family: 'Lora', Georgia, serif; font-style: italic; color: #3a3020; }
+  /* Actor description tooltip */
+  .actor-item { position: relative; }
+  .actor-item[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+    background: #100e0a;
+    border: 1px solid #2a2318;
+    color: #8a7a68;
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    padding: 0.35rem 0.5rem;
+    white-space: normal;
+    width: 220px;
+    pointer-events: none;
+  }
 </style>
 
 <div class="scene-panel"
@@ -33,7 +54,7 @@
       <% if scene_context[:actors].any? %>
         <div class="scene-section-label"><%= t("views.scene_panel.actors") %></div>
         <% scene_context[:actors].each do |actor| %>
-          <div class="actor-item">
+          <div class="actor-item"<% if actor[:description].present? %> data-tooltip="<%= actor[:description] %>"<% end %>>
             <span class="actor-name"><%= actor[:name] %></span>
             <% actor[:statuses].each do |status| %>
               <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
