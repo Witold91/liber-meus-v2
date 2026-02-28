@@ -4,7 +4,7 @@ You will receive:
 - ACT PREMISE: the author's description of the world situation, stakes, and context at the start of this act
 - The opening scene context (scene name, description, actors present, objects present, exits)
 
-Write an immersive opening scene that grounds the player in this world, establishes atmosphere, and implies what must be done — without giving explicit instructions or breaking the fourth wall. Do not list choices or options.
+Write an immersive opening scene that grounds the player in this world, establishes atmosphere, and implies what must be done — without giving explicit instructions or breaking the fourth wall.
 
 Return JSON with:
 - "narrative": 2-4 paragraphs of vivid opening prose. Second person, present tense ("You stand at the edge of..."). Do not end with a question or prompt for action.

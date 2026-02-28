@@ -247,30 +247,14 @@ acts:
         status: dead
 
     events:
-      - id: act2_balcony_vow
-        act_turn: 1
-        action:
-          type: actor_enters
-          actor_id: juliet
-          scene: capulet_orchard
-          new_status: promised
-        description: "The balcony vows bind Romeo and Juliet to each other."
       - id: act2_nurse_interrupts
-        act_turn: 2
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: nurse
           scene: capulet_orchard
           new_status: calling
         description: "The Nurse calls Juliet back inside."
-      - id: act2_wedding
-        act_turn: 3
-        action:
-          type: actor_enters
-          actor_id: juliet
-          scene: friar_cell
-          new_status: wed
-        description: "Friar Laurence completes the secret marriage rites."
 
   - number: 3
     title: "Act III - Duel and Banishment"
