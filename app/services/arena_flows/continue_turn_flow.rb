@@ -28,6 +28,7 @@ module ArenaFlows
         rating_reasoning = rating["reasoning"]
 
         # Step 6: Resolve outcome (deterministic)
+        momentum_at_roll = world_state["momentum"].to_i
         intent = {
           difficulty: difficulty,
           danger: rating["danger"] || "none",
@@ -70,6 +71,8 @@ module ArenaFlows
         narrative_content = narration["narrative"] || ""
         tokens_used = difficulty_tokens + narrator_tokens
 
+        roll_payload = { "roll" => outcome[:roll], "difficulty" => difficulty, "momentum_at_roll" => momentum_at_roll, "health_loss" => outcome[:health_loss] }
+
         turn = TurnPersistenceService.create!(
           game: game,
           act: act,
@@ -78,7 +81,8 @@ module ArenaFlows
           option_selected: action,
           resolution_tag: resolution_tag,
           llm_memory: llm_memory,
-          tokens_used: tokens_used
+          tokens_used: tokens_used,
+          options_payload: roll_payload
         )
 
         # Step 11: Check end conditions

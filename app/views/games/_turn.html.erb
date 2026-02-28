@@ -14,9 +14,25 @@
   .turn-narrative { font-family: var(--theme-font); color: var(--theme-text); line-height: 1.7; font-size: 0.92rem; white-space: pre-wrap; }
   .turn-meta { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.2em; color: #3a3020; margin-top: 0.4rem; text-transform: uppercase; }
   .act-header { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--theme-accent); text-transform: uppercase; text-align: center; margin-bottom: 0.6rem; opacity: 0.8; }
+  .roll-breakdown { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.4rem; font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.06em; color: #5a5040; }
+  .roll-die { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border: 1px solid #3a3020; background: #0f0d09; color: #c8b860; font-size: 0.85rem; font-weight: 600; border-radius: 2px; }
+  .roll-op { color: #3a3020; }
+  .roll-total { font-weight: 600; color: #8a7a60; }
+  .roll-vs { color: #3a3020; font-size: 0.58rem; letter-spacing: 0.1em; }
+  .roll-threshold { color: #7a6a50; font-weight: 600; }
+  .roll-verdict { font-size: 0.6rem; letter-spacing: 0.15em; padding: 0.1rem 0.35rem; border-radius: 1px; }
+  .roll-verdict.success { color: #507a60; border: 1px solid #507a60; }
+  .roll-verdict.partial { color: #907830; border: 1px solid #907830; }
+  .roll-verdict.failure { color: #903030; border: 1px solid #903030; }
+  .roll-difficulty { font-size: 0.58rem; color: #3a3020; letter-spacing: 0.1em; }
+  .health-loss { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.12em; color: #c84040; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+  .health-loss-icon { font-size: 0.7rem; }
+  .health-loss-value { font-weight: 600; }
 </style>
 
 <%
+  difficulty_threshold = { "easy" => 1, "medium" => 4, "hard" => 7 }
+
   entry_class =
     if turn.options_payload["ending"]
       "ending #{turn.options_payload["ending_status"]}"
@@ -25,6 +41,19 @@
     else
       turn.resolution_tag
     end
+
+  roll         = turn.options_payload["roll"]
+  difficulty   = turn.options_payload["difficulty"]
+  momentum     = turn.options_payload["momentum_at_roll"]
+  health_loss  = turn.options_payload["health_loss"].to_i
+  show_roll    = roll && difficulty && !%w[trivial impossible].include?(difficulty) &&
+                 !turn.options_payload["ending"] && !turn.options_payload["prologue"]
+
+  if show_roll
+    threshold = difficulty_threshold[difficulty] || 4
+    total     = roll.to_i + momentum.to_i
+    momentum_sign = momentum.to_i >= 0 ? "+#{momentum}" : momentum.to_s
+  end
 %>
 <div class="turn-entry <%= entry_class %>"
      id="turn-<%= turn.id %>">
@@ -38,7 +67,28 @@
     <div class="turn-action">&gt; <%= turn.option_selected %></div>
   <% end %>
   <div class="turn-narrative"><%= turn.content %></div>
-  <% if turn.resolution_tag.present? %>
+  <% if show_roll %>
+    <div class="roll-breakdown">
+      <span class="roll-die"><%= roll %></span>
+      <span class="roll-op">d6</span>
+      <span class="roll-op">+</span>
+      <span class="roll-total"><%= momentum_sign %></span>
+      <span class="roll-op">momentum</span>
+      <span class="roll-op">=</span>
+      <span class="roll-total"><%= total %></span>
+      <span class="roll-vs">vs</span>
+      <span class="roll-threshold"><%= threshold %></span>
+      <span class="roll-difficulty">(<%= difficulty %>)</span>
+      <span class="roll-verdict <%= turn.resolution_tag %>"><%= turn.resolution_tag&.upcase %></span>
+    </div>
+    <% if health_loss > 0 %>
+      <div class="health-loss">
+        <span class="health-loss-icon">♥</span>
+        <span class="health-loss-value">−<%= health_loss %></span>
+        <span>health</span>
+      </div>
+    <% end %>
+  <% elsif turn.resolution_tag.present? %>
     <div class="turn-meta">[<%= t("game.resolution_tags.#{turn.resolution_tag}", default: turn.resolution_tag) %>]</div>
   <% end %>
 </div>
