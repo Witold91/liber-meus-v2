@@ -104,6 +104,8 @@ pl:
         actors_present: "OBECNE POSTACIE:"
         objects_present: "OBECNE OBIEKTY:"
         list_item: "  - %{name}: %{statuses}"
+        recent_actions_header: "OSTATNIE DZIAŁANIA:"
+        recent_action_item: "  Tura %{turn_number}: %{action} → %{resolution}"
         player_action: "DZIAŁANIE GRACZA: %{action}"
     arena_narrator_service:
       prompt:

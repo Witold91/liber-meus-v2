@@ -33,6 +33,7 @@ class GamesController < ApplicationController
       format.turbo_stream do
         streams = [
           turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: turn }),
+          turbo_stream.replace("turn-counter", html: helpers.content_tag(:span, t("views.games.turn", number: turn.turn_number), class: "console-status", id: "turn-counter")),
           turbo_stream.replace("hero-stats", partial: "games/hero_stats", locals: { game: @game }),
           turbo_stream.replace("stage-panel", partial: "games/stage_panel", locals: { stage_context: @stage_context, game: @game })
         ]

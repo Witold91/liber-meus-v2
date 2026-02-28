@@ -1,11 +1,12 @@
 class ArenaNarratorService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_narrator.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, stage_context, turn_context, health_loss = 0)
+  def self.narrate(action, resolution_tag, difficulty, stage_context, turn_context, health_loss = 0, narrator_style: nil)
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
     model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
+    system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
     user_message = build_user_message(action, resolution_tag, difficulty, stage_context, turn_context, health_loss)
 
     response = client.chat(

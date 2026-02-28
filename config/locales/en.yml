@@ -104,6 +104,8 @@ en:
         actors_present: "ACTORS PRESENT:"
         objects_present: "OBJECTS PRESENT:"
         list_item: "  - %{name}: %{statuses}"
+        recent_actions_header: "RECENT ACTIONS:"
+        recent_action_item: "  Turn %{turn_number}: %{action} → %{resolution}"
         player_action: "PLAYER ACTION: %{action}"
     arena_narrator_service:
       prompt:

@@ -8,7 +8,7 @@ class EndConditionChecker
       return {
         "id" => "turn_limit_reached",
         "type" => "failure",
-        "description" => I18n.t("services.end_condition_checker.turn_limit_reached")
+        "narrative" => I18n.t("services.end_condition_checker.turn_limit_reached")
       }
     end
 
@@ -17,7 +17,7 @@ class EndConditionChecker
       return {
         "id" => "health_depleted",
         "type" => "failure",
-        "description" => I18n.t("services.end_condition_checker.health_depleted")
+        "narrative" => I18n.t("services.end_condition_checker.health_depleted")
       }
     end
 

@@ -73,7 +73,7 @@
     <div class="console-panel">
       <div class="console-header">
         <h2><%= @game.hero.name %> // <%= ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language)&.dig("title") %></h2>
-        <span class="console-status"><%= t("views.games.turn", number: @game.turns.maximum(:turn_number) || 0) %></span>
+        <span class="console-status" id="turn-counter"><%= t("views.games.turn", number: @game.turns.maximum(:turn_number) || 0) %></span>
       </div>
 
       <div class="turn-log" id="turn-log">

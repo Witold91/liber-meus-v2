@@ -144,6 +144,23 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
     ArenaNarratorService.narrate("Crawl through shaft", "success", "easy", @stage_context, turn_context)
   end
 
+  test "narrator_style is appended to system prompt when provided" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => { "narrative" => "You act.", "diff" => {} }.to_json } } ],
+      "usage" => { "total_tokens" => 30 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      system_prompt = request.dig(:parameters, :messages, 0, :content)
+      assert_includes system_prompt, "STYLE DIRECTIVE"
+      assert_includes system_prompt, "terse"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    ArenaNarratorService.narrate("Look around", "success", "trivial", @stage_context, @turn_context, 0, narrator_style: "Write in a terse style.")
+  end
+
   test "narrate raises AIConnectionError on API error" do
     OpenAI::Client.expects(:new).raises(StandardError, "network error")
 

@@ -48,7 +48,7 @@ module ScenarioCatalog
   def self.deep_merge_scenario(base, overlay)
     result = base.dup
 
-    %w[title description].each do |key|
+    %w[title description narrator_style].each do |key|
       result[key] = overlay[key] if overlay.key?(key)
     end
 

@@ -2,6 +2,8 @@ slug: prison_break
 title: "Prison Break"
 description: "You must escape from a high-security prison before dawn."
 turn_limit: 20
+narrator_style: |
+  Write in a terse, urgent style. Sentences are short and punchy. Favour concrete sensory detail over atmosphere — the scrape of metal, the smell of sweat, the sound of boots. Paragraphs should be brief. Avoid flowery language. The tone is grim, tense, and immediate. 20-50 words.
 
 hero:
   slug: convict

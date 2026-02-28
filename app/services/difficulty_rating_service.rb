@@ -1,12 +1,12 @@
 class DifficultyRatingService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "difficulty_rating.txt")
 
-  def self.rate(action, stage_context, hero)
+  def self.rate(action, stage_context, hero, recent_actions = [])
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
     model = ENV.fetch("AI_DIFFICULTY_MODEL", "gpt-4o-mini")
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
-    user_message = build_user_message(action, stage_context, hero)
+    user_message = build_user_message(action, stage_context, hero, recent_actions)
 
     response = client.chat(
       parameters: {
@@ -27,7 +27,7 @@ class DifficultyRatingService
     raise AIConnectionError, e.message
   end
 
-  def self.build_user_message(action, stage_context, hero)
+  def self.build_user_message(action, stage_context, hero, recent_actions = [])
     parts = []
     parts << I18n.t("services.difficulty_rating_service.prompt.hero", name: hero.name, description: hero.description)
     parts << ""
@@ -47,6 +47,20 @@ class DifficultyRatingService
       parts << I18n.t("services.difficulty_rating_service.prompt.objects_present")
       stage_context[:objects].each do |o|
         parts << I18n.t("services.difficulty_rating_service.prompt.list_item", name: o[:name], statuses: o[:statuses].join(", "))
+      end
+      parts << ""
+    end
+
+    if recent_actions.any?
+      parts << I18n.t("services.difficulty_rating_service.prompt.recent_actions_header")
+      recent_actions.each do |ra|
+        localized_res = I18n.t("game.resolution_tags.#{ra[:resolution]}", default: ra[:resolution].to_s)
+        parts << I18n.t(
+          "services.difficulty_rating_service.prompt.recent_action_item",
+          turn_number: ra[:turn_number],
+          action: ra[:action],
+          resolution: localized_res
+        )
       end
       parts << ""
     end

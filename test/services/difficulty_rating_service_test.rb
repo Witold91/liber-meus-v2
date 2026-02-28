@@ -36,6 +36,25 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     assert_equal 42, tokens
   end
 
+  test "recent_actions are included in user message when provided" do
+    fake_response = {
+      "choices" => [ { "message" => { "content" => '{"difficulty":"medium","danger":"low","impact":"positive","reasoning":"Retry."}' } } ],
+      "usage" => { "total_tokens" => 30 }
+    }
+    client_mock = mock
+    client_mock.expects(:chat).with do |request|
+      msg = request.dig(:parameters, :messages, 1, :content)
+      assert_includes msg, "RECENT ACTIONS"
+      assert_includes msg, "climb to balcony"
+      assert_includes msg, "failure"
+      true
+    end.returns(fake_response)
+    OpenAI::Client.expects(:new).returns(client_mock)
+
+    recent = [ { turn_number: 1, action: "climb to balcony", resolution: "failure" } ]
+    DifficultyRatingService.rate("try again", @stage_context, @hero, recent)
+  end
+
   test "rate raises AIConnectionError on API error" do
     OpenAI::Client.expects(:new).raises(StandardError, "network error")
 
