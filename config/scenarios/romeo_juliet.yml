@@ -281,19 +281,25 @@ acts:
         exits:
           - to: friar_cell
             label: "Go to Friar Laurence"
+          - to: verona_outskirts
+            label: "Scale back over the wall and leave"
       - id: friar_cell
         name: "Friar Laurence's Cell"
         description: "A cramped chamber of herbs, books, and dangerous hopes."
         exits:
           - to: capulet_orchard
             label: "Return to the orchard"
+      - id: verona_outskirts
+        name: "Verona Outskirts"
+        description: "The edge of Capulet territory before dawn, where the city fades into open road. Romeo has made it out — but empty-handed."
+        exits: []
 
     actors:
       - id: juliet
         name: "Juliet Capulet"
-        description: "Now resolute, willing to defy her house for love."
+        description: "Now resolute, willing to defy her house for love — but if overwhelmed by fear, pushed too fast, or left without reassurance, she may withdraw."
         scene: capulet_orchard
-        status_options: [in_love, promised, wed, desperate, dead]
+        status_options: [in_love, promised, withdrawn, wed, desperate, dead]
         default_status: in_love
       - id: nurse
         name: "Nurse"
@@ -303,9 +309,9 @@ acts:
         default_status: watchful
       - id: friar_lawrence
         name: "Friar Laurence"
-        description: "A learned friar hoping to turn private love into public peace."
+        description: "A learned friar hoping to turn private love into public peace. If rushed or unconvinced of the match, he refuses outright — but his refusal is not necessarily final."
         scene: friar_cell
-        status_options: [contemplative, advising, marrying, desperate]
+        status_options: [contemplative, advising, marrying, refusing, desperate]
         default_status: contemplative
       - id: capulet_guard
         name: "Capulet Guard"
@@ -330,6 +336,20 @@ acts:
         check: actor_has_status
         actor: juliet
         status: wed
+      - id: act2_left_without_vows
+        description: "Romeo leaves the orchard with no marriage, only the memory of a name."
+        narrative: "Dawn threatens the sky. Romeo scales the wall back into Verona before a Capulet blade finds him — and leaves behind whatever Juliet might have been. No vow was spoken. What comes next will carry that absence."
+        type: act_goal
+        next_act: 3
+        check: player_at_scene
+        scene: verona_outskirts
+      - id: act2_discovered
+        description: "The guard raises the alarm — Romeo is driven out of the orchard."
+        narrative: "The shout goes up before Romeo can move. Torches bloom in every window of Capulet Hall. He escapes over the wall with nothing settled, and dawn comes without a vow."
+        type: danger
+        check: actor_has_status
+        actor: capulet_guard
+        status: alarmed
       - id: act2_juliet_slain
         description: "Juliet dies before the marriage can hold."
         narrative: "The orchard falls silent. What was meant to heal Verona dies in shadow before dawn."

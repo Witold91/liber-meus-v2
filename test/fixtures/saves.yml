@@ -1,0 +1,8 @@
+prison_save:
+  game: prison_game
+  user: one
+  hero: convict
+  world_state: '{"health":90,"danger_level":45,"momentum":1,"act_number":1,"act_turn":3,"player_scene":"cell","actors":{},"objects":{},"improvised_objects":{}}'
+  act_number: 1
+  turn_number: 3
+  label: "Act 1, Turn 3"

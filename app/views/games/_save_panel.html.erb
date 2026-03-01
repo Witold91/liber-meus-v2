@@ -1,0 +1,36 @@
+<% game = local_assigns[:game] %>
+<% saves = local_assigns[:saves] || [] %>
+
+<style>
+  .save-panel { border: 1px solid #2a2318; background: #0f0d09; padding: 0.65rem 1rem; font-size: 0.8rem; }
+  .save-panel-header { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: #4a4030; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+  .save-row { display: flex; align-items: center; justify-content: space-between; padding: 0.2rem 0; }
+  .save-label { color: #7a6a58; font-family: 'Lora', Georgia, serif; font-size: 0.72rem; }
+  .save-meta { color: #4a4030; font-family: 'Lora', Georgia, serif; font-size: 0.65rem; font-style: italic; }
+</style>
+
+<div class="save-panel">
+  <div class="save-panel-header">
+    <span><%= t("views.games.saves.title", default: "Saves") %></span>
+    <% if game&.status == "active" %>
+      <%= button_to t("views.games.saves.save_button", default: "Save"), save_game_game_path(game),
+          method: :post,
+          class: "replay-btn",
+          title: "Save current game state" %>
+    <% end %>
+  </div>
+
+  <% saves.each do |save| %>
+    <div class="save-row">
+      <div>
+        <span class="save-label"><%= save.label %></span>
+        <div class="save-meta"><%= save.created_at.strftime("%b %d, %H:%M") %></div>
+      </div>
+      <%= button_to "↩", load_save_game_path(game, save_id: save.id),
+          method: :post,
+          class: "replay-btn",
+          title: "Load this save",
+          form: { data: { turbo_confirm: t("views.games.saves.confirm_load", label: save.label, default: "Load save '#{save.label}'? All progress after this point will be lost.") } } %>
+    </div>
+  <% end %>
+</div>

@@ -13,6 +13,9 @@ Rails.application.routes.draw do
       member do
         post :continue
         post :replay_act
+        post :save_game
+        post :load_save
+        get  :saves
       end
     end
 

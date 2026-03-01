@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_02_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_02_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,6 +49,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_02_000002) do
     t.index ["slug"], name: "index_heroes_on_slug", unique: true
   end
 
+  create_table "saves", force: :cascade do |t|
+    t.integer "act_number", null: false
+    t.datetime "created_at", null: false
+    t.bigint "game_id", null: false
+    t.bigint "hero_id", null: false
+    t.string "label", null: false
+    t.integer "turn_number", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.jsonb "world_state", default: {}, null: false
+    t.index ["game_id", "created_at"], name: "index_saves_on_game_id_and_created_at"
+    t.index ["game_id"], name: "index_saves_on_game_id"
+    t.index ["user_id"], name: "index_saves_on_user_id"
+  end
+
   create_table "turns", force: :cascade do |t|
     t.bigint "act_id", null: false
     t.text "content"
@@ -77,4 +92,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_02_000002) do
   end
 
   add_foreign_key "games", "users"
+  add_foreign_key "saves", "games"
+  add_foreign_key "saves", "heroes"
+  add_foreign_key "saves", "users"
 end

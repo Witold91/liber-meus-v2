@@ -1,0 +1,68 @@
+<% content_for :title, "#{@game.hero.name} — Saves" %>
+
+<style>
+  .saves-page { max-width: 680px; margin: 3rem auto; }
+  .saves-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #2a2318;
+  }
+  .saves-title {
+    font-family: 'Cinzel', 'Palatino Linotype', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: var(--theme-accent);
+  }
+  .save-card {
+    border: 1px solid #2a2318;
+    background: #0f0d09;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .save-card-info { flex: 1; min-width: 0; }
+  .save-card-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #b0a890;
+  }
+  .save-card-meta {
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: #4a4030;
+    margin-top: 0.15rem;
+  }
+</style>
+
+<div class="saves-page">
+  <div class="saves-header">
+    <span class="saves-title"><%= @game.hero.name %> &mdash; <%= t("views.games.saves.title", default: "Saves") %></span>
+    <%= link_to t("views.games.saves.back", default: "← Back"), games_path, class: "btn" %>
+  </div>
+
+  <% @saves.each do |save| %>
+    <div class="save-card">
+      <div class="save-card-info">
+        <div class="save-card-label"><%= save.label %></div>
+        <div class="save-card-meta"><%= save.created_at.strftime("%b %d, %Y at %H:%M") %></div>
+      </div>
+      <%= button_to t("views.games.saves.load_button", default: "Load →"), load_save_game_path(@game, save_id: save.id),
+          method: :post,
+          class: "btn",
+          form: { data: { turbo_confirm: t("views.games.saves.confirm_load", label: save.label, default: "Load save '#{save.label}'? All progress after this point will be lost.") } } %>
+    </div>
+  <% end %>
+
+  <% if @saves.empty? %>
+    <div class="dashboard-empty"><%= t("views.games.saves.empty", default: "No saves for this game.") %></div>
+  <% end %>
+</div>

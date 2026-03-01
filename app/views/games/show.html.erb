@@ -183,6 +183,10 @@
       <%= render "games/hero_stats", game: @game %>
       <%= render "games/act_replay", acts_for_replay: @acts_for_replay, scenario: @scenario %>
 
+      <div id="save-panel">
+        <%= render "games/save_panel", saves: @saves, game: @game %>
+      </div>
+
       <div id="inventory-panel">
         <%= render "games/inventory", inventory: @scene_context&.dig(:inventory) || [] %>
       </div>

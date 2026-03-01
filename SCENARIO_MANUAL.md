@@ -37,7 +37,9 @@ Supported condition `type` values:
 If `act_goal` is met and the next act exists:
 - current act is marked completed
 - next act is created/activated
-- world state for actors/objects resets to defaults of the next act
+- actor/object **statuses carry over** from the previous act (e.g. a dead NPC stays dead); only actors/objects new to the act receive their `default_status`
+- actor/object **scenes** are set to the new act's definitions (placement resets, status does not)
+- actors/objects not defined in the new act are kept in world state so their statuses survive to later acts where they may reappear
 - player scene is set to the first scene of the next act
 - `act_turn` resets to `0`
 - `fired_events` resets to `[]`
@@ -328,6 +330,15 @@ When using this feature:
 - Rewrite the act `intro:` from the new protagonist's point of view.
 - Health and momentum carry over between acts regardless of hero change.
 
+### Cross-act status persistence
+
+Actor and object statuses survive act transitions. If an NPC is killed or an object is broken in Act 1, that status carries forward to all later acts — even if the actor/object is absent from intermediate acts. Only actors/objects appearing for the first time in a new act receive their `default_status`.
+
+This means you can rely on earlier-act outcomes mechanically:
+- A dead NPC will still be dead when they reappear in a later act.
+- A broken object stays broken.
+- Scene placement (where an actor/object is located) resets to the new act's definition — only the status carries over.
+
 Important:
 - `turn_limit` is global across the whole scenario, not per act.
 - Choose a large enough `turn_limit` for multi-act stories.
@@ -408,6 +419,7 @@ bin/rails test
 - Adding locale entries for keys the merger does not support.
 - Referencing scene IDs in exits/events that do not exist in that act.
 - Expecting `world_flag` events to mutate world state (they currently do not).
+- Assuming actor/object statuses reset between acts — statuses carry over; only scene placement resets.
 - Giving state-triggered events no `id` — they need one to track firing in `fired_events`.
 
 ## 12. Quick Multi-Act Checklist
@@ -419,4 +431,5 @@ bin/rails test
 - [ ] Turn-triggered events use `act_turn` for act pacing
 - [ ] State-triggered events have unique `id` values
 - [ ] `turn_limit` fits total scenario length
+- [ ] Cross-act status consequences are intentional (dead NPCs stay dead)
 - [ ] Optional locale overlay added and merged keys are valid

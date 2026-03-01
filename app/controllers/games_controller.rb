@@ -13,7 +13,7 @@ class GamesController < ApplicationController
 
   def index
     @active_games = current_user.games.where(status: "active")
-                                .order(updated_at: :desc).includes(:hero)
+                                .order(updated_at: :desc).includes(:hero, :saves)
     @past_games   = current_user.games.where.not(status: "active")
                                 .order(updated_at: :desc).includes(:hero).limit(10)
   end
@@ -24,6 +24,7 @@ class GamesController < ApplicationController
     @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     @acts_for_replay = @game.acts.order(:number)
+    @saves = @game.saves.order(created_at: :desc)
   end
 
   def continue
@@ -75,6 +76,45 @@ class GamesController < ApplicationController
       format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { message: message }) }
       format.html { redirect_to game_path(@game), alert: message }
     end
+  end
+
+  def save_game
+    save = ArenaFlows::SaveGameFlow.call(game: @game, user: current_user)
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "save-panel",
+          partial: "games/save_panel",
+          locals: { saves: @game.saves.order(created_at: :desc), game: @game }
+        )
+      end
+      format.html { redirect_to game_path(@game), notice: t("controllers.games.notices.game_saved", default: "Game saved.") }
+    end
+  rescue => e
+    Rails.logger.error("[GamesController#save_game] #{e.message}\n#{e.backtrace.first(5).join("\n")}")
+    message = t("controllers.games.alerts.error", message: e.message)
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { message: message }) }
+      format.html { redirect_to game_path(@game), alert: message }
+    end
+  end
+
+  def load_save
+    save = @game.saves.find(params[:save_id])
+    ArenaFlows::LoadSaveFlow.call(game: @game, save: save)
+    redirect_to game_path(@game)
+  rescue ActiveRecord::RecordNotFound
+    redirect_to game_path(@game), alert: t("controllers.games.alerts.save_not_found", default: "Save not found.")
+  rescue ArgumentError => e
+    redirect_to game_path(@game), alert: e.message
+  rescue => e
+    Rails.logger.error("[GamesController#load_save] #{e.message}\n#{e.backtrace.first(5).join("\n")}")
+    redirect_to game_path(@game), alert: t("controllers.games.alerts.error", message: e.message)
+  end
+
+  def saves
+    @saves = @game.saves.order(created_at: :desc)
   end
 
   def replay_act

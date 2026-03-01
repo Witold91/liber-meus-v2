@@ -25,6 +25,11 @@ module ArenaFlows
         scenario = ScenarioCatalog.find!(game.scenario_slug, locale: game.game_language)
         restore_hero!(game: game, scenario: scenario, act_number: act_number)
 
+        # Delete saves that fall after the rewind point
+        game.saves.where("act_number > ?", act_number)
+            .or(game.saves.where(act_number: act_number).where("turn_number > 0"))
+            .destroy_all
+
         # Reactivate target act
         target_act.update!(status: "active")
 
