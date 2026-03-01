@@ -1,0 +1,31 @@
+<% acts = local_assigns[:acts_for_replay] || [] %>
+<% scen = local_assigns[:scenario] %>
+<% return unless acts.size > 1 || acts.any? { |a| a.world_state_snapshot.present? } %>
+
+<style>
+  .act-replay-panel { border: 1px solid #2a2318; background: #0f0d09; padding: 0.65rem 1rem; font-size: 0.8rem; }
+  .act-replay-header { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: #4a4030; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .act-replay-row { display: flex; align-items: center; justify-content: space-between; padding: 0.2rem 0; }
+  .act-replay-label { color: #7a6a58; font-family: 'Lora', Georgia, serif; font-size: 0.78rem; }
+  .act-replay-label.active { color: var(--theme-accent); }
+  .replay-btn { background: transparent; border: 1px solid #2a2318; color: #4a4030; padding: 0.1rem 0.4rem; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.65rem; line-height: 1.4; }
+  .replay-btn:hover { color: var(--theme-accent); border-color: #3a3020; }
+</style>
+
+<div class="act-replay-panel">
+  <div class="act-replay-header">Acts</div>
+  <% acts.each do |act| %>
+    <% act_def = scen&.dig("acts")&.find { |a| a["number"] == act.number } %>
+    <% act_title = act_def&.dig("title") || "Act #{act.number}" %>
+    <div class="act-replay-row">
+      <span class="act-replay-label <%= act.status %>"><%= act_title %></span>
+      <% if act.world_state_snapshot.present? %>
+        <%= button_to "↩", replay_act_game_path(@game, act_number: act.number),
+            method: :post,
+            class: "replay-btn",
+            title: "Replay from start of #{act_title}",
+            form: { data: { turbo_confirm: "Replay #{act_title}? Progress after this act will be lost." } } %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

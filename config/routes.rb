@@ -5,7 +5,10 @@ Rails.application.routes.draw do
     resource :scenario_select, controller: :scenario_select, only: [ :show, :create ]
 
     resources :games, only: [ :show ] do
-      post :continue, on: :member
+      member do
+        post :continue
+        post :replay_act
+      end
     end
 
     root to: "scenario_select#show"

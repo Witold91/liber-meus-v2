@@ -18,7 +18,8 @@ module ArenaFlows
       act = Act.create!(
         game: game,
         number: 1,
-        status: "active"
+        status: "active",
+        world_state_snapshot: world_state
       )
 
       presenter = Arena::ScenarioPresenter.new(scenario, 1, world_state)

@@ -16,6 +16,7 @@ class GamesController < ApplicationController
     @scenario = ScenarioCatalog.find(@game.scenario_slug) if @game.arena_scenario?
     @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
+    @acts_for_replay = @game.acts.order(:number)
   end
 
   def continue
@@ -67,6 +68,17 @@ class GamesController < ApplicationController
       format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { message: message }) }
       format.html { redirect_to game_path(@game), alert: message }
     end
+  end
+
+  def replay_act
+    act_number = params[:act_number].to_i
+    ArenaFlows::ReplayActFlow.call(game: @game, act_number: act_number)
+    redirect_to game_path(@game)
+  rescue ArgumentError => e
+    redirect_to game_path(@game), alert: e.message
+  rescue => e
+    Rails.logger.error("[GamesController#replay_act] #{e.message}\n#{e.backtrace.first(5).join("\n")}")
+    redirect_to game_path(@game), alert: t("controllers.games.alerts.error", message: e.message)
   end
 
   private
