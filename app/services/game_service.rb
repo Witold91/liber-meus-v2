@@ -1,12 +1,13 @@
 class GameService
-  def self.start_game(scenario_slug:, hero_id: nil, game_language: I18n.default_locale.to_s)
+  def self.start_game(scenario_slug:, hero_id: nil, game_language: I18n.default_locale.to_s, user: nil)
     scenario = ScenarioCatalog.find!(scenario_slug)
 
     if scenario.present?
       ArenaFlows::StartScenarioFlow.call(
         scenario_slug: scenario_slug,
         hero_id: hero_id,
-        game_language: game_language
+        game_language: game_language,
+        user: user
       )
     else
       raise NotImplementedError, I18n.t("services.game_service.unsupported_scenario")

@@ -11,6 +11,8 @@ gem "ruby-openai", "~> 7.1"
 gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
 gem "stimulus-rails"
 gem "thruster", require: false
 gem "turbo-rails"

@@ -1,0 +1,122 @@
+<% content_for :title, t("app.name") %>
+
+<style>
+  .dashboard { max-width: 680px; margin: 3rem auto; }
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #2a2318;
+  }
+  .dashboard-title {
+    font-family: 'Cinzel', 'Palatino Linotype', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: var(--theme-accent);
+  }
+  .dashboard-section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.22em;
+    color: #3a3020;
+    text-transform: uppercase;
+    margin: 1.5rem 0 0.6rem;
+  }
+  .game-card {
+    border: 1px solid #2a2318;
+    background: #0f0d09;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .game-card-info { flex: 1; min-width: 0; }
+  .game-card-scenario {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #b0a890;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .game-card-meta {
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: #4a4030;
+    margin-top: 0.15rem;
+  }
+  .game-card-status {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid #2a2318;
+    color: #4a4030;
+    flex-shrink: 0;
+  }
+  .game-card-status.completed { color: #6a8a78; border-color: #2a4030; }
+  .game-card-status.failed    { color: #8a4040; border-color: #3a2020; }
+  .dashboard-empty {
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    color: #3a3020;
+    font-size: 0.85rem;
+    padding: 1rem 0;
+  }
+  .dashboard-actions { margin-top: 1.5rem; }
+</style>
+
+<div class="dashboard">
+  <div class="dashboard-header">
+    <span class="dashboard-title"><%= t("app.name") %></span>
+  </div>
+
+  <% if @active_games.any? %>
+    <div class="dashboard-section-label"><%= t("views.games.index.active", default: "Active Games") %></div>
+    <% @active_games.each do |game| %>
+      <div class="game-card">
+        <div class="game-card-info">
+          <div class="game-card-scenario">
+            <%= ScenarioCatalog.find(game.scenario_slug)&.dig("title") || game.scenario_slug %>
+          </div>
+          <div class="game-card-meta">
+            <%= game.hero.name %> &middot; <%= t("views.games.index.turns", count: game.turns.maximum(:turn_number) || 0, default: "%{count} turns") %>
+          </div>
+        </div>
+        <%= link_to t("views.games.index.continue", default: "Continue →"), game_path(game), class: "btn" %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @past_games.any? %>
+    <div class="dashboard-section-label"><%= t("views.games.index.past", default: "Past Games") %></div>
+    <% @past_games.each do |game| %>
+      <div class="game-card">
+        <div class="game-card-info">
+          <div class="game-card-scenario">
+            <%= ScenarioCatalog.find(game.scenario_slug)&.dig("title") || game.scenario_slug %>
+          </div>
+          <div class="game-card-meta">
+            <%= game.hero.name %> &middot; <%= t("views.games.index.turns", count: game.turns.maximum(:turn_number) || 0, default: "%{count} turns") %>
+          </div>
+        </div>
+        <span class="game-card-status <%= game.status %>"><%= t("game.statuses.#{game.status}", default: game.status) %></span>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @active_games.empty? && @past_games.empty? %>
+    <div class="dashboard-empty"><%= t("views.games.index.empty", default: "No games yet. Start one below.") %></div>
+  <% end %>
+
+  <div class="dashboard-actions">
+    <%= link_to t("views.games.index.new_game", default: "New Game"), scenario_select_path, class: "btn btn-primary" %>
+  </div>
+</div>

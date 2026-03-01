@@ -1,5 +1,6 @@
 prison_game:
   hero: convict
+  user: one
   scenario_slug: prison_break
   world_state: '{"health":100,"danger_level":40,"momentum":0,"act_number":1,"act_turn":0,"player_scene":"cell","actors":{},"objects":{},"improvised_objects":{}}'
   game_language: en

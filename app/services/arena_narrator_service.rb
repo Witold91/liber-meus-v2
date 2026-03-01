@@ -3,14 +3,14 @@ class ArenaNarratorService
   EPILOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_epilogue.txt")
   PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil)
+  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [])
     client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
     model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
     system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
-    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss)
+    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions)
 
     response = client.chat(
       parameters: {
@@ -96,7 +96,7 @@ class ArenaNarratorService
     raise AIConnectionError, e.message
   end
 
-  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0)
+  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [])
     parts = []
     localized_resolution = I18n.t("game.resolution_tags.#{resolution_tag}", default: resolution_tag).upcase
     localized_difficulty = I18n.t("game.difficulty_values.#{difficulty}", default: difficulty)
@@ -209,6 +209,12 @@ class ArenaNarratorService
 
     if health_loss > 0
       parts << I18n.t("services.arena_narrator_service.prompt.health_loss", amount: health_loss)
+      parts << ""
+    end
+
+    if event_descriptions&.any?
+      parts << "WORLD EVENTS THIS TURN:"
+      event_descriptions.each { |d| parts << "- #{d}" }
       parts << ""
     end
 

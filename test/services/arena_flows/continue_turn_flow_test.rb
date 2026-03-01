@@ -199,6 +199,153 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     end
   end
 
+  test "carries actor statuses across act transitions" do
+    two_act_scenario = {
+      "slug" => "prison_break",
+      "world_context" => "",
+      "narrator_style" => "",
+      "turn_limit" => 20,
+      "acts" => [
+        {
+          "number" => 1,
+          "intro" => "Act I",
+          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "actors" => [
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "cell", "default_status" => "alive", "status_options" => %w[alive dead] }
+          ],
+          "objects" => [
+            { "id" => "obj_x", "name" => "Object X", "scene" => "cell", "default_status" => "intact", "status_options" => %w[intact broken] }
+          ],
+          "conditions" => [],
+          "events" => []
+        },
+        {
+          "number" => 2,
+          "intro" => "Act II",
+          "scenes" => [ { "id" => "yard", "name" => "Yard", "description" => "", "exits" => [] } ],
+          "actors" => [
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "yard", "default_status" => "alive", "status_options" => %w[alive dead] },
+            { "id" => "npc_b", "name" => "NPC B", "scene" => "yard", "default_status" => "calm", "status_options" => %w[calm angry] }
+          ],
+          "objects" => [
+            { "id" => "obj_x", "name" => "Object X", "scene" => "yard", "default_status" => "intact", "status_options" => %w[intact broken] }
+          ],
+          "conditions" => [],
+          "events" => []
+        }
+      ]
+    }
+
+    # NPC A was killed and Object X was broken in Act 1
+    @game.update!(world_state: @game.world_state.merge(
+      "actors" => { "npc_a" => { "scene" => "cell", "status" => "dead" } },
+      "objects" => { "obj_x" => { "scene" => "cell", "status" => "broken" } }
+    ))
+
+    ScenarioCatalog.stubs(:find!).returns(two_act_scenario)
+    ScenarioCatalog.stubs(:find).returns(two_act_scenario)
+    EndConditionChecker.stubs(:check).returns(
+      { "id" => "act1_done", "type" => "act_goal", "next_act" => 2, "narrative" => "Act I closes." }
+    )
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "End of act." }, 55 ])
+    ArenaNarratorService.stubs(:narrate_prologue).returns([ { "narrative" => "New act begins.", "memory_note" => "" }, 45 ])
+
+    ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Advance")
+
+    @game.reload
+    # Actor status should carry over from Act 1
+    assert_equal "dead", @game.world_state.dig("actors", "npc_a", "status"),
+      "Actor status should carry across act transitions"
+    # New actor should get its default
+    assert_equal "calm", @game.world_state.dig("actors", "npc_b", "status"),
+      "New actor should get default_status"
+    # Object status should carry over too
+    assert_equal "broken", @game.world_state.dig("objects", "obj_x", "status"),
+      "Object status should carry across act transitions"
+    # Scene should be from the new act's definition
+    assert_equal "yard", @game.world_state.dig("actors", "npc_a", "scene"),
+      "Actor scene should come from the new act's definition"
+  end
+
+  test "carries actor status through an act where the actor is absent" do
+    three_act_scenario = {
+      "slug" => "prison_break",
+      "world_context" => "",
+      "narrator_style" => "",
+      "turn_limit" => 20,
+      "acts" => [
+        {
+          "number" => 1,
+          "intro" => "Act I",
+          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "actors" => [
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "cell", "default_status" => "alive", "status_options" => %w[alive dead] }
+          ],
+          "objects" => [],
+          "conditions" => [],
+          "events" => []
+        },
+        {
+          "number" => 2,
+          "intro" => "Act II — NPC A is not present here",
+          "scenes" => [ { "id" => "yard", "name" => "Yard", "description" => "", "exits" => [] } ],
+          "actors" => [
+            { "id" => "npc_b", "name" => "NPC B", "scene" => "yard", "default_status" => "calm", "status_options" => %w[calm angry] }
+          ],
+          "objects" => [],
+          "conditions" => [],
+          "events" => []
+        },
+        {
+          "number" => 3,
+          "intro" => "Act III — NPC A returns",
+          "scenes" => [ { "id" => "square", "name" => "Square", "description" => "", "exits" => [] } ],
+          "actors" => [
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "square", "default_status" => "alive", "status_options" => %w[alive dead] }
+          ],
+          "objects" => [],
+          "conditions" => [],
+          "events" => []
+        }
+      ]
+    }
+
+    # NPC A was killed in Act 1
+    @game.update!(world_state: @game.world_state.merge(
+      "actors" => { "npc_a" => { "scene" => "cell", "status" => "dead" } }
+    ))
+
+    ScenarioCatalog.stubs(:find!).returns(three_act_scenario)
+    ScenarioCatalog.stubs(:find).returns(three_act_scenario)
+
+    # Transition Act 1 → Act 2 (npc_a is NOT in Act 2)
+    EndConditionChecker.stubs(:check).returns(
+      { "id" => "act1_done", "type" => "act_goal", "next_act" => 2, "narrative" => "Act I closes." }
+    )
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "End." }, 55 ])
+    ArenaNarratorService.stubs(:narrate_prologue).returns([ { "narrative" => "New act.", "memory_note" => "" }, 45 ])
+
+    ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Advance to Act 2")
+    @game.reload
+
+    # npc_a should still be in world state even though Act 2 doesn't define him
+    assert_equal "dead", @game.world_state.dig("actors", "npc_a", "status"),
+      "Actor status should survive transition to an act where the actor is absent"
+
+    # Now transition Act 2 → Act 3 (npc_a returns)
+    EndConditionChecker.stubs(:check).returns(
+      { "id" => "act2_done", "type" => "act_goal", "next_act" => 3, "narrative" => "Act II closes." }
+    )
+
+    ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Advance to Act 3")
+    @game.reload
+
+    assert_equal "dead", @game.world_state.dig("actors", "npc_a", "status"),
+      "Actor status should carry from Act 1 through Act 2 (absent) to Act 3"
+    assert_equal "square", @game.world_state.dig("actors", "npc_a", "scene"),
+      "Actor scene should come from Act 3's definition"
+  end
+
   test "raises AIConnectionError and creates no turn when first AI call fails" do
     DifficultyRatingService.stubs(:rate).raises(::AIConnectionError, "network error")
 

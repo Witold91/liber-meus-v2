@@ -18,6 +18,8 @@ Respond ONLY with valid JSON — no markdown, no extra text — with these field
   - "player_moved_to": "stage_id"
 - "memory_note": 1-sentence note about a significant story development (omit if nothing notable happened)
 
+If WORLD EVENTS THIS TURN is provided, these scripted world events happen simultaneously with the player's action. Weave them into the narrative naturally — do not list them separately.
+
 Rules:
 - The diff must mirror the narrative exactly. Every actor movement, status change, or item acquisition/drop narrated must have a corresponding diff entry. Every diff entry must be described in the narrative.
 - If you write that an actor accompanies, follows, or travels with the player to a new location, you MUST emit actor_moved_to for that actor to the same destination as player_moved_to. "Accompanying" is a movement — it must be tracked.

@@ -9,6 +9,8 @@
       --theme-font: <%= @theme["font_family"] %>;
       --theme-bg-image: <%= @theme["bg_image"].present? ? "url(/#{@theme["bg_image"]})" : "none" %>;
     }
+    /* Game page is full-screen — suppress the nav bar */
+    .app-nav { display: none !important; }
   </style>
 <% end %>
 

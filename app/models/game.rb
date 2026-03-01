@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   belongs_to :hero
+  belongs_to :user, optional: true
   has_many :acts, dependent: :destroy
   has_many :turns, dependent: :destroy
 

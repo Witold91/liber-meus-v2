@@ -57,7 +57,7 @@ acts:
             label: "Wejdź do sali"
       - id: capulet_hall
         name: "Sala Kapuletów"
-        description: "Tłumna uczta lampionów, viol i masek. Każda twarz skrywa nazwisko, a każde nazwisko niesie własną historię."
+        description: "Tłumna uczta lampionów, muzyki i masek. Każda twarz skrywa nazwisko, a każde nazwisko niesie własną historię."
         exits:
           - to: capulet_grounds
             label: "Wyjdź na dziedziniec"

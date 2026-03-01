@@ -112,7 +112,7 @@ acts:
       - id: master_switch
         name: "Główny Panel Drzwi"
       - id: rope
-        name: "Związana Lina (ze ściereczek)"
+        name: "Związana Lina (z prześcieradeł)"
     conditions:
       - id: player_at_exit
         narrative: "Udało się. Mur zostaje za tobą, światła więzienia gasną w ciemności, a noc rozciąga się szeroko przed tobą."

@@ -7,9 +7,16 @@ class GamesController < ApplicationController
     "bg_image"     => nil
   }.freeze
 
-  before_action :set_game
-  before_action :set_game_locale
-  before_action :set_theme
+  before_action :set_game, except: [ :index ]
+  before_action :set_game_locale, except: [ :index ]
+  before_action :set_theme, except: [ :index ]
+
+  def index
+    @active_games = current_user.games.where(status: "active")
+                                .order(updated_at: :desc).includes(:hero)
+    @past_games   = current_user.games.where.not(status: "active")
+                                .order(updated_at: :desc).includes(:hero).limit(10)
+  end
 
   def show
     @recent_turns = @game.turns.order(:turn_number)
@@ -46,7 +53,7 @@ class GamesController < ApplicationController
           turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: turn }),
           turbo_stream.replace("turn-counter", html: helpers.content_tag(:span, t("views.games.turn", number: turn.turn_number), class: "console-status", id: "turn-counter")),
           turbo_stream.replace("hero-stats", partial: "games/hero_stats", locals: { game: @game }),
-          turbo_stream.replace("inventory-panel", partial: "games/inventory", locals: { inventory: @scene_context&.dig(:inventory) || [] }),
+          turbo_stream.update("inventory-panel", partial: "games/inventory", locals: { inventory: @scene_context&.dig(:inventory) || [] }),
           turbo_stream.replace("scene-panel", partial: "games/scene_panel", locals: { scene_context: @scene_context, game: @game })
         ]
         streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: ending_turn }) if ending_turn
@@ -84,7 +91,7 @@ class GamesController < ApplicationController
   private
 
   def set_game
-    @game = Game.find(params[:id])
+    @game = current_user.games.find(params[:id])
   end
 
   def set_theme

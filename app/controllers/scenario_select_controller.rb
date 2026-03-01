@@ -17,7 +17,8 @@ class ScenarioSelectController < ApplicationController
 
     game = GameService.start_game(
       scenario_slug: scenario_slug,
-      game_language: game_language
+      game_language: game_language,
+      user: current_user
     )
 
     redirect_to game_path(game, locale: selected_locale)

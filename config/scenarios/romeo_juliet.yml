@@ -142,9 +142,9 @@ acts:
         default_status: sheltered
       - id: rosaline
         name: "Rosaline"
-        description: "A Capulet niece, beautiful and devout — the object of Romeo's unrequited obsession, utterly indifferent to him."
+        description: "A Capulet niece, beautiful and devout — the object of Romeo's unrequited obsession, utterly indifferent to him. If persistently pursued she becomes cold; if publicly humiliated or pushed to the limit, she becomes offended — a closed door."
         scene: capulet_hall
-        status_options: [indifferent, absent]
+        status_options: [indifferent, cold, offended, absent]
         default_status: indifferent
       - id: nurse
         name: "Nurse"
@@ -206,6 +206,27 @@ acts:
         check: actor_has_status
         actor: juliet
         status: dead
+      - id: act1_rosaline_offended
+        description: "Romeo's obsession with Rosaline burns every bridge."
+        narrative: "Rosaline's rebuff is final and public. She calls for her uncle, and the hall turns cold. You leave Capulet grounds with nothing — no introduction, no Juliet, no story that matters. The obsession closes around you like a room with no doors."
+        type: danger
+        check: actor_has_status
+        actor: rosaline
+        status: offended
+      - id: act1_tybalt_slain
+        description: "Tybalt dies in the morning brawl — Romeo is banished before nightfall."
+        narrative: "Blood on the cobblestones before noon. When Tybalt Capulet falls, the Prince's judgment is swift: the Montague who struck first is banished by sundown. You never reach the feast, and Juliet remains a stranger."
+        type: danger
+        check: actor_has_status
+        actor: tybalt
+        status: dead
+      - id: act1_romeo_banished_early
+        description: "The Prince names Romeo specifically in the decree."
+        narrative: "The Prince's finger lands on you. Your name has been in too many quarrels this season. By the decree read aloud in the square, you are banished from Verona — before the feast, before the balcony, before any of it begins."
+        type: danger
+        check: actor_has_status
+        actor: prince_escalus
+        status: sentencing
 
     events:
       - id: act1_brawl_escalates
@@ -215,7 +236,7 @@ acts:
           actor_id: tybalt
           scene: verona_square
           new_status: enraged
-        description: "Tybalt draws steel on Benvolio and the morning's quarrel becomes a full brawl."
+        description: "'What, drawn, and talk of peace! I hate the word, as I hate hell, all Montagues, and thee.' Tybalt draws steel on Benvolio and the morning's quarrel becomes a full brawl."
       - id: act1_montague_seeks_romeo
         act_turn: 4
         action:
@@ -231,7 +252,19 @@ acts:
           actor_id: prince_escalus
           scene: verona_square
           new_status: condemning
-        description: "The Prince intervenes and warns both houses: the next public brawl will cost lives."
+        description: "'If ever you disturb our streets again, your lives shall pay the forfeit of the peace.' The Prince faces both houses and makes the ultimatum final."
+      - id: act1_servant_returns
+        act_turn: 8
+        condition:
+          actor_status:
+            id: capulet_servant
+            status: searching
+        action:
+          type: actor_enters
+          actor_id: capulet_servant
+          scene: montague_grounds
+          new_status: departed
+        description: "The Capulet servant, finding no reader for his list, gives up on the square and wanders back toward the Montague side of the city — his invitation unread, the feast still waiting."
 
   - number: 2
     title: "Act II - Balcony and Vows"
@@ -452,7 +485,7 @@ acts:
           actor_id: tybalt
           scene: dueling_square
           new_status: enraged
-        description: "With Mercutio fallen, Tybalt's fury turns on Romeo."
+        description: "Mercutio's last breath carries a curse: 'A plague o' both your houses!' With him fallen, Tybalt's fury turns on Romeo."
       - id: act3_prince_arrives
         trigger:
           actor_status:
@@ -463,7 +496,7 @@ acts:
           actor_id: prince_escalus
           scene: dueling_square
           new_status: condemning
-        description: "The Prince strides into the square to face the carnage."
+        description: "'And for that offence immediately do we exile him hence.' The Prince strides into the square and passes sentence on Romeo."
 
   - number: 4
     title: "Act IV - The Sleeping Draught"
@@ -583,7 +616,7 @@ acts:
           actor_id: nurse
           scene: juliet_chamber
           new_status: urging
-        description: "The Nurse counsels you to forget Romeo and accept Paris as a finer match."
+        description: "'Romeo's a dishclout to him.' The Nurse urges you to forget your husband and accept Paris as a finer match."
       - id: act4_plan_in_motion
         trigger:
           object_status:
@@ -594,7 +627,7 @@ acts:
           actor_id: friar_lawrence
           scene: friar_cell
           new_status: desperate
-        description: "With the draught taken, Friar Laurence sends the letter to Mantua and prays the plan holds."
+        description: "Juliet drinks alone, whispering: 'Romeo, Romeo, Romeo! Here's drink — I drink to thee.' Friar Laurence seals the letter and prays it reaches Mantua in time."
 
   - number: 5
     title: "Act V - Tomb and Reckoning"
@@ -747,7 +780,7 @@ acts:
           actor_id: balthasar
           scene: mantua_street
           new_status: grieving
-        description: "Balthasar reports Juliet as dead."
+        description: "Balthasar delivers the blow: Juliet lies in the Capulet tomb. The words land like a death sentence. 'Is it even so? Then I defy you, stars!'"
       - id: act5_juliet_wakes
         act_turn: 3
         action:
@@ -775,4 +808,4 @@ acts:
           actor_id: juliet
           scene: capulet_crypt
           new_status: dead
-        description: "With Romeo gone, Juliet finds no reason to wake into a world without him."
+        description: "Juliet wakes to find Romeo dead beside her. 'O happy dagger! This is thy sheath; there rust, and let me die.' The tragedy closes on itself."

@@ -41,6 +41,12 @@ module ArenaFlows
         game.reload
         world_state = game.world_state
 
+        # Step 6.5: Collect turn-triggered event descriptions for narrator context
+        turn_events = ScenarioEventService.events_for_turn(
+          turn_number: turn_number, act_turn_number: act_turn_number, world_state: world_state
+        ).reject { |e| e.key?("trigger") }
+        event_descriptions = turn_events.filter_map { |e| e["description"] }
+
         # Step 7: Get narration (AI call 2)
         turn_context = {
           world_state_delta: presenter.world_state_delta,
@@ -49,13 +55,14 @@ module ArenaFlows
           recent_actions: recent_actions,
           rating_reasoning: rating_reasoning
         }
-        narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"])
+        narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"], event_descriptions: event_descriptions)
 
         # Step 8: Apply world-state diff from narration
         diff = narration["diff"] || {}
         world_state = Arena::WorldStateManager.new(world_state).apply_scene_diff(diff, scenario: scenario)
 
         # Step 9: Apply scenario events
+        new_event_memories = []
         ScenarioEventService.events_for_turn(turn_number: turn_number, act_turn_number: act_turn_number, world_state: world_state).each do |event|
           event_diff = ScenarioEventService.event_to_scene_diff(event)
           next if event_diff.empty?
@@ -63,6 +70,7 @@ module ArenaFlows
           if event.key?("trigger")
             world_state["fired_events"] ||= []
             world_state["fired_events"] |= [ event["id"] ]
+            new_event_memories << event["description"] if event["description"].present?
           end
         end
         world_state["act_turn"] = act_turn_number
@@ -72,6 +80,9 @@ module ArenaFlows
 
         # Step 10: Persist turn
         llm_memory = narration["memory_note"]
+        if new_event_memories.any?
+          llm_memory = [ llm_memory, *new_event_memories ].compact.join(" | ")
+        end
         narrative_content = narration["narrative"] || ""
         tokens_used = difficulty_tokens + narrator_tokens
 
@@ -206,11 +217,24 @@ module ArenaFlows
 
     def self.build_world_state_for_act(world_state:, scenario:, act_number:)
       presenter = Arena::ScenarioPresenter.new(scenario, act_number, world_state)
-      actors = presenter.actors.each_with_object({}) do |actor, h|
-        h[actor["id"]] = { "scene" => actor["scene"], "status" => actor["default_status"] }
+      previous_actors = world_state["actors"] || {}
+      previous_objects = world_state["objects"] || {}
+
+      # Start with carried-over entries for actors/objects not in the new act
+      # (so statuses survive even if an actor skips an act entirely)
+      actors = previous_actors.dup
+      objects = previous_objects.dup
+
+      # Layer on the new act's definitions, preserving previous statuses
+      presenter.actors.each do |actor|
+        prev = previous_actors[actor["id"]]
+        status = prev ? prev["status"] : actor["default_status"]
+        actors[actor["id"]] = { "scene" => actor["scene"], "status" => status }
       end
-      objects = presenter.objects.each_with_object({}) do |object, h|
-        h[object["id"]] = { "scene" => object["scene"], "status" => object["default_status"] }
+      presenter.objects.each do |object|
+        prev = previous_objects[object["id"]]
+        status = prev ? prev["status"] : object["default_status"]
+        objects[object["id"]] = { "scene" => object["scene"], "status" => status }
       end
 
       state = world_state.deep_dup

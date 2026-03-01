@@ -52,6 +52,10 @@
       .flash-notice { background: #1a3a2a; border: 1px solid var(--theme-accent); padding: 0.75rem 1rem; margin-bottom: 1rem; }
       .flash-alert { background: #3a1a1a; border: 1px solid #a08080; color: #c8a0a0; padding: 0.75rem 1rem; margin-bottom: 1rem; }
       h1, h2, h3 { color: #e8e8d4; font-weight: normal; letter-spacing: 0.05em; }
+      .app-nav { display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; padding: 0.4rem 0 0.75rem; border-bottom: 1px solid #1e1810; margin-bottom: 0.75rem; font-size: 0.7rem; }
+      .app-nav-user { font-family: 'Lora', Georgia, serif; font-style: italic; color: #4a4030; }
+      .app-nav-signout { background: transparent; border: 1px solid #2a2318; color: #4a4030; padding: 0.1rem 0.4rem; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; }
+      .app-nav-signout:hover { color: var(--theme-accent); border-color: #3a3020; }
     </style>
 
     <%= yield :head %>
@@ -59,6 +63,12 @@
 
   <body>
     <div class="container">
+      <% if current_user && controller_name != "sessions" %>
+        <nav class="app-nav">
+          <span class="app-nav-user"><%= current_user.name || current_user.email %></span>
+          <%= button_to t("views.sessions.sign_out", default: "Sign out"), sign_out_path, method: :delete, class: "app-nav-signout" %>
+        </nav>
+      <% end %>
       <% if notice %>
         <div class="flash-notice"><%= notice %></div>
       <% end %>
