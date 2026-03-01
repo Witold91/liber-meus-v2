@@ -302,6 +302,32 @@ For each act:
 3. Use `act_turn` events for per-act pacing.
 4. Keep act scene IDs self-consistent (exits must target valid scene IDs within the same act).
 
+### Switching the protagonist between acts
+
+An act can optionally define its own `hero:` block. When the act transition fires, the game's hero is updated to the new one using the same `find_or_create_by!(slug:)` pattern as game start. If no `hero:` is defined on the new act, the previous hero carries forward unchanged.
+
+```yaml
+acts:
+  - number: 1
+    # no hero: → uses top-level hero
+    scenes: ...
+
+  - number: 2
+    hero:
+      slug: juliet
+      name: "Juliet Capulet"
+      description: "Clear-eyed and resolute, determined to control her own fate."
+      sex: female
+    intro: |
+      ... written from Juliet's point of view ...
+    scenes: ...
+```
+
+When using this feature:
+- Update `world_context` at scenario level to reflect the shifting perspective.
+- Rewrite the act `intro:` from the new protagonist's point of view.
+- Health and momentum carry over between acts regardless of hero change.
+
 Important:
 - `turn_limit` is global across the whole scenario, not per act.
 - Choose a large enough `turn_limit` for multi-act stories.

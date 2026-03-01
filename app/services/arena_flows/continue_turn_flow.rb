@@ -189,6 +189,17 @@ module ArenaFlows
       end
       next_act.update!(status: "active")
 
+      # Switch protagonist if the new act defines its own hero
+      next_act_def = scenario["acts"]&.find { |a| a["number"] == next_act_number }
+      if (hero_def = next_act_def&.dig("hero"))
+        next_hero = Hero.find_or_create_by!(slug: hero_def["slug"]) do |h|
+          h.name        = hero_def["name"]
+          h.description = hero_def["description"]
+          h.sex         = hero_def["sex"]
+        end
+        game.update!(hero: next_hero)
+      end
+
       next_world_state = build_world_state_for_act(world_state: world_state, scenario: scenario, act_number: next_act_number)
       game.update!(world_state: next_world_state)
     end
