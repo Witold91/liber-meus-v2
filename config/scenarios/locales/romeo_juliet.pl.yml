@@ -17,33 +17,72 @@ acts:
   - number: 1
     title: "Akt I - Waśń i pierwsze spojrzenie"
     intro: |
-      Werona budzi się przemocą i dumą: słudzy Kapuletów i Montekich są gotowi lać krew za dawne obelgi, których nikt już porządnie nie pamięta.
-      Książę wielokrotnie groził obu rodom karą, ale gniew bywa szybszy od prawa, a każda uliczna bójka tylko pogłębia konflikt.
-      Nocą miasto zmienia ton: sala Kapuletów rozbłyska ucztą masek, muzyki i politycznych spojrzeń.
-      Jesteś Romeem Montekim - niespokojnym i porywczym - i właśnie wchodzisz na teren wroga, gdzie jedno spotkanie może naraz rozpalić miłość i zapowiedzieć zgubę.
-      Aktualna sytuacja: Jesteś na placu w Weronie, obok ciebie są Merkucjo i Benwolio, a słudzy obu rodów zaczynają kolejną prowokację.
+      W gaju jaworowym za murami Werony Romeo Monteki trzyma się na uboczu świata - schorowany z miłości do Rozaliny, pięknej Kapuletki, która odpowiada mu jedynie chłodem i obojętnością.
+      Ledwie dociera do niego poranna bójka na ulicach miasta, która znów zmusza Księcia do interwencji i kolejnego ultimatum wobec obu rodów.
+      Wieczorem Werona zmienia twarz: Kapuleci otwierają dom na maskowy bal, a przypadek - sługa z listą gości i jedno zasłyszane nazwisko - podpowiada Romeowi, że Rozalina tam będzie.
+      Idzie, by o niej zapomnieć, próbując zobaczyć ją jeszcze raz, i wchodzi prosto na teren wroga, gdzie jedno spojrzenie przez tłum może rozpalić uczucie silniejsze niż życie.
+      Aktualna sytuacja: Jesteś Romeem Montekim, sam w gaju jaworowym na wschód od miasta, zraniony niespełnioną miłością, podczas gdy Werona toczy się dalej bez ciebie.
     scenes:
+      - id: sycamore_grove
+        name: "Gaj Jaworowy"
+        description: "Cichy zagajnik na skraju Werony, gdzie Romeo ukrywa się ze swoją miłosną udręką, z dala od ulicznych bójek i rodzinnej polityki."
+        exits:
+          - to: verona_square
+            label: "Rusz do miasta"
+          - to: montague_grounds
+            label: "Wróć na teren Montekich"
+      - id: montague_grounds
+        name: "Posiadłość Montekich"
+        description: "Dziedziniec i wejście do domu Montekich, gdzie pod dumą rodu kryje się cichy niepokój o Romea."
+        exits:
+          - to: sycamore_grove
+            label: "Szukaj Romea w gaju"
+          - to: verona_square
+            label: "Idź w stronę miasta"
       - id: verona_square
         name: "Plac w Weronie (Akt I)"
-        description: "Publiczny plac, gdzie słudzy prowokują się nawzajem, a możni bronią honoru rodu."
+        description: "Publiczny plac, gdzie słudzy obu rodów prowokują się nawzajem, a szlachta staje do obrony honoru. W powietrzu wciąż czuć gniew poranka."
         exits:
-          - to: capulet_hall
-            label: "Przemknij do sali Kapuletów"
-      - id: capulet_hall
-        name: "Sala Kapuletów"
-        description: "Tłumna uczta pełna lampionów, muzyki, masek i czujnych spojrzeń."
+          - to: sycamore_grove
+            label: "Wymyknij się z powrotem do gaju"
+          - to: capulet_grounds
+            label: "Podążaj za światłem pochodni ku domowi Kapuletów"
+      - id: capulet_grounds
+        name: "Dziedziniec Kapuletów"
+        description: "Dziedziniec przed domem Kapuletów, skąpany w świetle lampionów. Zamaskowani goście przybywają grupami, a odkryte twarze przyciągają zbyt długie spojrzenia."
         exits:
           - to: verona_square
             label: "Wróć na plac"
+          - to: capulet_hall
+            label: "Wejdź do sali"
+      - id: capulet_hall
+        name: "Sala Kapuletów"
+        description: "Tłumna uczta lampionów, viol i masek. Każda twarz skrywa nazwisko, a każde nazwisko niesie własną historię."
+        exits:
+          - to: capulet_grounds
+            label: "Wyjdź na dziedziniec"
 
   - number: 2
     title: "Akt II - Balkon i przysięgi"
     intro: |
-      Uczta dobiegła końca, ale najważniejsze słowa dopiero mają paść.
-      Pod balkonem Julii pragnienie walczy ze strachem: nazwiska rodów, czujne uszy służby i pewność, że wykrycie oznacza katastrofę.
-      Piastunka przenosi sekrety między domem a ogrodem, a z każdą minutą rośnie ryzyko, że plotka wyprzedzi prawdę.
-      W celi Ojca Laurentego miłość może zostać potajemnie uświęcona, lecz sama tajemnica staje się lontem dla całej dalszej tragedii.
-      Aktualna sytuacja: Jesteś w sadzie Kapuletów pod balkonem Julii; Julia i Piastunka są blisko, więc jeden błąd może zdradzić wasz sekret.
+      Uczta dobiegła końca, Werona ucichła, ale ty nie potrafiłeś odejść.
+      Instynktownie wróciłeś na teren wroga - przeskakując mury, których nie powinieneś przekraczać, przyciągnięty imieniem, którego nie miałeś poznać, i twarzą, o której nie umiesz zapomnieć.
+      Ona jest nad tobą, na balkonie, a jej głos spływa przez nocny mrok, bez tej ostrożności, z jaką Kapuleci zwykle mówią za dnia.
+      Piastunka roznosi wiadomości. W celi Ojca Laurentego miłość może zostać potajemnie uświęcona. Ale każda minuta w tym sadzie to minuta, w której może dosięgnąć cię kapulecki miecz.
+      Aktualna sytuacja: Jesteś Romeem Montekim, stoisz w sadzie Kapuletów pod balkonem Julii. Noc jest ciepła. Wykrycie oznacza śmierć.
+    scenes:
+      - id: capulet_orchard
+        name: "Sad Kapuletów"
+        description: "Kamień i bluszcz skąpane w księżycowym świetle pod balkonem Julii."
+        exits:
+          - to: friar_cell
+            label: "Idź do Ojca Laurentego"
+      - id: friar_cell
+        name: "Cela Ojca Laurentego"
+        description: "Ciasna komnata zioł, ksiąg i niebezpiecznych nadziei."
+        exits:
+          - to: capulet_orchard
+            label: "Wróć do sadu"
 
   - number: 3
     title: "Akt III - Pojedynek i wygnanie"
@@ -53,15 +92,58 @@ acts:
       Romeo stoi między lojalnością wobec przyjaciół a tajemnym małżeństwem i próbuje ocalić pokój w mieście, które nagradza odwet.
       Kiedy poleje się krew, wyrok przyjdzie szybko: słowo Księcia potrafi rozdzielić kochanków skuteczniej niż jakikolwiek mur.
       Aktualna sytuacja: Jesteś na placu pojedynków z Merkucjem, Tybaltem i Benwoliem; tłum gęstnieje i do przemocy brakuje już tylko chwili.
+    scenes:
+      - id: dueling_square
+        name: "Plac Pojedynków"
+        description: "Zatłoczona ulica Werony, gdzie honor i gniew szybko stają się śmiertelne."
+        exits:
+          - to: juliet_chamber
+            label: "Biegnij do komnaty Julii"
+          - to: mantua_road
+            label: "Uciekaj ku Mantui"
+      - id: juliet_chamber
+        name: "Komnata Julii"
+        description: "Prywatny pokój, w którym radość i żałoba zderzają się jednej nocy."
+        exits:
+          - to: dueling_square
+            label: "Wróć na ulicę"
+          - to: mantua_road
+            label: "Uciekaj w stronę Mantui"
+      - id: mantua_road
+        name: "Droga do Mantui"
+        description: "Trudna droga poza Weronę pod wyrokiem wygnania."
+        exits:
+          - to: juliet_chamber
+            label: "Zaryzykuj powrót do Julii"
 
   - number: 4
     title: "Akt IV - Napój nasenny"
     intro: |
-      Wygnanie wyrwało Romea z Werony, a pod jego nieobecność Kapuleci przyspieszają ślub Julii z Parysem.
-      W domu posłuszeństwo staje się rozkazem, a każdy kolejny głos dorosłych zamyka Julii następną drogę ucieczki.
-      Julia szuka u Ojca Laurentego nie pocieszenia, lecz planu, który przechytrzy rodzinę, obyczaj i kalendarz ceremonii.
-      Jedna fiolka niesie nierealną nadzieję: wyglądać na martwą wystarczająco długo, by uniknąć życia w cudzej woli.
-      Aktualna sytuacja: Jesteś w komnacie Julii, gdzie Julia, Piastunka, Parys i Kapuleci naciskają jednocześnie, a czasu na decyzję prawie nie ma.
+      W noc, gdy Romeo wyjechał, coś się w tobie zmieniło. Nie jesteś już chronioną dziewczyną, która rumieniła się na widok nieznajomego po drugiej stronie sali - jesteś mężatką, której mąż jest na wygnaniu, a rodzina nic o tym nie wie.
+      Ojciec wyznaczył datę: za trzy dni Parys ma otrzymać twoją rękę. Matka przytakuje i nalega. Piastunka - która zna cię od urodzenia - zaczyna radzić, byś zapomniała o Romeu.
+      Wszyscy w Weronie mówią ci, co masz robić. Tylko Ojciec Laurenty zna prawdę i tylko on może wskazać drogę wyjścia.
+      Aktualna sytuacja: Jesteś Julią Kapulet, sama w swojej komnacie, a do ślubu, na który nie możesz się zgodzić, zostały trzy dni.
+    scenes:
+      - id: juliet_chamber
+        name: "Komnata Julii"
+        description: "Prywatny pokój, gdzie każde pukanie do drzwi przynosi nową presję."
+        exits:
+          - to: friar_cell
+            label: "Idź do Ojca Laurentego"
+          - to: capulet_crypt
+            label: "Zejdź ku rodzinnej krypcie"
+      - id: friar_cell
+        name: "Cela Ojca Laurentego"
+        description: "Ciche schronienie dla rozpaczliwej rady."
+        exits:
+          - to: juliet_chamber
+            label: "Wróć do swojej komnaty"
+      - id: capulet_crypt
+        name: "Krypta Kapuletów"
+        description: "Zimne podziemia gotowe na ciała szlachetnie urodzonych - i być może na kogoś, kto tylko na martwego wygląda."
+        exits:
+          - to: juliet_chamber
+            label: "Wróć ku domowi"
 
   - number: 5
     title: "Akt V - Grobowiec i rozrachunek"
@@ -71,3 +153,29 @@ acts:
       W krypcie Kapuletów spotkają się żałoba, pomyłka i pośpiech - trzy siły, które zamykają tragedię.
       O świcie przyjdą Książę i oba rody, by policzyć winy, straty i cenę pokoju kupionego zbyt późno.
       Aktualna sytuacja: Jesteś na ulicy w Mantui, obok są Baltazar i ubogi Aptekarz, a ty musisz zdecydować, czy wierzyć wieści, czy czekać na dowód.
+    scenes:
+      - id: mantua_street
+        name: "Ulica w Mantui"
+        description: "Biedna dzielnica, gdzie wygnanie smakuje goryczą, a prawo łatwo złamać za pieniądze."
+        exits:
+          - to: friar_cell_dawn
+            label: "Wybierz drogę ku klasztorowi"
+          - to: capulet_crypt
+            label: "Pędź do krypty Kapuletów"
+      - id: friar_cell_dawn
+        name: "Klasztorny Punkt Posłańców"
+        description: "Wąskie krużganki, gdzie pilne listy mogą nigdy nie dotrzeć na czas."
+        exits:
+          - to: mantua_street
+            label: "Wróć na drogę mantuańską"
+          - to: capulet_crypt
+            label: "Spiesz do krypty"
+      - id: capulet_crypt
+        name: "Krypta Kapuletów"
+        description: "Kamień, dym pochodni i cisza wokół mar."
+        exits:
+          - to: prince_court
+            label: "Zanieś prawdę przed oblicze Księcia"
+      - id: prince_court
+        name: "Sąd Księcia"
+        description: "Poranny sąd, gdzie liczy się żałobę i przysięga pokój złożona zbyt późno."

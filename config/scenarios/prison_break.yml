@@ -236,3 +236,37 @@ acts:
           flag: dawn_alarm
           value: true
         description: "The 5 AM alarm sounds. Guards double their patrols."
+
+      - id: chen_alerted_by_rodriguez
+        trigger:
+          actor_status:
+            actor: guard_rodriguez
+            status: alerted
+        action:
+          type: actor_enters
+          actor_id: guard_chen
+          scene: cell_block
+          new_status: alerted
+        description: "Chen hears Rodriguez's shout and rushes to the cell block."
+
+      - id: rope_noise_wakes_guard
+        trigger:
+          object_status:
+            object: rope
+            status: deployed
+        action:
+          type: actor_enters
+          actor_id: guard_rodriguez
+          scene: cell_block
+          new_status: alerted
+        description: "The scrape of a rope against concrete wakes the guard."
+
+      - id: rodriguez_spots_intruder
+        trigger:
+          player_at_scene: guard_station
+        action:
+          type: actor_enters
+          actor_id: guard_rodriguez
+          scene: guard_station
+          new_status: alerted
+        description: "Rodriguez is at the guard station and immediately spots the intruder."

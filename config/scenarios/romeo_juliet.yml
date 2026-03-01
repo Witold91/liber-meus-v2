@@ -1,12 +1,12 @@
 slug: romeo_juliet
 title: "Romeo and Juliet"
 description: "A five-act tragedy in Verona, mapped as five playable acts (chapters)."
-turn_limit: 40
+turn_limit: 999
 world_context: |
   Verona, late 16th century. Two noble houses, Montague and Capulet, are trapped in an old blood feud.
   Honor, reputation, and family duty shape every choice. Public violence brings swift civic punishment.
   The world is realistic and historical: no magic, no modern technology, no supernatural intervention.
-  You play Romeo Montague through all five acts of the tragedy.
+  The perspective shifts between protagonists as the tragedy unfolds.
 narrator_style: |
   Keep the tone tragic, immediate, and vivid. Use clear modern prose with occasional Shakespearean flavor.
   Emphasize consequence, pressure, and emotional stakes. 30-60 words.
@@ -28,24 +28,50 @@ acts:
   - number: 1
     title: "Act I - Feud and First Sight"
     intro: |
-      Verona wakes in violence and pride, with Capulet and Montague servants ready to spill blood over old insults no one remembers clearly anymore.
-      The Prince has warned both houses before, but rage moves faster than law, and every public clash tightens the noose around both families.
-      By night, the city turns from brawl to celebration as Capulet Hall opens for a masked feast filled with politics, flirtation, and dangerous curiosity.
-      You are Romeo Montague: restless, impulsive, and walking directly into enemy territory where one meeting can ignite love and ruin in the same breath.
-      Current situation: You are in Verona Square with Mercutio and Benvolio nearby as servants from both houses trade provocations.
+      In a sycamore grove outside Verona's walls, Romeo Montague sits apart from the world — heartsick over Rosaline, a Capulet beauty who has given him nothing but cold silence and polished indifference.
+      He has barely registered the morning's street brawl, which rattled the city and brought the Prince himself to the square with another ultimatum for both houses.
+      By nightfall, Verona transforms: Capulet Hall opens its doors for a masked feast, and by chance — a servant with an unreadable guest list, a name overheard — Romeo learns that Rosaline will be among the guests.
+      He goes to forget her by seeing her, and walks directly into enemy territory where one glance across a crowded hall can ignite something that will outlast both of them.
+      Current situation: You are Romeo Montague, alone in a sycamore grove east of the city, nursing an unrequited love while Verona moves without you.
     scenes:
+      - id: sycamore_grove
+        name: "Sycamore Grove"
+        description: "A quiet stand of trees on the edge of Verona where Romeo retreats to nurse his lovesickness, hidden from the brawls and politics of the city."
+        exits:
+          - to: verona_square
+            label: "Head into the city"
+          - to: montague_grounds
+            label: "Return to Montague grounds"
+      - id: montague_grounds
+        name: "Montague Grounds"
+        description: "The courtyard and entrance of the Montague estate, where family worry runs quietly beneath the surface of pride."
+        exits:
+          - to: sycamore_grove
+            label: "Return to the grove"
+          - to: verona_square
+            label: "Go toward the city"
       - id: verona_square
         name: "Verona Square"
-        description: "A public square where servants provoke one another and nobles rush to defend family honor."
+        description: "A public square where servants provoke one another and nobles rush to defend family honor. The air still carries the morning's anger."
         exits:
-          - to: capulet_hall
-            label: "Slip into Capulet Hall"
-      - id: capulet_hall
-        name: "Capulet Hall"
-        description: "A crowded feast of lanterns, viols, masks, and guarded smiles."
+          - to: sycamore_grove
+            label: "Slip back toward the grove"
+          - to: capulet_grounds
+            label: "Follow the torchlight toward Capulet Hall"
+      - id: capulet_grounds
+        name: "Capulet Grounds"
+        description: "The lantern-lit courtyard outside Capulet Hall. Masked guests arrive in clusters, music drifts through the walls, and unmasked faces draw second glances."
         exits:
           - to: verona_square
             label: "Return to the square"
+          - to: capulet_hall
+            label: "Enter the hall"
+      - id: capulet_hall
+        name: "Capulet Hall"
+        description: "A crowded feast of lanterns, viols, masks, and guarded smiles. Every face hides a name, and every name carries a history."
+        exits:
+          - to: capulet_grounds
+            label: "Step out to the grounds"
 
     actors:
       - id: sampson
@@ -68,7 +94,7 @@ acts:
         default_status: wary
       - id: benvolio
         name: "Benvolio"
-        description: "Romeo's cousin, always trying to cool hot blood."
+        description: "Romeo's cousin, always trying to cool hot blood. He is out looking for Romeo."
         scene: verona_square
         status_options: [calm, warning, alarmed]
         default_status: calm
@@ -80,16 +106,46 @@ acts:
         default_status: witty
       - id: tybalt
         name: "Tybalt"
-        description: "Juliet's cousin, proud and dangerous in defense of Capulet honor."
-        scene: capulet_hall
+        description: "Juliet's cousin, proud and dangerous in defense of Capulet honor. Already in the square and spoiling for a fight."
+        scene: verona_square
         status_options: [proud, enraged, dueling, dead]
         default_status: proud
+      - id: capulet_servant
+        name: "Capulet Servant"
+        description: "An illiterate servant tasked with delivering feast invitations, wandering the square looking for someone to read the guest list aloud."
+        scene: verona_square
+        status_options: [searching, helped, departed]
+        default_status: searching
+      - id: prince_escalus
+        name: "Prince Escalus"
+        description: "Ruler of Verona, determined to end public bloodshed."
+        scene: offstage
+        status_options: [stern, condemning, sentencing, grieving]
+        default_status: stern
+      - id: lord_montague
+        name: "Lord Montague"
+        description: "Romeo's father, burdened by the feud and quietly worried about his son's strange withdrawal from the world."
+        scene: montague_grounds
+        status_options: [concerned, defensive, mourning]
+        default_status: concerned
+      - id: lady_montague
+        name: "Lady Montague"
+        description: "Romeo's mother, fearful for her son."
+        scene: montague_grounds
+        status_options: [concerned, fearful, mourning]
+        default_status: concerned
       - id: juliet
         name: "Juliet Capulet"
         description: "A young noblewoman whose courage deepens as danger grows."
         scene: capulet_hall
-        status_options: [sheltered, curious, in_love, wed, desperate, entombed, awakened, dead]
+        status_options: [sheltered, curious, in_love]
         default_status: sheltered
+      - id: rosaline
+        name: "Rosaline"
+        description: "A Capulet niece, beautiful and devout — the object of Romeo's unrequited obsession, utterly indifferent to him."
+        scene: capulet_hall
+        status_options: [indifferent, absent]
+        default_status: indifferent
       - id: nurse
         name: "Nurse"
         description: "Juliet's caretaker, practical and fiercely devoted."
@@ -110,40 +166,29 @@ acts:
         default_status: observing
       - id: paris
         name: "Count Paris"
-        description: "A polished noble suitor favored by Capulet."
+        description: "A polished noble suitor favored by Capulet, here to press his case for Juliet's hand."
         scene: capulet_hall
         status_options: [courtly, betrothed, mourning, dead]
         default_status: courtly
-      - id: prince_escalus
-        name: "Prince Escalus"
-        description: "Ruler of Verona, determined to end public bloodshed."
-        scene: verona_square
-        status_options: [stern, condemning, sentencing, grieving]
-        default_status: stern
-      - id: lord_montague
-        name: "Lord Montague"
-        description: "Romeo's father, burdened by the feud."
-        scene: verona_square
-        status_options: [concerned, defensive, mourning]
-        default_status: concerned
-      - id: lady_montague
-        name: "Lady Montague"
-        description: "Romeo's mother, fearful for her son."
-        scene: verona_square
-        status_options: [concerned, fearful, mourning]
-        default_status: concerned
 
     objects:
       - id: capulet_guest_list
         name: "Capulet Guest List"
+        description: "A parchment list of tonight's Capulet guests, carried by an illiterate servant who needs someone to read it aloud."
         scene: verona_square
-        status_options: [carried, read, lost]
-        default_status: carried
+        status_options: [servant_carried, read, lost]
+        default_status: servant_carried
       - id: masquerade_mask
         name: "Masquerade Mask"
         scene: capulet_hall
         status_options: [unused, worn, discarded]
         default_status: unused
+      - id: romeo_sword
+        name: "Romeo's Sword"
+        description: "A Montague blade, worn at the hip out of habit and family pride."
+        scene: player_inventory
+        status_options: [sheathed, drawn, bloodied]
+        default_status: sheathed
 
     conditions:
       - id: act1_love_ignites
@@ -163,14 +208,22 @@ acts:
         status: dead
 
     events:
-      - id: act1_opening_brawl
-        act_turn: 2
+      - id: act1_brawl_escalates
+        act_turn: 3
         action:
           type: actor_enters
           actor_id: tybalt
           scene: verona_square
           new_status: enraged
-        description: "Tybalt joins the street clash and raises the stakes."
+        description: "Tybalt draws steel on Benvolio and the morning's quarrel becomes a full brawl."
+      - id: act1_montague_seeks_romeo
+        act_turn: 4
+        action:
+          type: actor_enters
+          actor_id: lord_montague
+          scene: verona_square
+          new_status: defensive
+        description: "Lord Montague arrives at the square, alarmed by the brawl and searching for his son."
       - id: act1_prince_decree
         act_turn: 5
         action:
@@ -178,16 +231,16 @@ acts:
           actor_id: prince_escalus
           scene: verona_square
           new_status: condemning
-        description: "The Prince intervenes and warns both houses."
+        description: "The Prince intervenes and warns both houses: the next public brawl will cost lives."
 
   - number: 2
     title: "Act II - Balcony and Vows"
     intro: |
-      The feast is over, but the most important words have not yet been spoken.
-      Beneath Juliet's balcony, desire must fight fear: family names, spying servants, and the certainty that discovery means disaster.
-      The Nurse runs messages, the night shortens, and every delay raises the chance that rumor outruns truth.
-      In Friar Laurence's cell, love can be made lawful in secret, but secrecy itself becomes a fuse that will burn through every later act.
-      Current situation: You are in the Capulet Orchard beneath Juliet's balcony, with Juliet and her Nurse close enough that one wrong move can expose you.
+      The feast is over and Verona has gone quiet, but you could not leave.
+      You crossed back into enemy territory on instinct — scaling walls you have no right to cross, drawn by a name you should not have learned and a face you cannot stop seeing.
+      She is above you on the balcony, her voice drifting down through the dark, unguarded in a way that no Capulet ever is in daylight.
+      The Nurse runs messages. In Friar Laurence's cell, love can be made lawful in secret. But every minute you stay in this orchard is a minute a Capulet blade could find you.
+      Current situation: You are Romeo Montague, standing in the Capulet orchard beneath Juliet's balcony. The night is warm. Discovery means death.
     scenes:
       - id: capulet_orchard
         name: "Capulet Orchard"
@@ -212,7 +265,7 @@ acts:
       - id: nurse
         name: "Nurse"
         description: "A loyal go-between carrying urgent messages."
-        scene: capulet_orchard
+        scene: offstage
         status_options: [watchful, calling, worried, grieving]
         default_status: watchful
       - id: friar_lawrence
@@ -221,6 +274,12 @@ acts:
         scene: friar_cell
         status_options: [contemplative, advising, marrying, desperate]
         default_status: contemplative
+      - id: capulet_guard
+        name: "Capulet Guard"
+        description: "A household sentry making his nightly rounds through the orchard."
+        scene: offstage
+        status_options: [patrolling, alarmed, searching]
+        default_status: patrolling
 
     objects:
       - id: wedding_vows
@@ -255,8 +314,21 @@ acts:
           scene: capulet_orchard
           new_status: calling
         description: "The Nurse calls Juliet back inside."
+      - id: act2_guard_patrols
+        act_turn: 5
+        action:
+          type: actor_enters
+          actor_id: capulet_guard
+          scene: capulet_orchard
+          new_status: patrolling
+        description: "A Capulet guard makes his nightly rounds through the orchard."
 
   - number: 3
+    hero:
+      slug: romeo
+      name: "Romeo Montague"
+      description: "A young nobleman torn between love, loyalty, and fatal impulse."
+      sex: male
     title: "Act III - Duel and Banishment"
     intro: |
       Verona at noon is hot, crowded, and brittle; one taunt can turn a street into a battlefield.
@@ -322,17 +394,15 @@ acts:
       - id: prince_escalus
         name: "Prince Escalus"
         description: "Judge of Verona's blood feud."
-        scene: dueling_square
+        scene: offstage
         status_options: [condemning, sentencing, grieving]
         default_status: condemning
-      - id: balthasar
-        name: "Balthasar"
-        description: "Romeo's servant and messenger."
-        scene: mantua_road
-        status_options: [searching, loyal, grieving]
-        default_status: searching
-
     objects:
+      - id: romeo_sword
+        name: "Romeo's Sword"
+        scene: player_inventory
+        status_options: [sheathed, drawn, bloodied]
+        default_status: sheathed
       - id: prince_banishment_edict
         name: "Banishment Edict"
         scene: dueling_square
@@ -341,13 +411,12 @@ acts:
 
     conditions:
       - id: act3_banishment
-        description: "The Prince's sentence forces Romeo into exile."
-        narrative: "The Prince's word lands heavier than steel: banishment. Love must now survive distance, fear, and the speed of rumor."
+        description: "Romeo flees Verona under sentence of banishment."
+        narrative: "The road stretches ahead into darkness. Verona, Juliet, everything — behind you. The exile has begun."
         type: act_goal
         next_act: 4
-        check: actor_has_status
-        actor: prince_escalus
-        status: sentencing
+        check: player_at_scene
+        scene: mantua_road
       - id: act3_juliet_slain
         description: "Juliet dies in the fallout of the duel."
         narrative: "After blood in the street, blood reaches the house. The feud swallows the heart of Verona's youngest hope."
@@ -373,43 +442,45 @@ acts:
           scene: dueling_square
           new_status: dueling
         description: "Tybalt presses the duel in open street."
-      - id: act3_mercutio_falls
-        act_turn: 2
-        action:
-          type: actor_enters
-          actor_id: mercutio
-          scene: offstage
-          new_status: dead
-        description: "Mercutio is killed in the chaos."
-      - id: act3_tybalt_falls
-        act_turn: 3
+      - id: act3_tybalt_turns_on_romeo
+        trigger:
+          actor_status:
+            actor: mercutio
+            status: dead
         action:
           type: actor_enters
           actor_id: tybalt
-          scene: offstage
-          new_status: dead
-        description: "Tybalt is slain in revenge."
-      - id: act3_prince_sentences
-        act_turn: 3
+          scene: dueling_square
+          new_status: enraged
+        description: "With Mercutio fallen, Tybalt's fury turns on Romeo."
+      - id: act3_prince_arrives
+        trigger:
+          actor_status:
+            actor: tybalt
+            status: dead
         action:
           type: actor_enters
           actor_id: prince_escalus
           scene: dueling_square
-          new_status: sentencing
-        description: "The Prince pronounces banishment."
+          new_status: condemning
+        description: "The Prince strides into the square to face the carnage."
 
   - number: 4
     title: "Act IV - The Sleeping Draught"
+    hero:
+      slug: juliet
+      name: "Juliet Capulet"
+      description: "Clear-eyed and resolute, determined to control her own fate."
+      sex: female
     intro: |
-      Exile has torn Romeo from Verona, and in his absence the Capulets force Juliet toward a marriage with Paris.
-      At home, obedience is demanded; in private, panic grows as every adult voice closes another door.
-      Juliet seeks Friar Laurence not for comfort but for a plan that can outwit family power, church timing, and public ceremony.
-      One vial now carries impossible hope: to appear dead long enough to escape a living prison.
-      Current situation: You are in Juliet's Chamber, where Juliet, the Nurse, Paris, and the Capulets are pressing competing demands on every moment.
+      The night Romeo left, something in you resolved. You are no longer the sheltered girl who blushed at a stranger across a banquet hall — you are a married woman whose husband is an exile and whose family does not know it.
+      Your father has set a date: Paris will have your hand within three days. Your mother nods and urges. The Nurse — who has known you since birth — has begun to counsel forgetting Romeo entirely.
+      Everyone in Verona is telling you what to do. Only the Friar knows the truth, and only he might have a way out.
+      Current situation: You are Juliet Capulet, alone in your chamber, with three days before a wedding you cannot allow to happen.
     scenes:
       - id: juliet_chamber
         name: "Juliet's Chamber"
-        description: "A private room where Juliet resists her family's plans."
+        description: "A private room where every knock at the door brings more pressure."
         exits:
           - to: friar_cell
             label: "Go to Friar Laurence"
@@ -420,43 +491,37 @@ acts:
         description: "A quiet refuge for desperate counsel."
         exits:
           - to: juliet_chamber
-            label: "Return to Juliet's chamber"
+            label: "Return to your chamber"
       - id: capulet_crypt
         name: "Capulet Crypt"
-        description: "A cold vault prepared for noble dead."
+        description: "A cold vault prepared for noble dead — and, perhaps, one who only seems so."
         exits:
           - to: juliet_chamber
             label: "Climb back toward the house"
 
     actors:
-      - id: juliet
-        name: "Juliet Capulet"
-        description: "Driven to a final gamble between obedience and self-determination."
-        scene: juliet_chamber
-        status_options: [desperate, resolved, entombed, dead]
-        default_status: desperate
       - id: nurse
         name: "Nurse"
-        description: "Distraught witness to Juliet's escalating crisis."
+        description: "Your lifelong confidante, beginning to counsel surrender."
         scene: juliet_chamber
-        status_options: [worried, grieving]
+        status_options: [worried, urging, grieving]
         default_status: worried
       - id: lord_capulet
         name: "Lord Capulet"
-        description: "Impatient to secure Juliet's marriage to Paris."
+        description: "Impatient to secure the marriage to Paris."
         scene: juliet_chamber
         status_options: [commanding, furious, mourning]
         default_status: commanding
       - id: lady_capulet
         name: "Lady Capulet"
-        description: "Presses Juliet toward the arranged match."
+        description: "Presses you toward the arranged match."
         scene: juliet_chamber
         status_options: [urging, grieving]
         default_status: urging
       - id: paris
         name: "Count Paris"
         description: "Confident that the wedding will proceed."
-        scene: juliet_chamber
+        scene: offstage
         status_options: [betrothed, mourning, dead]
         default_status: betrothed
       - id: friar_lawrence
@@ -465,12 +530,6 @@ acts:
         scene: friar_cell
         status_options: [advising, desperate]
         default_status: advising
-      - id: peter
-        name: "Peter"
-        description: "The Nurse's servant, running errands amid confusion."
-        scene: juliet_chamber
-        status_options: [attending, searching, confused]
-        default_status: attending
 
     objects:
       - id: sleeping_draught
@@ -486,20 +545,19 @@ acts:
 
     conditions:
       - id: act4_feigned_death
-        description: "Juliet's sleeping plan reaches the crypt."
-        narrative: "Juliet lies cold to all appearances, and Verona mourns what is not yet truly lost. The last act begins in the dark."
+        description: "Juliet reaches the crypt with the plan in motion."
+        narrative: "The cold stone of the crypt closes around you. To Verona, you are dead. To Romeo — if the letter reaches him — you are only waiting."
         type: act_goal
         next_act: 5
-        check: actor_has_status
-        actor: juliet
-        status: entombed
-      - id: act4_juliet_dead
-        description: "Juliet dies before the plan can unfold."
-        narrative: "The friar's strategy collapses before dawn. With Juliet gone in truth, hope gives way to pure catastrophe."
+        check: player_at_scene
+        scene: capulet_crypt
+      - id: act4_surrendered
+        description: "Juliet gives in to the arranged marriage."
+        narrative: "The vial remains untouched. Paris takes your hand at the altar. The secret marriage dissolves into silence, and Romeo has no one to come back to."
         type: danger
         check: actor_has_status
-        actor: juliet
-        status: dead
+        actor: paris
+        status: wed
 
     events:
       - id: act4_family_pressure
@@ -509,26 +567,42 @@ acts:
           actor_id: lord_capulet
           scene: juliet_chamber
           new_status: furious
-        description: "Capulet forces the marriage timetable."
-      - id: act4_friar_counsel
+        description: "Capulet forces the marriage timetable, furious at any hint of resistance."
+      - id: act4_paris_announces_date
         act_turn: 2
+        action:
+          type: actor_enters
+          actor_id: paris
+          scene: juliet_chamber
+          new_status: betrothed
+        description: "Paris arrives to announce the wedding date with cheerful certainty."
+      - id: act4_nurse_betrayal
+        act_turn: 3
+        action:
+          type: actor_enters
+          actor_id: nurse
+          scene: juliet_chamber
+          new_status: urging
+        description: "The Nurse counsels you to forget Romeo and accept Paris as a finer match."
+      - id: act4_plan_in_motion
+        trigger:
+          object_status:
+            object: sleeping_draught
+            status: taken
         action:
           type: actor_enters
           actor_id: friar_lawrence
           scene: friar_cell
-          new_status: advising
-        description: "Friar Laurence presents the sleeping-draught plan."
-      - id: act4_entombed
-        act_turn: 3
-        action:
-          type: actor_enters
-          actor_id: juliet
-          scene: capulet_crypt
-          new_status: entombed
-        description: "Juliet is laid in the Capulet crypt."
+          new_status: desperate
+        description: "With the draught taken, Friar Laurence sends the letter to Mantua and prays the plan holds."
 
   - number: 5
     title: "Act V - Tomb and Reckoning"
+    hero:
+      slug: romeo
+      name: "Romeo Montague"
+      description: "A young nobleman torn between love, loyalty, and fatal impulse."
+      sex: male
     intro: |
       In Mantua, Romeo receives news before he receives truth: Juliet is said to be dead, and time collapses into one desperate decision.
       The friar's letter is delayed, the warning arrives too late, and an apothecary's poison becomes cheaper than patience.
@@ -674,14 +748,6 @@ acts:
           scene: mantua_street
           new_status: grieving
         description: "Balthasar reports Juliet as dead."
-      - id: act5_poison_purchase
-        act_turn: 2
-        action:
-          type: actor_enters
-          actor_id: apothecary
-          scene: mantua_street
-          new_status: bribed
-        description: "The Apothecary yields poison for coin."
       - id: act5_juliet_wakes
         act_turn: 3
         action:
@@ -690,11 +756,23 @@ acts:
           scene: capulet_crypt
           new_status: awakened
         description: "Juliet wakes in the crypt."
-      - id: act5_tragic_close
-        act_turn: 4
+      - id: act5_romeo_enters_crypt
+        trigger:
+          player_at_scene: capulet_crypt
+        action:
+          type: actor_enters
+          actor_id: friar_lawrence
+          scene: capulet_crypt
+          new_status: desperate
+        description: "Friar Laurence races into the crypt, desperate to stop what he fears is already too late."
+      - id: act5_poison_taken
+        trigger:
+          object_status:
+            object: poison_vial
+            status: emptied
         action:
           type: actor_enters
           actor_id: juliet
-          scene: offstage
+          scene: capulet_crypt
           new_status: dead
-        description: "The tragedy reaches its canonical end."
+        description: "With Romeo gone, Juliet finds no reason to wake into a world without him."

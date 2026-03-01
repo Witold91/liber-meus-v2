@@ -107,6 +107,7 @@ pl:
         actors_present: "OBECNE POSTACIE:"
         objects_present: "OBECNE OBIEKTY:"
         list_item: "  - %{name}: %{statuses}"
+        exits: "WYJŚCIA (dostępne lokacje): %{exits}"
         recent_actions_header: "OSTATNIE DZIAŁANIA:"
         recent_action_item: "  Tura %{turn_number}: %{action} → %{resolution}"
         player_action: "DZIAŁANIE GRACZA: %{action}"
