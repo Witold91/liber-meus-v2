@@ -60,6 +60,10 @@ module ArenaFlows
           event_diff = ScenarioEventService.event_to_scene_diff(event)
           next if event_diff.empty?
           world_state = Arena::WorldStateManager.new(world_state).apply_scene_diff(event_diff, scenario: scenario)
+          if event.key?("trigger")
+            world_state["fired_events"] ||= []
+            world_state["fired_events"] |= [ event["id"] ]
+          end
         end
         world_state["act_turn"] = act_turn_number
 
@@ -201,6 +205,7 @@ module ArenaFlows
       state = world_state.deep_dup
       state["act_number"] = act_number
       state["act_turn"] = 0
+      state["fired_events"] = []
       state["player_scene"] = presenter.scenes.first&.dig("id")
       state["actors"] = actors
       state["objects"] = objects

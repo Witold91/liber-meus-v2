@@ -9,6 +9,11 @@ class ScenarioEventService
     presenter = Arena::ScenarioPresenter.new(scenario, world_state["act_number"] || 1, world_state)
 
     presenter.events.select do |event|
+      if event.key?("trigger")
+        next false if (world_state["fired_events"] || []).include?(event["id"])
+        next state_trigger_met?(event["trigger"], world_state)
+      end
+
       target_turn = if event.key?("act_turn")
         act_turn_number
       else
@@ -40,6 +45,26 @@ class ScenarioEventService
   end
 
   private
+
+  def self.state_trigger_met?(trigger, world_state)
+    if (actor_cond = trigger["actor_status"])
+      actor_state = world_state.dig("actors", actor_cond["actor"])
+      status = actor_state&.dig("status") || actor_state&.dig("statuses")&.first
+      return status == actor_cond["status"]
+    end
+
+    if (obj_cond = trigger["object_status"])
+      obj_state = world_state.dig("objects", obj_cond["object"])
+      status = obj_state&.dig("status") || obj_state&.dig("statuses")&.first
+      return status == obj_cond["status"]
+    end
+
+    if (scene_id = trigger["player_at_scene"])
+      return world_state["player_scene"] == scene_id
+    end
+
+    false
+  end
 
   def self.condition_met?(condition, world_state)
     return true if condition.nil?

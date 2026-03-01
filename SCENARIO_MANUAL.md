@@ -14,32 +14,33 @@ Examples:
 
 ## 2. Engine Model (Important)
 
-A scenario is chapter-based.
+A scenario is act-based.
 
-- A scenario has one or more `chapters`.
-- Each chapter has its own stages, actors, objects, conditions, and events.
+- A scenario has one or more `acts`.
+- Each act has its own scenes, actors, objects, conditions, and events.
 - Game flow uses:
   - global turn number (`turn_number`) across the whole game
-  - chapter turn number (`chapter_turn`) that resets to `0` when a new chapter starts
+  - act turn number (`act_turn`) that resets to `0` when a new act starts
 
 ### End condition behavior
 
 Conditions are checked in this order:
 1. Turn limit reached (`turn_limit`)
 2. Health depleted
-3. Chapter conditions
+3. Act conditions (top to bottom)
 
-Supported condition `type` values in practice:
+Supported condition `type` values:
 - `goal`: complete the game
 - `danger`: fail the game
-- `chapter_goal`: move to the next chapter if `next_chapter` exists
+- `act_goal`: move to the next act if `next_act` exists
 
-If `chapter_goal` is met and next chapter exists:
-- current chapter is marked completed
-- next chapter is created/activated
-- world state for actors/objects resets to defaults of next chapter
-- player stage is set to the first stage of next chapter
-- `chapter_turn` resets to `0`
+If `act_goal` is met and the next act exists:
+- current act is marked completed
+- next act is created/activated
+- world state for actors/objects resets to defaults of the next act
+- player scene is set to the first scene of the next act
+- `act_turn` resets to `0`
+- `fired_events` resets to `[]`
 - game remains `active`
 
 ## 3. Full Scenario Schema
@@ -54,25 +55,32 @@ world_context: |
 narrator_style: |
   Writing style instructions for narrator.
 
+theme:
+  bg_color: "#0d0d0d"
+  text_color: "#c8c8b4"
+  accent_color: "#8ab4a0"
+  font_family: "'Courier New', Courier, monospace"
+  bg_image: ~
+
 hero:
   slug: hero_slug
   name: "Hero Name"
   description: "Who the hero is."
   sex: male
 
-chapters:
+acts:
   - number: 1
-    title: "Chapter Title"
+    title: "Act Title"
     intro: |
-      Intro text for prologue/transition.
+      Intro text shown as the opening prologue or act transition.
 
-    stages:
-      - id: stage_a
-        name: "Stage A"
+    scenes:
+      - id: scene_a
+        name: "Scene A"
         description: "What the place is."
         exits:
-          - to: stage_b
-            label: "Go to stage B"
+          - to: scene_b
+            label: "Go to scene B"
             locked: true
           - to: finale
             label: "Exit"
@@ -82,27 +90,27 @@ chapters:
       - id: npc_id
         name: "NPC Name"
         description: "Who this actor is."
-        stage: stage_a
+        scene: scene_a
         status_options: [calm, alerted, dead]
         default_status: calm
 
     objects:
       - id: object_id
         name: "Object Name"
-        stage: stage_a
+        scene: scene_a
         status_options: [intact, broken, taken]
         default_status: intact
 
     conditions:
-      - id: chapter_done
-        description: "Chapter completion condition"
-        narrative: "Text shown in ending/transition turn."
-        type: chapter_goal
-        next_chapter: 2
-        check: player_at_stage
-        stage: finale
+      - id: act_done
+        description: "Act completion condition"
+        narrative: "Text shown in the ending/transition turn."
+        type: act_goal
+        next_act: 2
+        check: player_at_scene
+        scene: finale
 
-      - id: chapter_fail
+      - id: act_fail
         description: "Failure condition"
         narrative: "Failure text"
         type: danger
@@ -111,8 +119,9 @@ chapters:
         status: alerted
 
     events:
+      # Turn-triggered event (fires at a specific turn number)
       - id: timed_event
-        chapter_turn: 2
+        act_turn: 2
         condition:
           actor_status:
             id: npc_id
@@ -120,17 +129,30 @@ chapters:
         action:
           type: actor_enters
           actor_id: npc_id
-          stage: stage_b
+          scene: scene_b
           new_status: alerted
         description: "Optional event description"
+
+      # State-triggered event (fires when world state matches condition)
+      - id: state_event
+        trigger:
+          actor_status:
+            actor: npc_id
+            status: alerted
+        action:
+          type: actor_enters
+          actor_id: npc_id
+          scene: scene_a
+          new_status: dead
+        description: "Fires once when npc_id becomes alerted."
 ```
 
 ## 4. Supported Condition Checks
 
-Only these `check` values are evaluated:
+Only these `check` values are evaluated in `conditions`:
 
-- `player_at_stage`
-  - required key: `stage`
+- `player_at_scene`
+  - required key: `scene`
 - `actor_has_status`
   - required keys: `actor`, `status`
 - `all_actors_have_status`
@@ -140,16 +162,30 @@ If you use anything else, it will not trigger.
 
 ## 5. Supported Event Triggers and Actions
 
-### Event timing keys
+### Turn-triggered events
 
+Use `act_turn` or `trigger_turn` to fire at a specific turn number:
+
+- `act_turn`: compares against per-act turn number (recommended for act-scoped stories)
 - `trigger_turn`: compares against global `turn_number`
-- `chapter_turn`: compares against per-chapter turn number (recommended for chapter-scoped stories)
 
-If both are present, `chapter_turn` wins.
+Both support an optional `condition` block (see below).
 
-### Event condition support
+```yaml
+- id: guard_wakes
+  act_turn: 3
+  condition:
+    actor_status:
+      id: guard_rodriguez
+      status: asleep
+  action:
+    type: actor_enters
+    actor_id: guard_rodriguez
+    scene: cell_block
+    new_status: awake
+```
 
-Only this condition shape is supported:
+Only this `condition` shape is supported:
 
 ```yaml
 condition:
@@ -158,41 +194,116 @@ condition:
     status: expected_status
 ```
 
+### State-triggered events
+
+Use a `trigger:` key (instead of `act_turn`/`trigger_turn`) to fire when the world state matches a condition. State-triggered events fire **exactly once** — they are tracked in `world_state["fired_events"]` and skipped on subsequent turns even if the condition remains true. `fired_events` is cleared on act transition.
+
+Three trigger types are supported:
+
+#### `actor_status` — fires when an actor reaches a given status
+
+```yaml
+- id: chen_alerted_by_rodriguez
+  trigger:
+    actor_status:
+      actor: guard_rodriguez
+      status: alerted
+  action:
+    type: actor_enters
+    actor_id: guard_chen
+    scene: cell_block
+    new_status: alerted
+  description: "Chen hears Rodriguez's shout and rushes to the cell block."
+```
+
+#### `object_status` — fires when an object reaches a given status
+
+```yaml
+- id: rope_noise_wakes_guard
+  trigger:
+    object_status:
+      object: rope
+      status: deployed
+  action:
+    type: actor_enters
+    actor_id: guard_rodriguez
+    scene: cell_block
+    new_status: alerted
+  description: "The scrape of a rope against concrete wakes the guard."
+```
+
+#### `player_at_scene` — fires when the player enters a given scene
+
+```yaml
+- id: rodriguez_spots_intruder
+  trigger:
+    player_at_scene: guard_station
+  action:
+    type: actor_enters
+    actor_id: guard_rodriguez
+    scene: guard_station
+    new_status: alerted
+  description: "Rodriguez spots the intruder the moment they enter."
+```
+
 ### Event action support
 
 - `actor_enters`
-  - moves actor to stage (`actor_moved_to`)
+  - moves actor to a scene (`actor_moved_to`)
   - optionally updates status (`new_status`)
 
 - `world_flag`
-  - currently a no-op in state application (kept for future use)
+  - currently a no-op in state application (reserved for future use)
 
 ## 6. Narrator Diff Contract (What AI Can Change)
 
-The narrator service can output a `diff`. Supported keys:
+The narrator service outputs a `diff`. Supported keys:
 
 - `actor_updates`: set actor status
-- `object_updates`: set object status
-- `actor_moved_to`: move actor to stage
-- `player_moved_to`: move player to stage
+  ```json
+  { "actor_id": { "status": "new_status" } }
+  ```
+- `object_updates`: set object status and/or scene
+  ```json
+  { "object_id": { "status": "taken", "scene": "player_inventory" } }
+  ```
+- `actor_moved_to`: move actor to a scene
+  ```json
+  { "actor_id": "scene_id" }
+  ```
+- `player_moved_to`: move player to a scene (adjacency-validated)
+  ```json
+  "scene_id"
+  ```
 
 Notes:
-- Unknown object IDs in `object_updates` become `improvised_objects`.
-- `offstage` is a valid stage target for actors and player.
+- `player_moved_to` is silently ignored if the target scene is not adjacent to the player's current scene.
+- Unknown actor/object IDs in diffs are resolved by slug if possible; unknown objects become `improvised_objects`.
+- `"offstage"` is a valid scene target for actors.
 
-## 7. Multi-Chapter Design Rules
+### Player inventory
 
-For each chapter:
+To place an item in the player's possession, set `"scene": "player_inventory"` in `object_updates`:
 
-1. Include at least one stage.
-2. Set an explicit chapter-ending condition:
-   - `type: chapter_goal` for Acts 1..N-1
-   - `type: goal` or `type: danger` for final act
-3. Use `chapter_turn` events for per-act pacing.
-4. Keep chapter stage IDs self-consistent (exits must target valid stage IDs in that chapter).
+```json
+{ "sword": { "status": "taken", "scene": "player_inventory" } }
+```
+
+To drop an item at a location, set `"scene": "scene_id"`. Improvised items (not in the scenario YAML) without a `scene` value are treated as carried by default.
+
+## 7. Multi-Act Design Rules
+
+For each act:
+
+1. Include at least one scene.
+2. Set an explicit act-ending condition:
+   - `type: act_goal` for acts 1..N-1
+   - `type: goal` or `type: danger` for the final act
+3. Use `act_turn` events for per-act pacing.
+4. Keep act scene IDs self-consistent (exits must target valid scene IDs within the same act).
 
 Important:
-- `turn_limit` is global across the whole scenario, not per chapter.
+- `turn_limit` is global across the whole scenario, not per act.
 - Choose a large enough `turn_limit` for multi-act stories.
 
 ## 8. Localization Overlay Rules
@@ -207,12 +318,12 @@ Top-level:
 Hero:
 - `hero.name`, `hero.description`
 
-Chapter-level:
-- `chapters[].title`, `chapters[].intro`
+Act-level:
+- `acts[].title`, `acts[].intro`
 
-Stage-level:
-- `stages[].name`, `stages[].description`
-- `stages[].exits[].label` (matched by `to`)
+Scene-level:
+- `scenes[].name`, `scenes[].description`
+- `scenes[].exits[].label` (matched by `to`)
 
 Actor-level:
 - `actors[].name`, `actors[].description`
@@ -227,14 +338,14 @@ Not merged by locale overlay:
 - events
 - status_options
 - default_status
-- structural additions (new chapters/stages/actors/objects)
+- structural additions (new acts/scenes/actors/objects)
 
 ## 9. Authoring Workflow
 
 1. Copy a scenario template (`prison_break.yml` or `romeo_juliet.yml`).
 2. Fill top-level metadata (`slug`, title, etc.).
-3. Define chapter 1 completely (stages, actors, objects, conditions, events).
-4. Add later chapters and chapter goals.
+3. Define act 1 completely (scenes, actors, objects, conditions, events).
+4. Add later acts and act goals.
 5. Add fail conditions (`danger`) for meaningful failure states.
 6. Add optional locale overlay.
 7. Reload and test.
@@ -263,19 +374,23 @@ bin/rails test
 
 ## 11. Common Mistakes
 
+- Using `stage` instead of `scene` for actor/object locations or condition/event keys.
+- Using `chapter_turn` or `chapter_goal` — the correct keys are `act_turn` and `act_goal`.
 - Using unsupported `check` names in `conditions`.
-- Forgetting `next_chapter` on `chapter_goal`.
+- Forgetting `next_act` on an `act_goal` condition.
 - Setting `turn_limit` too low for multi-act scenarios.
 - Adding locale entries for keys the merger does not support.
-- Referencing stage IDs in exits/events that do not exist in that chapter.
+- Referencing scene IDs in exits/events that do not exist in that act.
 - Expecting `world_flag` events to mutate world state (they currently do not).
+- Giving state-triggered events no `id` — they need one to track firing in `fired_events`.
 
 ## 12. Quick Multi-Act Checklist
 
-- [ ] Scenario has `chapters` with ascending `number`
-- [ ] Every chapter has `stages`, `actors`, `objects`
-- [ ] Acts 1..N-1 end via `type: chapter_goal`
+- [ ] Scenario has `acts` with ascending `number`
+- [ ] Every act has `scenes`, `actors`, `objects`
+- [ ] Acts 1..N-1 end via `type: act_goal`
 - [ ] Final act has `goal` and/or `danger`
-- [ ] Events use `chapter_turn` for chapter pacing
+- [ ] Turn-triggered events use `act_turn` for act pacing
+- [ ] State-triggered events have unique `id` values
 - [ ] `turn_limit` fits total scenario length
 - [ ] Optional locale overlay added and merged keys are valid
