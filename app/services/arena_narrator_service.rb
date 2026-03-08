@@ -4,8 +4,8 @@ class ArenaNarratorService
   PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
   def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [])
-    client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
-    model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
+    client = AIClient.client
+    model = AIClient.narrator_model
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
@@ -32,8 +32,8 @@ class ArenaNarratorService
   end
 
   def self.narrate_epilogue(scene_context, action, resolution_tag, ending_narrative, world_context: nil, narrator_style: nil)
-    client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
-    model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
+    client = AIClient.client
+    model = AIClient.narrator_model
 
     system_prompt = File.read(EPILOGUE_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
@@ -65,8 +65,8 @@ class ArenaNarratorService
   end
 
   def self.narrate_prologue(scene_context, act_intro, world_context: nil, narrator_style: nil)
-    client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
-    model = ENV.fetch("AI_NARRATOR_MODEL", "gpt-4o-mini")
+    client = AIClient.client
+    model = AIClient.narrator_model
 
     system_prompt = File.read(PROLOGUE_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?

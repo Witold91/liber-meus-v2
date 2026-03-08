@@ -2,8 +2,8 @@ class DifficultyRatingService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "difficulty_rating.txt")
 
   def self.rate(action, scene_context, hero, recent_actions = [], world_context: nil)
-    client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_API_KEY"))
-    model = ENV.fetch("AI_DIFFICULTY_MODEL", "gpt-4o-mini")
+    client = AIClient.client
+    model = AIClient.difficulty_model
 
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?

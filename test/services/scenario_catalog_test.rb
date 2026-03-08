@@ -88,7 +88,7 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     act = scenario["acts"].first
     scene = act["scenes"].find { |s| s["id"] == "verona_square" }
     assert_not_nil scene
-    assert_equal "Plac w Weronie (Akt I)", scene["name"]
+    assert_equal "Plac w Weronie", scene["name"]
   end
 
   test "find with unsupported locale falls back to English" do

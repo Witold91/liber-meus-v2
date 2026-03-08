@@ -28,7 +28,7 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     }
     client_mock = mock
     client_mock.expects(:chat).returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     result, tokens = DifficultyRatingService.rate("Remove the grate", @scene_context, @hero)
     assert_equal "easy", result["difficulty"]
@@ -49,14 +49,14 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
       assert_includes msg, "failure"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     recent = [ { turn_number: 1, action: "climb to balcony", resolution: "failure" } ]
     DifficultyRatingService.rate("try again", @scene_context, @hero, recent)
   end
 
   test "rate raises AIConnectionError on API error" do
-    OpenAI::Client.expects(:new).raises(StandardError, "network error")
+    AIClient.expects(:client).raises(StandardError, "network error")
 
     assert_raises(::AIConnectionError) do
       DifficultyRatingService.rate("Do something", @scene_context, @hero)
@@ -70,7 +70,7 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
     }
     client_mock = mock
     client_mock.expects(:chat).returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     assert_raises(::AIConnectionError) do
       DifficultyRatingService.rate("Do something", @scene_context, @hero)

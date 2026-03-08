@@ -37,7 +37,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert_includes user_message, "[id=loose_grate]"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     result, tokens = ArenaNarratorService.narrate("Remove the grate", "success", "easy", @scene_context, @turn_context)
     assert result.key?("narrative")
@@ -57,7 +57,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert_includes user_message, "HEALTH LOST: 18"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     ArenaNarratorService.narrate("Fight the guard", "failure", "medium", @scene_context, @turn_context, 18)
   end
@@ -73,7 +73,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert_not_includes user_message, "HEALTH LOST"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     ArenaNarratorService.narrate("Look around", "success", "trivial", @scene_context, @turn_context, 0)
   end
@@ -90,7 +90,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert_includes user_message, "[id=guard_rodriguez]"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     turn_context = {
       world_state_delta: [ { type: "actor", id: "guard_rodriguez", name: "Guard Rodriguez", status: "distracted", scene: nil } ],
@@ -112,7 +112,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert_includes user_message, "Torres agreed to help"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     turn_context = {
       world_state_delta: [],
@@ -134,7 +134,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert_includes user_message, "remove the grate"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     turn_context = {
       world_state_delta: [],
@@ -159,7 +159,7 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert world_pos < style_pos, "WORLD CONTEXT should appear before STYLE DIRECTIVE"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     ArenaNarratorService.narrate("Look around", "success", "trivial", @scene_context, @turn_context, 0,
       world_context: "Renaissance Verona, late at night.",
@@ -178,13 +178,13 @@ class ArenaNarratorServiceTest < ActiveSupport::TestCase
       assert_includes system_prompt, "terse"
       true
     end.returns(fake_response)
-    OpenAI::Client.expects(:new).returns(client_mock)
+    AIClient.expects(:client).returns(client_mock)
 
     ArenaNarratorService.narrate("Look around", "success", "trivial", @scene_context, @turn_context, 0, narrator_style: "Write in a terse style.")
   end
 
   test "narrate raises AIConnectionError on API error" do
-    OpenAI::Client.expects(:new).raises(StandardError, "network error")
+    AIClient.expects(:client).raises(StandardError, "network error")
 
     assert_raises(::AIConnectionError) do
       ArenaNarratorService.narrate("Do something", "success", "easy", @scene_context, @turn_context)
