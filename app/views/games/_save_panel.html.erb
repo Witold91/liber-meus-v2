@@ -20,7 +20,7 @@
     <% end %>
   </div>
 
-  <% saves.each do |save| %>
+  <% saves.first(5).each do |save| %>
     <div class="save-row">
       <div>
         <span class="save-label"><%= save.label %></span>
@@ -31,6 +31,14 @@
           class: "replay-btn",
           title: "Load this save",
           form: { data: { turbo_confirm: t("views.games.saves.confirm_load", label: save.label, default: "Load save '#{save.label}'? All progress after this point will be lost.") } } %>
+    </div>
+  <% end %>
+
+  <% if saves.size > 5 %>
+    <div style="margin-top: 0.4rem; text-align: right;">
+      <%= link_to t("views.games.saves.view_all", default: "View all (%{count})" % { count: saves.size }),
+          saves_game_path(game),
+          class: "save-meta", style: "text-decoration: underline;" %>
     </div>
   <% end %>
 </div>

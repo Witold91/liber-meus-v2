@@ -10,8 +10,10 @@
   .actor-item, .object-item, .exit-item { padding: 0.22rem 0; color: #7a6a58; }
   .actor-name, .object-name { color: #b0a890; }
   .status-badge { display: inline-block; background: #1a1610; border: 1px solid #2e2418; color: #5a5040; padding: 0 0.3rem; font-size: 0.65rem; margin-left: 0.3rem; font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
-  .exit-label { color: #6a8a78; }
-  .exit-arena { color: #b8a850; }
+  .exit-label { color: #6a8a78; cursor: pointer; }
+  .exit-label:hover { color: #8abaa0; }
+  .exit-arena { color: #b8a850; cursor: pointer; }
+  .exit-arena:hover { color: #d8c870; }
   .scene-empty { font-family: 'Lora', Georgia, serif; font-style: italic; color: #3a3020; }
   /* Actor description tooltip */
   .actor-item { position: relative; }
@@ -79,7 +81,9 @@
         <div class="scene-section-label"><%= t("views.scene_panel.exits") %></div>
         <% scene_context[:exits].each do |exit_def| %>
           <div class="exit-item">
-            <span class="<%= exit_def['arena_exit'] ? 'exit-arena' : 'exit-label' %>">
+            <span class="<%= exit_def['arena_exit'] ? 'exit-arena' : 'exit-label' %>"
+                  data-action="click->game#fillAction"
+                  data-label="<%= exit_def['label'] %>">
               → <%= exit_def['label'] %><%= " ★" if exit_def['arena_exit'] %>
             </span>
           </div>

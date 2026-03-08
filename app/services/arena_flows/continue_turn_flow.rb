@@ -225,15 +225,16 @@ module ArenaFlows
       actors = previous_actors.dup
       objects = previous_objects.dup
 
-      # Layer on the new act's definitions, preserving previous statuses
+      # Layer on the new act's definitions
+      # Priority: force_status > carried-over status > default_status
       presenter.actors.each do |actor|
         prev = previous_actors[actor["id"]]
-        status = prev ? prev["status"] : actor["default_status"]
+        status = actor["force_status"] || (prev && prev["status"]) || actor["default_status"]
         actors[actor["id"]] = { "scene" => actor["scene"], "status" => status }
       end
       presenter.objects.each do |object|
         prev = previous_objects[object["id"]]
-        status = prev ? prev["status"] : object["default_status"]
+        status = object["force_status"] || (prev && prev["status"]) || object["default_status"]
         objects[object["id"]] = { "scene" => object["scene"], "status" => status }
       end
 

@@ -346,6 +346,71 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       "Actor scene should come from Act 3's definition"
   end
 
+  test "force_status overrides carried-over status" do
+    two_act_scenario = {
+      "slug" => "prison_break",
+      "world_context" => "",
+      "narrator_style" => "",
+      "turn_limit" => 20,
+      "acts" => [
+        {
+          "number" => 1,
+          "intro" => "Act I",
+          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "actors" => [
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "cell", "default_status" => "calm", "status_options" => %w[calm hostile friendly] }
+          ],
+          "objects" => [
+            { "id" => "obj_x", "name" => "Object X", "scene" => "cell", "default_status" => "intact", "status_options" => %w[intact broken repaired] }
+          ],
+          "conditions" => [],
+          "events" => []
+        },
+        {
+          "number" => 2,
+          "intro" => "Act II",
+          "scenes" => [ { "id" => "yard", "name" => "Yard", "description" => "", "exits" => [] } ],
+          "actors" => [
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "yard", "default_status" => "calm", "force_status" => "hostile", "status_options" => %w[calm hostile friendly] },
+            { "id" => "npc_b", "name" => "NPC B", "scene" => "yard", "default_status" => "calm", "force_status" => "friendly", "status_options" => %w[calm friendly] }
+          ],
+          "objects" => [
+            { "id" => "obj_x", "name" => "Object X", "scene" => "yard", "default_status" => "intact", "force_status" => "repaired", "status_options" => %w[intact broken repaired] }
+          ],
+          "conditions" => [],
+          "events" => []
+        }
+      ]
+    }
+
+    # NPC A became friendly and Object X was broken in Act 1
+    @game.update!(world_state: @game.world_state.merge(
+      "actors" => { "npc_a" => { "scene" => "cell", "status" => "friendly" } },
+      "objects" => { "obj_x" => { "scene" => "cell", "status" => "broken" } }
+    ))
+
+    ScenarioCatalog.stubs(:find!).returns(two_act_scenario)
+    ScenarioCatalog.stubs(:find).returns(two_act_scenario)
+    EndConditionChecker.stubs(:check).returns(
+      { "id" => "act1_done", "type" => "act_goal", "next_act" => 2, "narrative" => "Act I closes." }
+    )
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "End of act." }, 55 ])
+    ArenaNarratorService.stubs(:narrate_prologue).returns([ { "narrative" => "New act begins.", "memory_note" => "" }, 45 ])
+
+    ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Advance")
+
+    @game.reload
+    # force_status should override the carried-over "friendly"
+    assert_equal "hostile", @game.world_state.dig("actors", "npc_a", "status"),
+      "force_status should override carried-over status"
+    # force_status should work for new actors too (overrides default_status)
+    assert_equal "friendly", @game.world_state.dig("actors", "npc_b", "status"),
+      "force_status should override default_status for new actors"
+    # force_status should work for objects too
+    assert_equal "repaired", @game.world_state.dig("objects", "obj_x", "status"),
+      "force_status should override carried-over object status"
+  end
+
   test "raises AIConnectionError and creates no turn when first AI call fails" do
     DifficultyRatingService.stubs(:rate).raises(::AIConnectionError, "network error")
 

@@ -20,7 +20,7 @@ class GamesController < ApplicationController
 
   def show
     @recent_turns = @game.turns.order(:turn_number)
-    @scenario = ScenarioCatalog.find(@game.scenario_slug) if @game.arena_scenario?
+    @scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language) if @game.arena_scenario?
     @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     @acts_for_replay = @game.acts.order(:number)
@@ -42,7 +42,7 @@ class GamesController < ApplicationController
     turn = GameService.continue_turn(game: @game, action: action)
     @game.reload
 
-    @scenario = ScenarioCatalog.find(@game.scenario_slug) if @game.arena_scenario?
+    @scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language) if @game.arena_scenario?
     @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     ending_turn = @game.turns.ending.find_by(turn_number: turn.turn_number + 1)
@@ -135,7 +135,7 @@ class GamesController < ApplicationController
   end
 
   def set_theme
-    scenario = ScenarioCatalog.find(@game.scenario_slug)
+    scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language)
     raw_theme = scenario&.dig("theme") || {}
     @theme = DEFAULT_THEME.merge(raw_theme)
   end

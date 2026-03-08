@@ -95,6 +95,7 @@ acts:
         scene: scene_a
         status_options: [calm, alerted, dead]
         default_status: calm
+        force_status: alerted  # optional: override carried-over status at act start
 
     objects:
       - id: object_id
@@ -102,6 +103,7 @@ acts:
         scene: scene_a
         status_options: [intact, broken, taken]
         default_status: intact
+        force_status: broken   # optional: override carried-over status at act start
 
     conditions:
       - id: act_done
@@ -334,10 +336,29 @@ When using this feature:
 
 Actor and object statuses survive act transitions. If an NPC is killed or an object is broken in Act 1, that status carries forward to all later acts — even if the actor/object is absent from intermediate acts. Only actors/objects appearing for the first time in a new act receive their `default_status`.
 
+Status resolution priority at act start:
+1. `force_status` (if set on the actor/object in the new act) — always wins
+2. Carried-over status from previous world state — preserves history
+3. `default_status` — used only for actors/objects with no prior history
+
 This means you can rely on earlier-act outcomes mechanically:
 - A dead NPC will still be dead when they reappear in a later act.
 - A broken object stays broken.
+- Use `force_status` to override history when the narrative demands it.
 - Scene placement (where an actor/object is located) resets to the new act's definition — only the status carries over.
+
+Example — force a status regardless of what happened before:
+
+```yaml
+# Act 3: Tybalt is always enraged here, no matter what happened earlier
+actors:
+  - id: tybalt
+    name: "Tybalt"
+    scene: dueling_square
+    status_options: [calm, enraged, dead]
+    default_status: calm
+    force_status: enraged
+```
 
 Important:
 - `turn_limit` is global across the whole scenario, not per act.

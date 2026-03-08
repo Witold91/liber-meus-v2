@@ -77,6 +77,13 @@ export default class extends Controller {
       })
   }
 
+  fillAction(event) {
+    const label = event.currentTarget.dataset.label
+    if (!label || !this.hasInputTarget) return
+    this.inputTarget.value = label
+    this.inputTarget.focus()
+  }
+
   toggleWorldInfo() {
     const open = this.worldPanelTarget.classList.toggle("mobile-open")
     if (this.hasWorldBtnTarget) {
