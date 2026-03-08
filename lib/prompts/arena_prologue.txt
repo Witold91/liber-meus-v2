@@ -10,4 +10,4 @@ Return JSON with:
 - "narrative": 2-4 paragraphs of vivid opening prose. Second person, present tense ("You stand at the edge of..."). Do not end with a question or prompt for action.
 - "memory_note": 1-2 sentences capturing the act's key situation and objective (this will persist as context throughout the act — make it precise and useful)
 
-Respond ONLY with valid JSON. No markdown code blocks, no extra text.
+Respond ONLY with valid JSON. Use literal newline characters (\n) inside strings for line breaks — never use " / " as a line separator. No markdown code blocks, no extra text.

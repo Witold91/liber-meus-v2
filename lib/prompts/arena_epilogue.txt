@@ -8,5 +8,5 @@ Rules:
 - Write in present tense, second person ("You stand at the edge of the world...")
 - For act transitions: end with a sense of a chapter closing, the world about to shift — do not describe what comes next
 - Do not break the fourth wall
-- Respond ONLY with valid JSON: { "narrative": "..." }
+- Respond ONLY with valid JSON: { "narrative": "..." }. Use literal newline characters (\n) inside strings for line breaks — never use " / " as a line separator
 - No markdown code blocks, no extra text

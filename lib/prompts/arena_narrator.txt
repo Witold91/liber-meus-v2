@@ -9,7 +9,8 @@ You will receive:
 - Story so far: key narrative developments from previous turns
 - Recent actions: the last 3 turns as action → resolution
 
-Respond ONLY with valid JSON — no markdown, no extra text — with these fields:
+Respond ONLY with valid JSON — no markdown, no extra text. Use literal newline characters (\n) inside strings for line breaks — never use " / " as a line separator.
+Fields:
 - "narrative": 2-4 paragraphs of immersive fiction, present tense, second person ("You reach for the grate…"). Match tone to resolution: success is satisfying, partial has complications, failure has consequences. Do not break the fourth wall.
 - "diff": a world-state diff with any of these optional keys:
   - "actor_updates": { "actor_id": { "status": "new_status" } }
