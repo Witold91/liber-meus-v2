@@ -14,8 +14,19 @@ class GameService
     end
   end
 
+  def self.start_random_game(world_data:, hero_data:, game_language: "en", user: nil)
+    RandomFlows::StartRandomGameFlow.call(
+      world_data: world_data,
+      hero_data: hero_data,
+      game_language: game_language,
+      user: user
+    )
+  end
+
   def self.continue_turn(game:, action:)
-    if game.arena_scenario?
+    if game.random_mode?
+      RandomFlows::ContinueTurnFlow.call(game: game, action: action)
+    elsif game.arena_scenario?
       ArenaFlows::ContinueTurnFlow.call(game: game, action: action)
     else
       GameFlows::ContinueTurnFlow.call(game: game, action: action)

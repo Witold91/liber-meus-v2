@@ -3,11 +3,11 @@ class ArenaNarratorService
   EPILOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_epilogue.txt")
   PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [])
+  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil)
     client = AIClient.client
     model = AIClient.narrator_model
 
-    system_prompt = File.read(SYSTEM_PROMPT_PATH)
+    system_prompt = File.read(prompt_path || SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
     system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
     user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions)
@@ -16,6 +16,7 @@ class ArenaNarratorService
       parameters: {
         model: model,
         temperature: 0.7,
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }
@@ -49,6 +50,7 @@ class ArenaNarratorService
       parameters: {
         model: model,
         temperature: 0.7,
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }
@@ -81,6 +83,7 @@ class ArenaNarratorService
       parameters: {
         model: model,
         temperature: 0.7,
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }

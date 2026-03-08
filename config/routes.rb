@@ -9,6 +9,14 @@ Rails.application.routes.draw do
   scope "(:locale)", locale: /en|pl/ do
     resource :scenario_select, controller: :scenario_select, only: [ :show, :create ]
 
+    resource :random_setup, controller: :random_setup, only: [ :new ] do
+      post :create_setting
+      get  :setting
+      post :create_hero
+      get  :hero
+      post :create_game
+    end
+
     resources :games, only: [ :index, :show ] do
       member do
         post :continue

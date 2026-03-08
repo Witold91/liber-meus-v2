@@ -84,7 +84,7 @@
       <div class="game-card">
         <div class="game-card-info">
           <div class="game-card-scenario">
-            <%= ScenarioCatalog.find(game.scenario_slug)&.dig("title") || game.scenario_slug %>
+            <%= game.random_mode? ? (game.world_state&.dig("setting_name") || "Random Adventure") : (ScenarioCatalog.find(game.scenario_slug)&.dig("title") || game.scenario_slug) %>
           </div>
           <div class="game-card-meta">
             <%= game.hero.name %> &middot; <%= t("views.games.index.turns", count: game.turns.maximum(:turn_number) || 0, default: "%{count} turns") %>
@@ -106,7 +106,7 @@
       <div class="game-card">
         <div class="game-card-info">
           <div class="game-card-scenario">
-            <%= ScenarioCatalog.find(game.scenario_slug)&.dig("title") || game.scenario_slug %>
+            <%= game.random_mode? ? (game.world_state&.dig("setting_name") || "Random Adventure") : (ScenarioCatalog.find(game.scenario_slug)&.dig("title") || game.scenario_slug) %>
           </div>
           <div class="game-card-meta">
             <%= game.hero.name %> &middot; <%= t("views.games.index.turns", count: game.turns.maximum(:turn_number) || 0, default: "%{count} turns") %>

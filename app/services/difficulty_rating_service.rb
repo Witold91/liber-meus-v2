@@ -13,6 +13,7 @@ class DifficultyRatingService
       parameters: {
         model: model,
         temperature: 0.2,
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }

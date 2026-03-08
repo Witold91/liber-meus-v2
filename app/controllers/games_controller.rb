@@ -20,8 +20,7 @@ class GamesController < ApplicationController
 
   def show
     @recent_turns = @game.turns.order(:turn_number)
-    @scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language) if @game.arena_scenario?
-    @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
+    build_presenter
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     @acts_for_replay = @game.acts.order(:number)
     @saves = @game.saves.order(created_at: :desc)
@@ -42,8 +41,7 @@ class GamesController < ApplicationController
     turn = GameService.continue_turn(game: @game, action: action)
     @game.reload
 
-    @scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language) if @game.arena_scenario?
-    @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
+    build_presenter
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     ending_turn = @game.turns.ending.find_by(turn_number: turn.turn_number + 1)
     prologue_turn = @game.turns.find_by(turn_number: turn.turn_number + 2)
@@ -135,9 +133,22 @@ class GamesController < ApplicationController
   end
 
   def set_theme
-    scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language)
-    raw_theme = scenario&.dig("theme") || {}
+    if @game.random_mode?
+      raw_theme = @game.world_state&.dig("theme") || {}
+    else
+      scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language)
+      raw_theme = scenario&.dig("theme") || {}
+    end
     @theme = DEFAULT_THEME.merge(raw_theme)
+  end
+
+  def build_presenter
+    if @game.random_mode?
+      @presenter = RandomMode::WorldPresenter.new(@game.world_state)
+    elsif @game.arena_scenario?
+      @scenario = ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language)
+      @presenter = Arena::ScenarioPresenter.new(@scenario, @game.world_state["act_number"] || 1, @game.world_state) if @scenario
+    end
   end
 
   def set_game_locale

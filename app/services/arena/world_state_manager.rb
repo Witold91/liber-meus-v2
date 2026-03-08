@@ -4,8 +4,8 @@ module Arena
       @world_state = world_state.deep_dup
     end
 
-    def apply_scene_diff(diff, scenario:)
-      presenter = ScenarioPresenter.new(scenario, @world_state["act_number"] || 1, @world_state)
+    def apply_scene_diff(diff, scenario: nil, presenter: nil)
+      presenter ||= ScenarioPresenter.new(scenario, @world_state["act_number"] || 1, @world_state)
       valid_scene_ids = presenter.scenes.map { |s| s["id"] } + [ "offstage" ]
       valid_actor_ids = presenter.actors.map { |a| a["id"] }
       valid_object_ids = presenter.objects.map { |o| o["id"] }
