@@ -7,9 +7,8 @@ Fields:
 - "world_context": A concise summary (3-5 sentences) of the world's key facts, rules, tone, and atmosphere. This is used as context in every AI prompt, so keep it dense and factual — no flowery prose.
 - "world_context_display": 2-3 rich, evocative paragraphs describing the world for the player to read. Paint a vivid picture of the setting's atmosphere, history, and unique characteristics.
 - "narrator_style": 1-2 sentences directing the narration style (e.g. "Write in terse, noir prose" or "Use flowery, epic fantasy language"). Match the tone to the setting.
-- "theme": CSS theme object with these keys:
-  - "accent_color": accent hex color for highlights, fitting the mood of the setting
-  - "font_family": CSS font-family string (use web-safe fonts)
+- "theme_id": one of the following theme IDs, chosen to best fit the setting's mood:
+{{THEME_OPTIONS}}
 - "initial_scene": The first scene the player finds themselves in:
   - "id": snake_case unique identifier
   - "name": Human-readable scene name

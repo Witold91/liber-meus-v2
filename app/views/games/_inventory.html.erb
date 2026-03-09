@@ -5,11 +5,12 @@
   </div>
   <div class="scene-panel-body">
     <% inventory.each do |item| %>
-      <div class="object-item">
+      <% item_tooltip = item[:statuses].map { |s| t("game.status_values.#{s}", default: s) }.join(", ") %>
+      <div class="object-item"<% if item_tooltip.present? %> data-tooltip="<%= item_tooltip %>"<% end %>>
         <span class="object-name"><%= item[:name] %></span>
         <% item[:statuses].each do |status| %>
           <% status_text = t("game.status_values.#{status}", default: status) %>
-          <span class="status-badge" title="<%= status_text %>"><%= status_text %></span>
+          <span class="status-badge"><%= status_text %></span>
         <% end %>
       </div>
     <% end %>

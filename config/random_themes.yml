@@ -1,0 +1,63 @@
+dark_fantasy:
+  name: Dark Fantasy
+  bg_color: "#000000"
+  text_color: "#d4d0c8"
+  accent_color: "#c8a86e"
+  font_family: "Georgia, serif"
+  bg_image: null
+
+noir:
+  name: Noir
+  bg_color: "#f5f0e8"
+  text_color: "#1a1a1a"
+  accent_color: "#8a6e3e"
+  font_family: "'Courier New', Courier, monospace"
+  bg_image: null
+
+sci_fi:
+  name: Sci-Fi
+  bg_color: "#000000"
+  text_color: "#c8d8e0"
+  accent_color: "#4ae0d2"
+  font_family: "Consolas, 'Courier New', monospace"
+  bg_image: null
+
+horror:
+  name: Horror
+  bg_color: "#000000"
+  text_color: "#c8b8a8"
+  accent_color: "#8a3030"
+  font_family: "Georgia, serif"
+  bg_image: null
+
+fairy_tale:
+  name: Fairy Tale
+  bg_color: "#faf6f0"
+  text_color: "#2a2018"
+  accent_color: "#7a5aa0"
+  font_family: "'Palatino Linotype', Palatino, serif"
+  bg_image: null
+
+wasteland:
+  name: Wasteland
+  bg_color: "#000000"
+  text_color: "#c8b8a0"
+  accent_color: "#c87a3a"
+  font_family: "'Trebuchet MS', Helvetica, sans-serif"
+  bg_image: null
+
+historical:
+  name: Historical
+  bg_color: "#f8f4ec"
+  text_color: "#1e1810"
+  accent_color: "#6a4a2a"
+  font_family: "'Palatino Linotype', Palatino, serif"
+  bg_image: null
+
+mythic:
+  name: Mythic
+  bg_color: "#000000"
+  text_color: "#d0c8b8"
+  accent_color: "#d4a840"
+  font_family: "Georgia, serif"
+  bg_image: null

@@ -1,31 +1,32 @@
 <style>
-  .scene-panel { border: 1px solid #2a2318; background: #0f0d09; font-size: 0.8rem; }
-  .scene-panel-header { padding: 0.55rem 1rem; border-bottom: 1px solid #2a2318; display: flex; justify-content: space-between; align-items: center; background: #0c0a07; }
+  .scene-panel { border: 1px solid var(--border-color); background: var(--panel-bg); font-size: 0.8rem; }
+  .scene-panel-header { padding: 0.55rem 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--panel-header); }
   .scene-panel-header h3 { font-family: 'Cinzel', 'Palatino Linotype', serif; font-size: 0.72rem; font-weight: 400; letter-spacing: 0.12em; color: var(--theme-accent); }
-  .scene-toggle-btn { background: transparent; border: 1px solid #2a2318; color: #4a4030; padding: 0.18rem 0.45rem; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.1em; }
-  .scene-toggle-btn:hover { color: #6a6050; border-color: #3a3020; }
+  .scene-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.18rem 0.45rem; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.1em; }
+  .scene-toggle-btn:hover { color: var(--text-mid); border-color: var(--text-dim); }
   .scene-panel-body { padding: 0.75rem 1rem; }
-  .scene-description { font-family: 'Lora', Georgia, serif; font-style: italic; color: #5a5040; font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.75rem; border-bottom: 1px solid #1e1810; padding-bottom: 0.5rem; }
-  .scene-section-label { font-family: 'Cinzel', serif; color: #3a3020; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.2em; margin: 0.6rem 0 0.2rem; }
-  .actor-item, .object-item, .exit-item { padding: 0.22rem 0; color: #7a6a58; }
-  .actor-name, .object-name { color: #b0a890; }
-  .status-badge { display: inline-block; background: #1a1610; border: 1px solid #2e2418; color: #5a5040; padding: 0 0.3rem; font-size: 0.65rem; margin-left: 0.3rem; font-family: 'Cinzel', serif; letter-spacing: 0.08em; max-width: 14em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; cursor: default; }
+  .scene-description { font-family: 'Lora', Georgia, serif; font-style: italic; color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem; }
+  .scene-section-label { font-family: 'Cinzel', serif; color: var(--text-dim); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.2em; margin: 0.6rem 0 0.2rem; }
+  .actor-item, .object-item, .exit-item { padding: 0.22rem 0; color: var(--text-mid); }
+  .actor-name, .object-name { color: var(--text-bright); }
+  .status-badge { display: inline-block; background: var(--panel-header); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0 0.3rem; font-size: 0.65rem; margin-left: 0.3rem; font-family: 'Cinzel', serif; letter-spacing: 0.08em; max-width: 14em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; cursor: default; }
   .exit-label { color: #6a8a78; cursor: pointer; }
   .exit-label:hover { color: #8abaa0; }
   .exit-arena { color: #b8a850; cursor: pointer; }
   .exit-arena:hover { color: #d8c870; }
-  .scene-empty { font-family: 'Lora', Georgia, serif; font-style: italic; color: #3a3020; }
-  /* Actor description tooltip */
-  .actor-item { position: relative; }
-  .actor-item[data-tooltip]:hover::after {
+  .scene-empty { font-family: 'Lora', Georgia, serif; font-style: italic; color: var(--text-dim); }
+  /* Hover tooltip for actors and objects */
+  .actor-item, .object-item { position: relative; }
+  .actor-item[data-tooltip]:hover::after,
+  .object-item[data-tooltip]:hover::after {
     content: attr(data-tooltip);
     position: absolute;
     left: 0;
     top: 100%;
     z-index: 10;
-    background: #100e0a;
-    border: 1px solid #2a2318;
-    color: #8a7a68;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-mid);
     font-family: 'Lora', Georgia, serif;
     font-style: italic;
     font-size: 0.72rem;
@@ -56,11 +57,18 @@
       <% if scene_context[:actors].any? %>
         <div class="scene-section-label"><%= t("views.scene_panel.actors") %></div>
         <% scene_context[:actors].each do |actor| %>
-          <div class="actor-item"<% if actor[:description].present? %> data-tooltip="<%= actor[:description] %>"<% end %>>
+          <%
+            actor_tooltip_parts = []
+            actor_tooltip_parts << actor[:description] if actor[:description].present?
+            actor_statuses = actor[:statuses].map { |s| t("game.status_values.#{s}", default: s) }
+            actor_tooltip_parts << actor_statuses.join(", ") if actor_statuses.any?
+            actor_tooltip = actor_tooltip_parts.join(" — ")
+          %>
+          <div class="actor-item"<% if actor_tooltip.present? %> data-tooltip="<%= actor_tooltip %>"<% end %>>
             <span class="actor-name"><%= actor[:name] %></span>
             <% actor[:statuses].each do |status| %>
               <% status_text = t("game.status_values.#{status}", default: status) %>
-              <span class="status-badge" title="<%= status_text %>"><%= status_text %></span>
+              <span class="status-badge"><%= status_text %></span>
             <% end %>
           </div>
         <% end %>
@@ -69,11 +77,12 @@
       <% if scene_context[:objects].any? %>
         <div class="scene-section-label"><%= t("views.scene_panel.objects") %></div>
         <% scene_context[:objects].each do |obj| %>
-          <div class="object-item">
+          <% obj_tooltip = obj[:statuses].map { |s| t("game.status_values.#{s}", default: s) }.join(", ") %>
+          <div class="object-item"<% if obj_tooltip.present? %> data-tooltip="<%= obj_tooltip %>"<% end %>>
             <span class="object-name"><%= obj[:name] %></span>
             <% obj[:statuses].each do |status| %>
               <% status_text = t("game.status_values.#{status}", default: status) %>
-              <span class="status-badge" title="<%= status_text %>"><%= status_text %></span>
+              <span class="status-badge"><%= status_text %></span>
             <% end %>
           </div>
         <% end %>

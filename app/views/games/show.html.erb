@@ -6,8 +6,17 @@
       --theme-bg: <%= @theme["bg_color"] %>;
       --theme-text: <%= @theme["text_color"] %>;
       --theme-accent: <%= @theme["accent_color"] %>;
-      --theme-font: <%= @theme["font_family"] %>;
+      --theme-font: <%= raw @theme["font_family"] %>;
       --theme-bg-image: <%= @theme["bg_image"].present? ? "url(/#{@theme["bg_image"]})" : "none" %>;
+      /* Derived adaptive colors — work for both dark and light themes */
+      --panel-bg: color-mix(in srgb, var(--theme-bg) 92%, var(--theme-text));
+      --panel-header: color-mix(in srgb, var(--theme-bg) 88%, var(--theme-text));
+      --border-color: color-mix(in srgb, var(--theme-bg) 80%, var(--theme-text));
+      --border-subtle: color-mix(in srgb, var(--theme-bg) 88%, var(--theme-text));
+      --text-bright: color-mix(in srgb, var(--theme-text) 75%, var(--theme-bg));
+      --text-mid: color-mix(in srgb, var(--theme-text) 50%, var(--theme-bg));
+      --text-muted: color-mix(in srgb, var(--theme-text) 35%, var(--theme-bg));
+      --text-dim: color-mix(in srgb, var(--theme-text) 22%, var(--theme-bg));
     }
     /* Game page is full-screen — suppress the nav bar */
     .app-nav { display: none !important; }
@@ -19,33 +28,33 @@
   html, body { height: 100%; overflow: hidden; }
   .game-screen { height: calc(100dvh - 2rem); display: flex; flex-direction: column; overflow: hidden; }
 
-  .game-over-banner { background: #1a1208; border: 1px solid #8a7a40; padding: 0.5rem 1rem; text-align: center; font-size: 0.85rem; color: #c8b860; flex-shrink: 0; font-family: 'Lora', Georgia, serif; font-style: italic; }
+  .game-over-banner { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 0.5rem 1rem; text-align: center; font-size: 0.85rem; color: var(--theme-accent); flex-shrink: 0; font-family: 'Lora', Georgia, serif; font-style: italic; }
 
   /* Grid fills whatever height remains after the banner */
   .game-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 320px; gap: 1rem; padding-top: 1rem; }
   @media (max-width: 768px) { .game-layout { grid-template-columns: 1fr; } }
 
   /* Console panel is a bounded flex column — only turn-log scrolls */
-  .console-panel { display: flex; flex-direction: column; min-height: 0; height: 100%; overflow: hidden; border: 1px solid #2a2318; background: color-mix(in srgb, var(--theme-bg) 60%, transparent); }
-  .console-header { flex-shrink: 0; padding: 0.75rem 1rem; border-bottom: 1px solid #2a2318; background: color-mix(in srgb, #0f0d09 85%, transparent); display: flex; justify-content: space-between; align-items: center; }
+  .console-panel { display: flex; flex-direction: column; min-height: 0; height: 100%; overflow: hidden; border: 1px solid var(--border-color); background: color-mix(in srgb, var(--theme-bg) 60%, transparent); }
+  .console-header { flex-shrink: 0; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); background: color-mix(in srgb, var(--panel-bg) 85%, transparent); display: flex; justify-content: space-between; align-items: center; }
   .console-header h2 { font-family: 'Cinzel', 'Palatino Linotype', serif; font-size: 0.78rem; font-weight: 400; letter-spacing: 0.12em; color: var(--theme-accent); }
-  .console-status { font-family: 'Lora', Georgia, serif; font-style: italic; font-size: 0.75rem; color: #4a4030; }
+  .console-status { font-family: 'Lora', Georgia, serif; font-style: italic; font-size: 0.75rem; color: var(--text-muted); }
   .turn-log { flex: 1; min-height: 0; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
 
   /* Action area — stage prompt feel */
-  .action-area { flex-shrink: 0; border-top: 1px solid #2a2318; padding: 0.65rem 0.75rem; }
+  .action-area { flex-shrink: 0; border-top: 1px solid var(--border-color); padding: 0.65rem 0.75rem; }
   .action-form { display: flex; align-items: center; gap: 0.5rem; }
   .action-prompt { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--theme-accent); opacity: 0.6; flex-shrink: 0; user-select: none; }
-  .action-input { flex: 1; background: transparent; color: var(--theme-text); border: none; border-bottom: 1px solid #3a3020; padding: 0.4rem 0.25rem; font-family: var(--theme-font); font-size: 1rem; }
+  .action-input { flex: 1; background: transparent; color: var(--theme-text); border: none; border-bottom: 1px solid var(--text-dim); padding: 0.4rem 0.25rem; font-family: var(--theme-font); font-size: 1rem; }
   .action-input:focus { outline: none; border-bottom-color: var(--theme-accent); }
   .action-input:disabled { opacity: 0.4; }
 
-  .right-panel { display: flex; flex-direction: column; gap: 0.5rem; min-height: 0; overflow-y: auto; }
-  .hero-stat-bar { flex-shrink: 0; border: 1px solid #2a2318; background: #0f0d09; padding: 0.75rem 1rem; font-size: 0.8rem; }
+  .right-panel { display: flex; flex-direction: column; gap: 0.5rem; min-height: 0; overflow-y: auto; font-family: 'Lora', Georgia, serif; }
+  .hero-stat-bar { flex-shrink: 0; border: 1px solid var(--border-color); background: var(--panel-bg); padding: 0.75rem 1rem; font-size: 0.8rem; }
   .stat-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.2rem 0; }
-  .stat-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: #4a4030; text-transform: uppercase; }
-  .stat-value { color: #c8c0a8; font-variant-numeric: tabular-nums; }
-  .health-bar-outer { height: 3px; background: #2a2318; margin-top: 0.5rem; }
+  .stat-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: var(--text-muted); text-transform: uppercase; }
+  .stat-value { color: var(--text-bright); font-variant-numeric: tabular-nums; }
+  .health-bar-outer { height: 3px; background: var(--border-color); margin-top: 0.5rem; }
   .health-bar-inner { height: 3px; background: var(--theme-accent); transition: width 0.3s; }
   .momentum-track { display: flex; gap: 3px; margin-top: 0.35rem; }
   .momentum-pip { flex: 1; height: 5px; border-radius: 1px; opacity: 0.15; transition: opacity 0.3s, box-shadow 0.3s; }
@@ -53,11 +62,11 @@
   .momentum-value { font-variant-numeric: tabular-nums; min-width: 2.2ch; text-align: right; }
 
   /* Scrollbars */
-  .turn-log, .right-panel { scrollbar-width: thin; scrollbar-color: #2e2318 #0a0806; }
+  .turn-log, .right-panel { scrollbar-width: thin; scrollbar-color: var(--border-color) var(--panel-bg); }
   .turn-log::-webkit-scrollbar, .right-panel::-webkit-scrollbar { width: 8px; }
-  .turn-log::-webkit-scrollbar-track, .right-panel::-webkit-scrollbar-track { background: #0a0806; }
-  .turn-log::-webkit-scrollbar-thumb, .right-panel::-webkit-scrollbar-thumb { background: #2e2318; border-radius: 4px; }
-  .turn-log::-webkit-scrollbar-thumb:hover, .right-panel::-webkit-scrollbar-thumb:hover { background: #3e3020; }
+  .turn-log::-webkit-scrollbar-track, .right-panel::-webkit-scrollbar-track { background: var(--panel-bg); }
+  .turn-log::-webkit-scrollbar-thumb, .right-panel::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+  .turn-log::-webkit-scrollbar-thumb:hover, .right-panel::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
   /* Mobile: world button + close bar hidden by default */
   .mobile-world-btn { display: none; }
@@ -88,7 +97,7 @@
       justify-content: space-between;
       align-items: center;
       padding-bottom: 0.75rem;
-      border-bottom: 1px solid #2a2318;
+      border-bottom: 1px solid var(--border-color);
       margin-bottom: 0.25rem;
       flex-shrink: 0;
     }
@@ -96,13 +105,13 @@
       font-family: 'Cinzel', serif;
       font-size: 0.62rem;
       letter-spacing: 0.2em;
-      color: #4a4030;
+      color: var(--text-muted);
       text-transform: uppercase;
     }
     .mobile-panel-close-btn {
       background: transparent;
-      border: 1px solid #2a2318;
-      color: #4a4030;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
       font-family: 'Cinzel', serif;
       font-size: 0.6rem;
       letter-spacing: 0.1em;
@@ -114,8 +123,8 @@
     .mobile-world-btn {
       display: inline-block;
       background: transparent;
-      border: 1px solid #2a2318;
-      color: #4a4030;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
       font-family: 'Cinzel', serif;
       font-size: 0.6rem;
       letter-spacing: 0.12em;
@@ -123,7 +132,7 @@
       cursor: pointer;
       flex-shrink: 0;
     }
-    .mobile-world-btn:hover { color: var(--theme-accent); border-color: #3a3020; }
+    .mobile-world-btn:hover { color: var(--theme-accent); border-color: var(--text-dim); }
 
     /* On mobile, header has three items: title | turn | world-btn */
     .console-header { gap: 0.5rem; }

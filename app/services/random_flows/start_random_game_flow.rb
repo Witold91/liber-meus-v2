@@ -55,11 +55,7 @@ module RandomFlows
         "hero_description" => hero_data["description"],
         "narrator_style" => world_data["narrator_style"],
         "setting_name" => world_data["setting_name"],
-        "theme" => (world_data["theme"] || {}).merge(
-          "bg_color" => "#000000",
-          "text_color" => "#d4d0c8",
-          "bg_image" => nil
-        ),
+        "theme" => RandomMode::WorldGeneratorService.resolve_theme(world_data["theme_id"]),
         "generated_scenes" => {
           scene_id => initial_scene
         }

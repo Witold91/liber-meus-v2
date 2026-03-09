@@ -2,11 +2,11 @@
 <% saves = local_assigns[:saves] || [] %>
 
 <style>
-  .save-panel { border: 1px solid #2a2318; background: #0f0d09; padding: 0.65rem 1rem; font-size: 0.8rem; }
-  .save-panel-header { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: #4a4030; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+  .save-panel { border: 1px solid var(--border-color); background: var(--panel-bg); padding: 0.65rem 1rem; font-size: 0.8rem; }
+  .save-panel-header { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
   .save-row { display: flex; align-items: center; justify-content: space-between; padding: 0.2rem 0; }
-  .save-label { color: #7a6a58; font-family: 'Lora', Georgia, serif; font-size: 0.72rem; }
-  .save-meta { color: #4a4030; font-family: 'Lora', Georgia, serif; font-size: 0.65rem; font-style: italic; }
+  .save-label { color: var(--text-mid); font-family: 'Lora', Georgia, serif; font-size: 0.72rem; }
+  .save-meta { color: var(--text-muted); font-family: 'Lora', Georgia, serif; font-size: 0.65rem; font-style: italic; }
 </style>
 
 <div class="save-panel">
