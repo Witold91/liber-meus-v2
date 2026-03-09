@@ -9,7 +9,7 @@
   .scene-section-label { font-family: 'Cinzel', serif; color: #3a3020; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.2em; margin: 0.6rem 0 0.2rem; }
   .actor-item, .object-item, .exit-item { padding: 0.22rem 0; color: #7a6a58; }
   .actor-name, .object-name { color: #b0a890; }
-  .status-badge { display: inline-block; background: #1a1610; border: 1px solid #2e2418; color: #5a5040; padding: 0 0.3rem; font-size: 0.65rem; margin-left: 0.3rem; font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
+  .status-badge { display: inline-block; background: #1a1610; border: 1px solid #2e2418; color: #5a5040; padding: 0 0.3rem; font-size: 0.65rem; margin-left: 0.3rem; font-family: 'Cinzel', serif; letter-spacing: 0.08em; max-width: 14em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; cursor: default; }
   .exit-label { color: #6a8a78; cursor: pointer; }
   .exit-label:hover { color: #8abaa0; }
   .exit-arena { color: #b8a850; cursor: pointer; }
@@ -59,7 +59,8 @@
           <div class="actor-item"<% if actor[:description].present? %> data-tooltip="<%= actor[:description] %>"<% end %>>
             <span class="actor-name"><%= actor[:name] %></span>
             <% actor[:statuses].each do |status| %>
-              <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+              <% status_text = t("game.status_values.#{status}", default: status) %>
+              <span class="status-badge" title="<%= status_text %>"><%= status_text %></span>
             <% end %>
           </div>
         <% end %>
@@ -71,7 +72,8 @@
           <div class="object-item">
             <span class="object-name"><%= obj[:name] %></span>
             <% obj[:statuses].each do |status| %>
-              <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+              <% status_text = t("game.status_values.#{status}", default: status) %>
+              <span class="status-badge" title="<%= status_text %>"><%= status_text %></span>
             <% end %>
           </div>
         <% end %>

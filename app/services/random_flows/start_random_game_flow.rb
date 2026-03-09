@@ -27,6 +27,23 @@ module RandomFlows
         }
       end
 
+      # Place starting equipment in player inventory
+      starting_equipment = hero_data["starting_equipment"] || []
+      starting_equipment.each do |item|
+        objects[item["id"]] = {
+          "scene" => "player_inventory",
+          "status" => item["status"] || "equipped"
+        }
+        # Register in initial scene definition so WorldPresenter.objects can find them
+        initial_scene["objects"] ||= []
+        initial_scene["objects"] << {
+          "id" => item["id"],
+          "name" => item["name"],
+          "scene" => scene_id,
+          "default_status" => item["status"] || "equipped"
+        }
+      end
+
       world_state = OutcomeResolutionService.initial_state.merge(
         "act_number" => 1,
         "act_turn" => 0,
@@ -38,7 +55,11 @@ module RandomFlows
         "hero_description" => hero_data["description"],
         "narrator_style" => world_data["narrator_style"],
         "setting_name" => world_data["setting_name"],
-        "theme" => world_data["theme"],
+        "theme" => (world_data["theme"] || {}).merge(
+          "bg_color" => "#000000",
+          "text_color" => "#d4d0c8",
+          "bg_image" => nil
+        ),
         "generated_scenes" => {
           scene_id => initial_scene
         }

@@ -12,9 +12,14 @@ Fields:
 - "description": A concise summary (1-2 sentences) of the hero's key traits, role, and abilities. This is used as context in AI prompts, so keep it factual and dense.
 - "description_display": 2-3 rich sentences describing the hero's appearance, background, personality, and key traits. Written for the player to read — vivid and evocative.
 - "sex": "male", "female", or "other"
+- "starting_equipment": Array of 2-4 items the hero starts with, appropriate to their background and the world. Each item:
+  - "id": snake_case unique identifier (e.g. "rusty_cutlass", "leather_journal", "healing_potion")
+  - "name": Human-readable name (e.g. "Rusty Cutlass", "Leather Journal", "Healing Potion")
+  - "status": short descriptive phrase for the item's condition (e.g. "chipped but sharp", "half-full of scrawled notes", "glowing faintly green")
 
 Rules:
 - Honor the player's description as closely as possible — if they say "a grizzled old pirate", make a grizzled old pirate.
 - Expand on their idea with specific details that fit the world context.
 - The slug should be unique and URL-safe (lowercase, underscores, no spaces).
 - Keep the name concise but evocative.
+- Starting equipment should feel natural for the character — a pirate gets a cutlass and compass, a wizard gets a staff and spellbook. Include 1 weapon or tool, 1 utility item, and optionally 1-2 flavor items.

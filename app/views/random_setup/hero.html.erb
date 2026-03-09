@@ -63,6 +63,27 @@
     font-size: 1.1rem;
     color: #c8a86e;
   }
+  .equipment-list {
+    margin-top: 0.6rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #1e1810;
+  }
+  .equipment-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: #4a3e2c;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .equipment-item {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 0.8rem;
+    color: #7a6a58;
+    padding: 0.1rem 0;
+  }
+  .equipment-item .item-name { color: #b0a890; }
+  .equipment-item .item-status { color: #5a5040; font-style: italic; }
   .setup-form-row {
     display: flex;
     gap: 1rem;
@@ -90,6 +111,18 @@
   <div class="generated-preview">
     <div class="hero-name"><%= @hero_data&.dig("name") || "Your Hero" %></div>
     <p><%= @hero_data&.dig("description_display") || @hero_data&.dig("description") %></p>
+
+    <% if @hero_data&.dig("starting_equipment")&.any? %>
+      <div class="equipment-list">
+        <div class="equipment-label"><%= t("views.random_setup.starting_equipment", default: "Starting Equipment") %></div>
+        <% @hero_data["starting_equipment"].each do |item| %>
+          <div class="equipment-item">
+            <span class="item-name"><%= item["name"] %></span>
+            <span class="item-status"> — <%= item["status"] %></span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 
   <%= form_with url: create_game_random_setup_path, method: :post do |f| %>

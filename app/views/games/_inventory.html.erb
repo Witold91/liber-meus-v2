@@ -8,7 +8,8 @@
       <div class="object-item">
         <span class="object-name"><%= item[:name] %></span>
         <% item[:statuses].each do |status| %>
-          <span class="status-badge"><%= t("game.status_values.#{status}", default: status) %></span>
+          <% status_text = t("game.status_values.#{status}", default: status) %>
+          <span class="status-badge" title="<%= status_text %>"><%= status_text %></span>
         <% end %>
       </div>
     <% end %>
