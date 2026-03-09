@@ -2,16 +2,6 @@
 <% scen = local_assigns[:scenario] %>
 <% return unless acts.size > 1 || acts.any? { |a| a.world_state_snapshot.present? } %>
 
-<style>
-  .act-replay-panel { border: 1px solid var(--border-color); background: var(--panel-bg); padding: 0.65rem 1rem; font-size: 0.8rem; }
-  .act-replay-header { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; }
-  .act-replay-row { display: flex; align-items: center; justify-content: space-between; padding: 0.2rem 0; }
-  .act-replay-label { color: var(--text-mid); font-family: 'Lora', Georgia, serif; font-size: 0.78rem; }
-  .act-replay-label.active { color: var(--theme-accent); }
-  .replay-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.1rem 0.4rem; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.65rem; line-height: 1.4; }
-  .replay-btn:hover { color: var(--theme-accent); border-color: var(--text-dim); }
-</style>
-
 <div class="act-replay-panel">
   <div class="act-replay-header">Acts</div>
   <% acts.each do |act| %>
