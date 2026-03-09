@@ -7,7 +7,7 @@ module RandomMode
       model = AIClient.narrator_model
 
       system_prompt = File.read(SYSTEM_PROMPT_PATH)
-      system_prompt += "\n\nIMPORTANT: Generate all text content in #{language_name(game_language)}."
+      system_prompt += "\n\nIMPORTANT: Write all prose and descriptions in #{language_name(game_language)}. Names of characters, locations, and items should be immersive and fit the world's culture and setting — not the output language."
 
       user_message = build_user_message(
         world_context: world_context,

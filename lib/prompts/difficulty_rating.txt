@@ -6,27 +6,26 @@ Respond ONLY with valid JSON — no markdown, no extra text — with exactly the
 - "impact": one of "negative", "none", "positive", "major"
 - "reasoning": 1-2 sentences explaining your ratings
 
-Guidelines for difficulty:
-- "trivial": No meaningful effort required; cannot fail. (e.g., looking around, picking up an object right in front of you, speaking to someone present)
-- "easy": Straightforward, little risk, success is likely. (e.g., picking up an unguarded object, moving to an empty room)
-- "medium": Meaningful risk or skill required; outcome uncertain. (e.g., sneaking past a distracted guard, picking a simple lock)
-- "hard": Risky or highly difficult; failure more likely than success. (e.g., overpowering an alert guard, crossing an open area under surveillance)
-- "impossible": Cannot succeed under any circumstances. (e.g., breaking through a reinforced steel door bare-handed)
+Difficulty:
+- "trivial": Cannot fail. (looking around, picking up a nearby object, talking to someone present)
+- "easy": Straightforward, success likely. (picking up an unguarded object, moving to an empty room)
+- "medium": Outcome uncertain, skill or risk involved. (sneaking past a distracted guard, picking a simple lock)
+- "hard": Failure more likely than success. (overpowering an alert guard, crossing open ground under surveillance)
+- "impossible": Cannot succeed under any circumstances. (breaking a steel door bare-handed)
 
-Guidelines for danger (physical risk if the action goes wrong — independent of difficulty):
-- "none": No bodily consequences on failure. (e.g., picking a lock alone, searching a shelf)
-- "low": Minor injury possible. (e.g., climbing a low fence, a brief shove from a guard)
-- "medium": Real harm likely on failure. (e.g., a fist fight, falling from height, a chase through obstacles)
-- "high": Life-threatening on failure. (e.g., combat with an armed enemy, crossing a live electrical panel)
+Danger (physical risk on failure — independent of difficulty):
+- "none": No bodily harm. (picking a lock, searching a shelf)
+- "low": Minor injury possible. (climbing a low fence, a shove from a guard)
+- "medium": Real harm likely. (a fist fight, falling from height, a chase)
+- "high": Life-threatening. (armed combat, crossing a live electrical panel)
 
-Guidelines for impact:
-- "negative": Unambiguously self-destructive with no plausible strategic reading. Only use when intent to harm the hero's own cause is clear. (e.g., deliberately alerting guards for no reason)
-- "none": Entirely irrelevant to the hero's goal. (e.g., eating a flower, rearranging furniture)
-- "positive": Plausibly advances the hero's goal. Default for any purposeful attempt — use whenever a reasonable goal-directed reading exists.
-- "major": A pivotal moment that fundamentally changes the situation. Use sparingly. (e.g., finding the master key, discovering the information that changes everything)
+Impact:
+- "negative": Unambiguously self-destructive with no strategic reading. (deliberately alerting guards for no reason)
+- "none": Irrelevant to the hero's goal. (eating a flower, rearranging furniture)
+- "positive": Plausibly advances the goal. Default for any purposeful attempt.
+- "major": A pivotal moment that fundamentally changes the situation. Use sparingly. (finding the master key)
 
-If the player action means repeating a previous attempt ("try again", "retry", "same thing", etc.), treat it as a repetition of the most recent RECENT ACTIONS entry — same difficulty and danger. Never rate a retry as trivial.
-
-If the action depends on an object not in OBJECTS PRESENT, rate it "impossible". Exception: constructing an improvised item from materials that ARE present (e.g., tying bedsheets into a rope) — rate normally based on the challenge of creating it.
-
-If the player attempts to travel to or enter a location not listed in EXITS, rate it "impossible" — they cannot reach it directly from their current position.
+Edge cases:
+- Retries ("try again", "same thing"): same difficulty and danger as the most recent action. Never trivial.
+- Action requires an object not in OBJECTS PRESENT: "impossible". Exception: improvising from materials that ARE present (e.g. tying bedsheets into a rope) — rate normally.
+- Travel to a location not in EXITS: "impossible".
