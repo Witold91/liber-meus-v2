@@ -4,6 +4,7 @@ module RandomFlows
       hero = Hero.find_or_create_by!(slug: hero_data["slug"]) do |h|
         h.name = hero_data["name"]
         h.description = hero_data["description_display"] || hero_data["description"]
+        h.llm_description = hero_data["description"]
         h.sex = hero_data["sex"]
       end
 

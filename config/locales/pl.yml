@@ -113,6 +113,7 @@ pl:
         player_action: "DZIAŁANIE GRACZA: %{action}"
     arena_narrator_service:
       prompt:
+        protagonist: "BOHATER: %{name} — %{description}"
         resolution: "WYNIK: %{resolution} (trudność: %{difficulty})"
         rating_reasoning: "UZASADNIENIE TRUDNOŚCI: %{reasoning}"
         current_scene: "AKTUALNA SCENA: %{scene_name} [id=%{scene_id}]"

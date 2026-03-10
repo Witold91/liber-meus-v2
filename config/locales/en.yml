@@ -113,6 +113,7 @@ en:
         player_action: "PLAYER ACTION: %{action}"
     arena_narrator_service:
       prompt:
+        protagonist: "PROTAGONIST: %{name} — %{description}"
         resolution: "RESOLUTION: %{resolution} (difficulty was %{difficulty})"
         rating_reasoning: "DIFFICULTY REASONING: %{reasoning}"
         current_scene: "CURRENT SCENE: %{scene_name} [id=%{scene_id}]"

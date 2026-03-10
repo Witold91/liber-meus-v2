@@ -57,6 +57,7 @@ module ArenaFlows
       Hero.find_or_create_by!(slug: hero_def["slug"]) do |h|
         h.name = hero_def["name"]
         h.description = hero_def["description"]
+        h.llm_description = hero_def["llm_description"]
         h.sex = hero_def["sex"]
       end
     end

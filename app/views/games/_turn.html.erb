@@ -34,7 +34,6 @@
   <% if turn.option_selected.present? %>
     <div class="turn-action">&gt; <%= turn.option_selected %></div>
   <% end %>
-  <div class="turn-narrative"><%= turn.content %></div>
   <% if show_roll %>
     <div class="roll-breakdown">
       <span class="roll-die"><%= roll %></span>
@@ -59,4 +58,5 @@
   <% elsif turn.resolution_tag.present? %>
     <div class="turn-meta">[<%= t("game.resolution_tags.#{turn.resolution_tag}", default: turn.resolution_tag) %>]</div>
   <% end %>
+  <div class="turn-narrative"><%= turn.content %></div>
 </div>

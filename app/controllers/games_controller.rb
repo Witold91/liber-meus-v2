@@ -38,7 +38,11 @@ class GamesController < ApplicationController
       return
     end
 
-    turn = GameService.continue_turn(game: @game, action: action)
+    stream_callbacks = {
+      on_roll: ->(data) { GameChannel.broadcast_to(@game, { type: "roll_result" }.merge(data)) },
+      on_chunk: ->(chunk) { GameChannel.broadcast_to(@game, { type: "chunk", text: chunk }) }
+    }
+    turn = GameService.continue_turn(game: @game, action: action, stream: stream_callbacks)
     @game.reload
 
     build_presenter

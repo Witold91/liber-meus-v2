@@ -3,15 +3,26 @@ class ArenaNarratorService
   EPILOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_epilogue.txt")
   PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil)
+  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil, stream: nil, hero: nil)
     client = AIClient.client
     model = AIClient.narrator_model
 
     system_prompt = File.read(prompt_path || SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
     system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
-    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions)
+    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions, hero: hero)
 
+    if stream
+      narrate_streaming(client, model, system_prompt, user_message, stream)
+    else
+      narrate_blocking(client, model, system_prompt, user_message)
+    end
+  rescue => e
+    Rails.logger.error("[ArenaNarratorService] Error: #{e.message}")
+    raise AIConnectionError, e.message
+  end
+
+  def self.narrate_blocking(client, model, system_prompt, user_message)
     response = client.chat(
       parameters: {
         model: model,
@@ -27,10 +38,71 @@ class ArenaNarratorService
     content = response.dig("choices", 0, "message", "content")
     tokens = response.dig("usage", "total_tokens").to_i
     [ JSON.parse(content), tokens ]
-  rescue => e
-    Rails.logger.error("[ArenaNarratorService] Error: #{e.message}")
-    raise AIConnectionError, e.message
   end
+  private_class_method :narrate_blocking
+
+  def self.narrate_streaming(client, model, system_prompt, user_message, on_chunk)
+    buffer = +""
+    in_narrative = false
+    narrative_done = false
+    escape_next = false
+    tokens_used = 0
+
+    stream_proc = proc do |chunk, _bytesize|
+      delta = chunk.dig("choices", 0, "delta", "content")
+      if (usage = chunk.dig("usage", "total_tokens"))
+        tokens_used = usage.to_i
+      end
+      next unless delta
+
+      buffer << delta
+
+      if narrative_done
+        # Already finished streaming narrative — skip
+      elsif in_narrative
+        # Check each character for end of narrative string
+        send_up_to = delta.length
+        delta.each_char.with_index do |c, i|
+          if escape_next
+            escape_next = false
+          elsif c == '\\'
+            escape_next = true
+          elsif c == '"'
+            send_up_to = i
+            in_narrative = false
+            narrative_done = true
+            break
+          end
+        end
+        chunk = delta[0...send_up_to]
+        on_chunk.call(chunk) unless chunk.empty?
+      elsif buffer.match?(/"narrative"\s*:\s*"/)
+        # We just entered the narrative value — extract any content after the opening quote
+        in_narrative = true
+        if (match = buffer.match(/"narrative"\s*:\s*"([^"]*)$/))
+          initial = match[1]
+          on_chunk.call(initial) unless initial.empty?
+        end
+      end
+    end
+
+    client.chat(
+      parameters: {
+        model: model,
+        temperature: 0.7,
+        response_format: { type: "json_object" },
+        stream: stream_proc,
+        stream_options: { include_usage: true },
+        messages: [
+          { role: "system", content: system_prompt },
+          { role: "user", content: user_message }
+        ]
+      }
+    )
+
+    [ JSON.parse(buffer), tokens_used ]
+  end
+  private_class_method :narrate_streaming
 
   def self.narrate_epilogue(scene_context, action, resolution_tag, ending_narrative, world_context: nil, narrator_style: nil)
     client = AIClient.client
@@ -99,8 +171,14 @@ class ArenaNarratorService
     raise AIConnectionError, e.message
   end
 
-  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [])
+  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [], hero: nil)
     parts = []
+
+    if hero
+      parts << I18n.t("services.arena_narrator_service.prompt.protagonist", name: hero.name, description: hero.llm_description || hero.description)
+      parts << ""
+    end
+
     localized_resolution = I18n.t("game.resolution_tags.#{resolution_tag}", default: resolution_tag).upcase
     localized_difficulty = I18n.t("game.difficulty_values.#{difficulty}", default: difficulty)
     parts << I18n.t(

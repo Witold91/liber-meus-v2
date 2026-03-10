@@ -24,7 +24,8 @@ theme:
 hero:
   slug: romeo
   name: "Romeo Montague"
-  description: "A young nobleman torn between love, loyalty, and fatal impulse."
+  description: "A restless young nobleman with dark curls and a poet's eyes, caught between his family's bitter feud and a love that burns brighter than reason. Passionate, impulsive, and willing to risk everything for Juliet."
+  llm_description: "Male, late teens. Young Montague nobleman — passionate, impulsive, romantic. Skilled with a rapier but prefers words. Driven entirely by his love for Juliet."
   sex: male
 
 acts:

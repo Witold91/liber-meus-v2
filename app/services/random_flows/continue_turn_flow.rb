@@ -2,62 +2,77 @@ module RandomFlows
   class ContinueTurnFlow
     NARRATOR_PROMPT_PATH = Rails.root.join("lib", "prompts", "random_narrator.txt")
 
-    def self.call(game:, action:)
-      ActiveRecord::Base.transaction do
-        world_state = game.world_state
+    def self.call(game:, action:, stream: nil)
+      # Steps 1-6: AI calls and resolution (outside transaction)
+      world_state = game.world_state
 
-        # Step 1: Determine turn number
-        turn_number = (game.turns.maximum(:turn_number) || 0) + 1
+      # Step 1: Determine turn number
+      turn_number = (game.turns.maximum(:turn_number) || 0) + 1
 
-        # Step 2: Get current act
-        act = game.current_act
-        raise "No active act found for random game" unless act
-        act_turn_number = world_state["act_turn"].to_i + 1
+      # Step 2: Get current act
+      act = game.current_act
+      raise "No active act found for random game" unless act
+      act_turn_number = world_state["act_turn"].to_i + 1
 
-        # Step 3: Build scene context
-        presenter = RandomMode::WorldPresenter.new(world_state)
-        player_scene = world_state["player_scene"]
-        scene_context = presenter.scene_context_for(player_scene, world_state)
+      # Step 3: Build scene context
+      presenter = RandomMode::WorldPresenter.new(world_state)
+      player_scene = world_state["player_scene"]
+      scene_context = presenter.scene_context_for(player_scene, world_state)
 
-        # Step 4: Rate difficulty (AI call 1)
-        recent_actions = game.turns.recent(3).to_a.reverse
-                             .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
-        rating, difficulty_tokens = DifficultyRatingService.rate(
-          action, scene_context, game.hero, recent_actions,
-          world_context: world_state["world_context"]
-        )
-        difficulty = rating["difficulty"]
-        rating_reasoning = rating["reasoning"]
+      # Step 4: Rate difficulty (AI call 1)
+      recent_actions = game.turns.recent(3).to_a.reverse
+                           .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
+      rating, difficulty_tokens = DifficultyRatingService.rate(
+        action, scene_context, game.hero, recent_actions,
+        world_context: world_state["world_context"]
+      )
+      difficulty = rating["difficulty"]
+      rating_reasoning = rating["reasoning"]
 
-        # Step 5: Resolve outcome (deterministic)
-        momentum_at_roll = world_state["momentum"].to_i
-        intent = {
+      # Step 5: Resolve outcome (deterministic)
+      momentum_at_roll = world_state["momentum"].to_i
+      intent = {
+        difficulty: difficulty,
+        danger: rating["danger"] || "none",
+        impact: rating["impact"] || "positive"
+      }
+      outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
+      resolution_tag = outcome[:resolution_tag]
+
+      # Broadcast roll result immediately so player sees it while narrative streams
+      if stream&.dig(:on_roll)
+        stream[:on_roll].call(
+          roll: outcome[:roll],
           difficulty: difficulty,
-          danger: rating["danger"] || "none",
-          impact: rating["impact"] || "positive"
-        }
-        outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
-        resolution_tag = outcome[:resolution_tag]
-
-        # Reload world_state after outcome update
-        game.reload
-        world_state = game.world_state
-
-        # Step 6: Get narration (AI call 2) — uses random narrator prompt
-        turn_context = {
-          world_state_delta: presenter.world_state_delta,
-          memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
-                            .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
-          recent_actions: recent_actions,
-          rating_reasoning: rating_reasoning
-        }
-        narration, narrator_tokens = ArenaNarratorService.narrate(
-          action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss],
-          world_context: world_state["world_context"],
-          narrator_style: world_state["narrator_style"],
-          prompt_path: NARRATOR_PROMPT_PATH
+          momentum: momentum_at_roll,
+          resolution_tag: resolution_tag,
+          health_loss: outcome[:health_loss]
         )
+      end
 
+      # Reload world_state after outcome update
+      game.reload
+      world_state = game.world_state
+
+      # Step 6: Get narration (AI call 2 — streams narrative chunks if callback provided)
+      turn_context = {
+        world_state_delta: presenter.world_state_delta,
+        memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
+                          .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
+        recent_actions: recent_actions,
+        rating_reasoning: rating_reasoning
+      }
+      narration, narrator_tokens = ArenaNarratorService.narrate(
+        action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss],
+        world_context: world_state["world_context"],
+        narrator_style: world_state["narrator_style"],
+        prompt_path: NARRATOR_PROMPT_PATH,
+        stream: stream&.dig(:on_chunk),
+        hero: game.hero
+      )
+
+      # Steps 7-10: DB writes (in transaction)
+      ActiveRecord::Base.transaction do
         # Step 7: Apply world-state diff from narration
         diff = narration["diff"] || {}
         world_state = Arena::WorldStateManager.new(world_state).apply_scene_diff(diff, presenter: presenter)

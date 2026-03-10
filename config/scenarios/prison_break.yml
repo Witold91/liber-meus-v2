@@ -17,7 +17,8 @@ theme:
 hero:
   slug: convict
   name: "The Convict"
-  description: "A wrongly imprisoned fighter with nothing to lose."
+  description: "A broad-shouldered man in his thirties, stubble-jawed and hollow-eyed from months of wrongful imprisonment. Once a bare-knuckle fighter on the outside, he carries himself with coiled tension — quiet, watchful, and utterly determined to see the sky again."
+  llm_description: "Male, early 30s. Former bare-knuckle fighter, wrongly imprisoned. Strong build, no tools or weapons. Determined, resourceful, has nothing to lose."
   sex: male
 
 acts:

@@ -23,7 +23,7 @@
   </style>
 <% end %>
 
-<div class="game-screen" data-controller="game">
+<div class="game-screen" data-controller="game" data-game-game-id-value="<%= @game.id %>">
   <% if @game.status != "active" %>
     <div class="game-over-banner">
       <%= t("views.games.game_over", status: t("game.statuses.#{@game.status}")) %> <%= link_to t("views.games.start_new_game"), root_path %>

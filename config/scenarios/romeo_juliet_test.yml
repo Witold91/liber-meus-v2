@@ -13,6 +13,7 @@ hero:
   slug: romeo
   name: "Romeo"
   description: "A young lover trying to reach Juliet."
+  llm_description: "Male, young. Determined lover seeking Juliet."
   sex: male
 
 acts:

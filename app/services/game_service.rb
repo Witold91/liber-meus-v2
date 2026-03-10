@@ -23,11 +23,11 @@ class GameService
     )
   end
 
-  def self.continue_turn(game:, action:)
+  def self.continue_turn(game:, action:, stream: nil)
     if game.random_mode?
-      RandomFlows::ContinueTurnFlow.call(game: game, action: action)
+      RandomFlows::ContinueTurnFlow.call(game: game, action: action, stream: stream)
     elsif game.arena_scenario?
-      ArenaFlows::ContinueTurnFlow.call(game: game, action: action)
+      ArenaFlows::ContinueTurnFlow.call(game: game, action: action, stream: stream)
     else
       GameFlows::ContinueTurnFlow.call(game: game, action: action)
     end

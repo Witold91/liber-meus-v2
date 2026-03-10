@@ -1,7 +1,7 @@
 /* Game screen layout — grid, console, action area, hero stats, scrollbars, mobile */
 
 /* Lock the game page to the viewport — no page-level scroll */
-html, body { height: 100%; overflow: hidden; }
+html:has(.game-screen), html:has(.game-screen) body { height: 100%; overflow: hidden; }
 .game-screen { height: calc(100dvh - 2rem); display: flex; flex-direction: column; overflow: hidden; }
 
 .game-over-banner { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 0.5rem 1rem; text-align: center; font-size: 0.85rem; color: var(--theme-accent); flex-shrink: 0; font-family: 'Lora', Georgia, serif; font-style: italic; }
