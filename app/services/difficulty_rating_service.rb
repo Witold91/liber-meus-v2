@@ -13,17 +13,16 @@ class DifficultyRatingService
       parameters: {
         model: model,
         temperature: 0.2,
-        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }
         ]
-      }
+      }.merge(AIClient.json_response_format)
     )
 
     content = response.dig("choices", 0, "message", "content")
     tokens = response.dig("usage", "total_tokens").to_i
-    [ JSON.parse(content), tokens ]
+    [ AIClient.parse_json(content), tokens ]
   rescue => e
     Rails.logger.error("[DifficultyRatingService] Error: #{e.message}")
     raise AIConnectionError, e.message

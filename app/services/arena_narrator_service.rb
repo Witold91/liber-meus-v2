@@ -27,17 +27,16 @@ class ArenaNarratorService
       parameters: {
         model: model,
         temperature: 0.7,
-        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }
         ]
-      }
+      }.merge(AIClient.json_response_format)
     )
 
     content = response.dig("choices", 0, "message", "content")
     tokens = response.dig("usage", "total_tokens").to_i
-    [ JSON.parse(content), tokens ]
+    [ AIClient.parse_json(content), tokens ]
   end
   private_class_method :narrate_blocking
 
@@ -90,17 +89,16 @@ class ArenaNarratorService
       parameters: {
         model: model,
         temperature: 0.7,
-        response_format: { type: "json_object" },
         stream: stream_proc,
         stream_options: { include_usage: true },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }
         ]
-      }
+      }.merge(AIClient.json_response_format)
     )
 
-    [ JSON.parse(buffer), tokens_used ]
+    [ AIClient.parse_json(buffer), tokens_used ]
   end
   private_class_method :narrate_streaming
 
@@ -122,17 +120,16 @@ class ArenaNarratorService
       parameters: {
         model: model,
         temperature: 0.7,
-        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }
         ]
-      }
+      }.merge(AIClient.json_response_format)
     )
 
     content = response.dig("choices", 0, "message", "content")
     tokens = response.dig("usage", "total_tokens").to_i
-    [ JSON.parse(content), tokens ]
+    [ AIClient.parse_json(content), tokens ]
   rescue => e
     Rails.logger.error("[ArenaNarratorService] Epilogue error: #{e.message}")
     raise AIConnectionError, e.message
@@ -155,17 +152,16 @@ class ArenaNarratorService
       parameters: {
         model: model,
         temperature: 0.7,
-        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: user_message }
         ]
-      }
+      }.merge(AIClient.json_response_format)
     )
 
     content = response.dig("choices", 0, "message", "content")
     tokens = response.dig("usage", "total_tokens").to_i
-    [ JSON.parse(content), tokens ]
+    [ AIClient.parse_json(content), tokens ]
   rescue => e
     Rails.logger.error("[ArenaNarratorService] Prologue error: #{e.message}")
     raise AIConnectionError, e.message
