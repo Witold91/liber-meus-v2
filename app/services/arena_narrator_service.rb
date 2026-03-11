@@ -4,7 +4,6 @@ class ArenaNarratorService
   PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
   def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil, stream: nil, hero: nil)
-    client = AIClient.client
     model = AIClient.narrator_model
 
     system_prompt = File.read(prompt_path || SYSTEM_PROMPT_PATH)
@@ -13,34 +12,27 @@ class ArenaNarratorService
     user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions, hero: hero)
 
     if stream
-      narrate_streaming(client, model, system_prompt, user_message, stream)
+      narrate_streaming(model, system_prompt, user_message, stream)
     else
-      narrate_blocking(client, model, system_prompt, user_message)
+      narrate_blocking(model, system_prompt, user_message)
     end
   rescue => e
     Rails.logger.error("[ArenaNarratorService] Error: #{e.message}")
     raise AIConnectionError, e.message
   end
 
-  def self.narrate_blocking(client, model, system_prompt, user_message)
-    response = client.chat(
-      parameters: {
-        model: model,
-        temperature: 0.7,
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_message }
-        ]
-      }.merge(AIClient.json_response_format)
+  def self.narrate_blocking(model, system_prompt, user_message)
+    AIClient.chat_json(
+      system_prompt: system_prompt,
+      user_message: user_message,
+      model: model,
+      temperature: 0.7,
+      service_name: "ArenaNarratorService"
     )
-
-    content = response.dig("choices", 0, "message", "content")
-    tokens = response.dig("usage", "total_tokens").to_i
-    [ AIClient.parse_json(content), tokens ]
   end
   private_class_method :narrate_blocking
 
-  def self.narrate_streaming(client, model, system_prompt, user_message, on_chunk)
+  def self.narrate_streaming(model, system_prompt, user_message, on_chunk)
     buffer = +""
     in_narrative = false
     narrative_done = false
@@ -85,25 +77,27 @@ class ArenaNarratorService
       end
     end
 
-    client.chat(
-      parameters: {
-        model: model,
-        temperature: 0.7,
-        stream: stream_proc,
-        stream_options: { include_usage: true },
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_message }
-        ]
-      }.merge(AIClient.json_response_format)
-    )
+    parameters = {
+      model: model,
+      temperature: 0.7,
+      stream: stream_proc,
+      stream_options: { include_usage: true },
+      messages: [
+        { role: "system", content: system_prompt },
+        { role: "user", content: user_message }
+      ]
+    }.merge(AIClient.json_response_format)
 
-    [ AIClient.parse_json(buffer), tokens_used ]
+    _response, log = AIClient.chat_streaming(parameters: parameters, service_name: "ArenaNarratorService.streaming")
+
+    parsed = AIClient.parse_json(buffer)
+    AIClient.complete_streaming_log(log, response_body: parsed, tokens: tokens_used)
+
+    [ parsed, tokens_used ]
   end
   private_class_method :narrate_streaming
 
   def self.narrate_epilogue(scene_context, action, resolution_tag, ending_narrative, world_context: nil, narrator_style: nil)
-    client = AIClient.client
     model = AIClient.narrator_model
 
     system_prompt = File.read(EPILOGUE_PROMPT_PATH)
@@ -116,27 +110,16 @@ class ArenaNarratorService
                           scene_name: scene_context.dig(:scene, :name),
                           ending_narrative: ending_narrative)
 
-    response = client.chat(
-      parameters: {
-        model: model,
-        temperature: 0.7,
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_message }
-        ]
-      }.merge(AIClient.json_response_format)
+    AIClient.chat_json(
+      system_prompt: system_prompt,
+      user_message: user_message,
+      model: model,
+      temperature: 0.7,
+      service_name: "ArenaNarratorService.epilogue"
     )
-
-    content = response.dig("choices", 0, "message", "content")
-    tokens = response.dig("usage", "total_tokens").to_i
-    [ AIClient.parse_json(content), tokens ]
-  rescue => e
-    Rails.logger.error("[ArenaNarratorService] Epilogue error: #{e.message}")
-    raise AIConnectionError, e.message
   end
 
   def self.narrate_prologue(scene_context, act_intro, world_context: nil, narrator_style: nil)
-    client = AIClient.client
     model = AIClient.narrator_model
 
     system_prompt = File.read(PROLOGUE_PROMPT_PATH)
@@ -148,23 +131,13 @@ class ArenaNarratorService
                           scene_name: scene_context.dig(:scene, :name),
                           scene_description: scene_context.dig(:scene, :description).to_s)
 
-    response = client.chat(
-      parameters: {
-        model: model,
-        temperature: 0.7,
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_message }
-        ]
-      }.merge(AIClient.json_response_format)
+    AIClient.chat_json(
+      system_prompt: system_prompt,
+      user_message: user_message,
+      model: model,
+      temperature: 0.7,
+      service_name: "ArenaNarratorService.prologue"
     )
-
-    content = response.dig("choices", 0, "message", "content")
-    tokens = response.dig("usage", "total_tokens").to_i
-    [ AIClient.parse_json(content), tokens ]
-  rescue => e
-    Rails.logger.error("[ArenaNarratorService] Prologue error: #{e.message}")
-    raise AIConnectionError, e.message
   end
 
   def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [], hero: nil)

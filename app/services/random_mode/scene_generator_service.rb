@@ -3,38 +3,23 @@ module RandomMode
     SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "random_scene_generator.txt")
 
     def self.generate(world_context:, existing_scenes:, origin_scene_id:, exit_label:, player_inventory: [], memory_notes: [], game_language: "en")
-      client = AIClient.client
-      model = AIClient.narrator_model
-
       system_prompt = File.read(SYSTEM_PROMPT_PATH)
       system_prompt += "\n\nIMPORTANT: Write all prose and descriptions in #{language_name(game_language)}. Names of characters, locations, and items should be immersive and fit the world's culture and setting — not the output language."
 
-      user_message = build_user_message(
-        world_context: world_context,
-        existing_scenes: existing_scenes,
-        origin_scene_id: origin_scene_id,
-        exit_label: exit_label,
-        player_inventory: player_inventory,
-        memory_notes: memory_notes
+      AIClient.chat_json(
+        system_prompt: system_prompt,
+        user_message: build_user_message(
+          world_context: world_context,
+          existing_scenes: existing_scenes,
+          origin_scene_id: origin_scene_id,
+          exit_label: exit_label,
+          player_inventory: player_inventory,
+          memory_notes: memory_notes
+        ),
+        model: AIClient.narrator_model,
+        temperature: 0.7,
+        service_name: "RandomMode::SceneGeneratorService"
       )
-
-      response = client.chat(
-        parameters: {
-          model: model,
-          temperature: 0.7,
-          messages: [
-            { role: "system", content: system_prompt },
-            { role: "user", content: user_message }
-          ]
-        }.merge(AIClient.json_response_format)
-      )
-
-      content = response.dig("choices", 0, "message", "content")
-      tokens = response.dig("usage", "total_tokens").to_i
-      [ AIClient.parse_json(content), tokens ]
-    rescue => e
-      Rails.logger.error("[RandomMode::SceneGeneratorService] Error: #{e.message}")
-      raise AIConnectionError, e.message
     end
 
     def self.build_user_message(world_context:, existing_scenes:, origin_scene_id:, exit_label:, player_inventory:, memory_notes:)

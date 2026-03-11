@@ -4,32 +4,17 @@ module RandomMode
     THEMES_PATH = Rails.root.join("config", "random_themes.yml")
 
     def self.generate(setting_description, game_language: "en")
-      client = AIClient.client
-      model = AIClient.narrator_model
-
       system_prompt = File.read(SYSTEM_PROMPT_PATH)
       system_prompt.gsub!("{{THEME_OPTIONS}}", theme_options_for_prompt)
       system_prompt += "\n\nIMPORTANT: Write all prose and descriptions in #{language_name(game_language)}. Names of characters, locations, and items should be immersive and fit the world's culture and setting — not the output language."
 
-      user_message = "SETTING DESCRIPTION:\n#{setting_description}"
-
-      response = client.chat(
-        parameters: {
-          model: model,
-          temperature: 0.8,
-          messages: [
-            { role: "system", content: system_prompt },
-            { role: "user", content: user_message }
-          ]
-        }.merge(AIClient.json_response_format)
+      AIClient.chat_json(
+        system_prompt: system_prompt,
+        user_message: "SETTING DESCRIPTION:\n#{setting_description}",
+        model: AIClient.narrator_model,
+        temperature: 0.8,
+        service_name: "RandomMode::WorldGeneratorService"
       )
-
-      content = response.dig("choices", 0, "message", "content")
-      tokens = response.dig("usage", "total_tokens").to_i
-      [ AIClient.parse_json(content), tokens ]
-    rescue => e
-      Rails.logger.error("[Random::WorldGeneratorService] Error: #{e.message}")
-      raise AIConnectionError, e.message
     end
 
     def self.themes

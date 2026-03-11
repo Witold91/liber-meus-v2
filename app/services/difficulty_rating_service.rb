@@ -2,30 +2,16 @@ class DifficultyRatingService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "difficulty_rating.txt")
 
   def self.rate(action, scene_context, hero, recent_actions = [], world_context: nil)
-    client = AIClient.client
-    model = AIClient.difficulty_model
-
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
-    user_message = build_user_message(action, scene_context, hero, recent_actions)
 
-    response = client.chat(
-      parameters: {
-        model: model,
-        temperature: 0.2,
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_message }
-        ]
-      }.merge(AIClient.json_response_format)
+    AIClient.chat_json(
+      system_prompt: system_prompt,
+      user_message: build_user_message(action, scene_context, hero, recent_actions),
+      model: AIClient.difficulty_model,
+      temperature: 0.2,
+      service_name: "DifficultyRatingService"
     )
-
-    content = response.dig("choices", 0, "message", "content")
-    tokens = response.dig("usage", "total_tokens").to_i
-    [ AIClient.parse_json(content), tokens ]
-  rescue => e
-    Rails.logger.error("[DifficultyRatingService] Error: #{e.message}")
-    raise AIConnectionError, e.message
   end
 
   def self.build_user_message(action, scene_context, hero, recent_actions = [])

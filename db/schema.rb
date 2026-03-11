@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_222212) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_11_201155) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_222212) do
     t.jsonb "world_state_snapshot", default: {}
     t.index ["game_id", "number"], name: "index_acts_on_game_id_and_number", unique: true
     t.index ["game_id"], name: "index_acts_on_game_id"
+  end
+
+  create_table "ai_request_logs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "duration_ms", default: 0
+    t.string "error_message"
+    t.jsonb "messages", default: [], null: false
+    t.string "model", null: false
+    t.jsonb "response_body", default: {}
+    t.string "service_name", null: false
+    t.float "temperature"
+    t.integer "tokens_used", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_ai_request_logs_on_created_at"
+    t.index ["service_name"], name: "index_ai_request_logs_on_service_name"
   end
 
   create_table "games", force: :cascade do |t|
