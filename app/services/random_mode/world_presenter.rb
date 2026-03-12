@@ -3,6 +3,7 @@ module RandomMode
     def initialize(world_state)
       @world_state = world_state
       @generated_scenes = world_state["generated_scenes"] || {}
+      @player_scene = world_state["player_scene"]
     end
 
     def scenes
@@ -20,11 +21,11 @@ module RandomMode
     end
 
     def actors
-      scenes.flat_map { |s| s["actors"] || [] }
+      nearby_scenes.flat_map { |s| s["actors"] || [] }
     end
 
     def objects
-      scenes.flat_map { |s| s["objects"] || [] }
+      nearby_scenes.flat_map { |s| s["objects"] || [] }
     end
 
     def scene_context_for(scene_id, world_state)
@@ -161,6 +162,11 @@ module RandomMode
       end
 
       items
+    end
+
+    def nearby_scenes
+      nearby_ids = Set.new([@player_scene]) + adjacent_scene_ids(@player_scene)
+      @generated_scenes.values_at(*nearby_ids).compact
     end
 
     def current_scene_for(entity, states)

@@ -1,5 +1,6 @@
 class MemoryCompressionService
   COMPRESSION_THRESHOLD = 10
+  COMPRESS_COUNT = 5
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "memory_compression.txt")
 
   def self.maybe_compress!(game)
@@ -9,13 +10,15 @@ class MemoryCompressionService
 
     return false if uncompressed_turns.count < COMPRESSION_THRESHOLD
 
+    # Compress only the oldest notes, keep the most recent ones intact
+    oldest_turns = uncompressed_turns.limit(COMPRESS_COUNT)
     existing_summary = game.memory_summary
-    notes = uncompressed_turns.map { |t| { turn_number: t.turn_number, note: t.llm_memory } }
+    notes = oldest_turns.map { |t| { turn_number: t.turn_number, note: t.llm_memory } }
 
     summary, _tokens = compress(existing_summary, notes)
 
     game.update!(memory_summary: summary)
-    uncompressed_turns.update_all(llm_memory: nil)
+    oldest_turns.update_all(llm_memory: nil)
 
     true
   end

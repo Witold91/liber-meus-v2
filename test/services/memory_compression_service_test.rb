@@ -21,7 +21,7 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
     assert_equal false, result
   end
 
-  test "compresses when threshold reached" do
+  test "compresses oldest 5 notes and keeps recent 5" do
     10.times do |i|
       Turn.create!(game: @game, act: acts(:act_one), turn_number: i + 1,
                    content: "Narrative #{i}", llm_memory: "Note #{i}")
@@ -35,11 +35,12 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
     @game.reload
     assert_equal "Compressed story summary.", @game.memory_summary
 
-    remaining_notes = @game.turns.where.not(llm_memory: [nil, ""]).count
-    assert_equal 0, remaining_notes
+    remaining = @game.turns.where.not(llm_memory: [nil, ""]).order(:turn_number)
+    assert_equal 5, remaining.count
+    assert_equal (6..10).to_a, remaining.pluck(:turn_number)
   end
 
-  test "incremental compression passes existing summary" do
+  test "incremental compression passes existing summary and only oldest notes" do
     @game.update!(memory_summary: "Previous summary of events.")
     10.times do |i|
       Turn.create!(game: @game, act: acts(:act_one), turn_number: i + 1,
@@ -57,6 +58,10 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
     assert_includes captured_message, "PREVIOUS SUMMARY:"
     assert_includes captured_message, "Previous summary of events."
     assert_includes captured_message, "MEMORY NOTES TO COMPRESS:"
+    # Only oldest 5 notes sent to compression
+    assert_includes captured_message, "T1 - Note 0"
+    assert_includes captured_message, "T5 - Note 4"
+    refute_includes captured_message, "T6 - Note 5"
   end
 
   test "uses difficulty model and low temperature" do
