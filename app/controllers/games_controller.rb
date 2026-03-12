@@ -13,7 +13,7 @@ class GamesController < ApplicationController
 
   def index
     @active_games = current_user.games.where(status: "active")
-                                .order(updated_at: :desc).includes(:hero, :saves)
+                                .order(updated_at: :desc).includes(:hero)
     @past_games   = current_user.games.where.not(status: "active")
                                 .order(updated_at: :desc).includes(:hero).limit(10)
   end
@@ -23,7 +23,7 @@ class GamesController < ApplicationController
     build_presenter
     @scene_context = @presenter&.scene_context_for(@game.world_state["player_scene"], @game.world_state)
     @acts_for_replay = @game.acts.order(:number)
-    @saves = @game.saves.order(created_at: :desc)
+    @save = @game.saves.find_by(user: current_user)
   end
 
   def continue
@@ -88,7 +88,7 @@ class GamesController < ApplicationController
         render turbo_stream: turbo_stream.replace(
           "save-panel",
           partial: "games/save_panel",
-          locals: { saves: @game.saves.order(created_at: :desc), game: @game }
+          locals: { save: save, game: @game }
         )
       end
       format.html { redirect_to game_path(@game), notice: t("controllers.games.notices.game_saved", default: "Game saved.") }
@@ -113,10 +113,6 @@ class GamesController < ApplicationController
   rescue => e
     Rails.logger.error("[GamesController#load_save] #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     redirect_to game_path(@game), alert: t("controllers.games.alerts.error", message: e.message)
-  end
-
-  def saves
-    @saves = @game.saves.order(created_at: :desc)
   end
 
   def replay_act

@@ -23,7 +23,6 @@ Rails.application.routes.draw do
         post :replay_act
         post :save_game
         post :load_save
-        get  :saves
       end
     end
 

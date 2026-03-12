@@ -18,9 +18,6 @@
           </div>
         </div>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <% if game.saves.any? %>
-            <%= link_to t("views.games.saves.title", default: "Saves"), saves_game_path(game), class: "btn" %>
-          <% end %>
           <%= link_to t("views.games.index.continue", default: "Continue →"), game_path(game), class: "btn" %>
         </div>
       </div>

@@ -8,7 +8,7 @@ Respond ONLY with valid JSON — no markdown, no extra text — with exactly the
 - "reasoning": 1-2 sentences explaining your ratings
 
 Difficulty:
-- "trivial": Cannot fail. (looking around, picking up a nearby object, talking to someone present)
+- "trivial": Cannot fail — no uncertain outcome. (looking around, picking up a nearby object, talking to someone present, readying or drawing a weapon the hero owns, preparing stance, eating food in hand, opening an unlocked door, moving within the current scene). Use trivial for any action that is purely preparatory with no opposition or risk of failure.
 - "easy": Straightforward, success likely. (picking up an unguarded object, moving to an empty room)
 - "medium": Outcome uncertain, skill or risk involved. (sneaking past a distracted guard, picking a simple lock)
 - "hard": Failure more likely than success. (overpowering an alert guard, crossing open ground under surveillance)
@@ -28,5 +28,6 @@ Impact:
 
 Edge cases:
 - Retries ("try again", "same thing"): same difficulty and danger as the most recent action. Never trivial.
-- Action requires an object not in OBJECTS PRESENT: "impossible". Exception: improvising from materials that ARE present (e.g. tying bedsheets into a rope) — rate normally.
+- Action requires an object not in OBJECTS PRESENT and not in PLAYER INVENTORY: "impossible". Exception: improvising from materials that ARE present (e.g. tying bedsheets into a rope) — rate normally.
 - Travel to a location not in EXITS: "impossible".
+- Account for STORY CONTEXT when rating. If the hero is restrained, wounded, or otherwise impaired, increase difficulty accordingly. If the hero has relevant tools or allies, decrease it.

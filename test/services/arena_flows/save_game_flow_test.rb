@@ -17,9 +17,24 @@ class ArenaFlows::SaveGameFlowTest < ActiveSupport::TestCase
     })
   end
 
-  test "creates a save record" do
-    assert_difference "Save.count", 1 do
-      ArenaFlows::SaveGameFlow.call(game: @game, user: @user)
+  test "creates or updates a save record" do
+    save = ArenaFlows::SaveGameFlow.call(game: @game, user: @user)
+    assert save.persisted?
+    assert_equal @game.id, save.game_id
+    assert_equal @user.id, save.user_id
+  end
+
+  test "overwrites existing save for same game and user" do
+    ArenaFlows::SaveGameFlow.call(game: @game, user: @user)
+
+    @game.update!(world_state: @game.world_state.merge("health" => 50, "player_scene" => "guard_room"))
+    Turn.create!(game: @game, act: acts(:act_one), turn_number: 5, content: "Later turn.")
+
+    assert_no_difference "Save.count" do
+      save = ArenaFlows::SaveGameFlow.call(game: @game, user: @user)
+      assert_equal 50, save.world_state["health"]
+      assert_equal "guard_room", save.world_state["player_scene"]
+      assert_equal 5, save.turn_number
     end
   end
 

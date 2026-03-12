@@ -105,7 +105,70 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     assert_equal "vent_shaft", result["player_scene"]
   end
 
-  test "apply_scene_diff does not mutate original world_state" do
+  test "apply_scene_diff registers new actor in random mode" do
+    world_state = {
+      "act_number" => 1,
+      "player_scene" => "tavern",
+      "actors" => {},
+      "objects" => {},
+      "generated_scenes" => {
+        "tavern" => {
+          "id" => "tavern", "name" => "Tavern", "description" => "A dusty tavern.",
+          "exits" => [], "actors" => [], "objects" => []
+        }
+      }
+    }
+    presenter = RandomMode::WorldPresenter.new(world_state)
+
+    diff = {
+      "actor_updates" => {
+        "old_bartender" => {
+          "new_actor" => true,
+          "name" => "Old Bartender",
+          "description" => "A grizzled man polishing glasses.",
+          "status" => "curious",
+          "scene" => "tavern"
+        }
+      }
+    }
+
+    result = Arena::WorldStateManager.new(world_state).apply_scene_diff(diff, presenter: presenter)
+
+    assert_equal "curious", result.dig("actors", "old_bartender", "status")
+    assert_equal "tavern", result.dig("actors", "old_bartender", "scene")
+
+    scene_actors = result.dig("generated_scenes", "tavern", "actors")
+    assert scene_actors.any? { |a| a["id"] == "old_bartender" }
+  end
+
+  test "apply_scene_diff allows disposition update on new actor" do
+    world_state = {
+      "act_number" => 1,
+      "player_scene" => "tavern",
+      "actors" => {},
+      "objects" => {},
+      "generated_scenes" => {
+        "tavern" => {
+          "id" => "tavern", "name" => "Tavern", "description" => "A dusty tavern.",
+          "exits" => [], "actors" => [], "objects" => []
+        }
+      }
+    }
+    presenter = RandomMode::WorldPresenter.new(world_state)
+
+    diff = {
+      "actor_updates" => {
+        "old_bartender" => { "new_actor" => true, "name" => "Old Bartender", "status" => "curious", "scene" => "tavern" }
+      },
+      "disposition_updates" => { "old_bartender" => "friendly" }
+    }
+
+    result = Arena::WorldStateManager.new(world_state).apply_scene_diff(diff, presenter: presenter)
+
+    assert_equal "friendly", result.dig("actors", "old_bartender", "disposition")
+  end
+
+  test "apply_scene_diff ignores unknown actors without new_actor flag" do
     original = @world_state.dup
     diff = { "player_moved_to" => "vent_shaft" }
     Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)

@@ -106,24 +106,6 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
     assert_equal "active", act.status
   end
 
-  test "deletes saves created after loaded save" do
-    later_save = Save.create!(
-      game: @game,
-      user: @user,
-      hero: @game.hero,
-      world_state: @game.world_state,
-      act_number: 1,
-      turn_number: 5,
-      label: "Act 1, Turn 5",
-      created_at: @save.created_at + 1.hour
-    )
-
-    ArenaFlows::LoadSaveFlow.call(game: @game, save: @save)
-
-    assert_not Save.exists?(later_save.id)
-    assert Save.exists?(@save.id)
-  end
-
   test "raises error if save does not belong to game" do
     other_game = Game.create!(
       hero: heroes(:convict),

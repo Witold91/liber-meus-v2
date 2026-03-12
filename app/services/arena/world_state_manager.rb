@@ -18,11 +18,21 @@ module Arena
       if (actor_updates = diff["actor_updates"])
         actor_updates.each do |actor_id, updates|
           resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug)
-          next unless resolved_actor_id
-          result["actors"] ||= {}
-          result["actors"][resolved_actor_id] ||= {}
-          result["actors"][resolved_actor_id]["status"] = updates["status"] if updates["status"]
-          result["actors"][resolved_actor_id].merge!(updates.except("status")) if updates.key?("notes")
+
+          if resolved_actor_id
+            result["actors"] ||= {}
+            result["actors"][resolved_actor_id] ||= {}
+            result["actors"][resolved_actor_id]["status"] = updates["status"] if updates["status"]
+            result["actors"][resolved_actor_id].merge!(updates.except("status")) if updates.key?("notes")
+          elsif updates["new_actor"]
+            # New actor introduced by the narrator (random mode)
+            result["actors"] ||= {}
+            result["actors"][actor_id] = {
+              "scene" => updates["scene"] || result["player_scene"],
+              "status" => updates["status"] || "present"
+            }
+            register_new_actor(result, actor_id, updates)
+          end
         end
       end
 
@@ -45,7 +55,7 @@ module Arena
 
       if (disposition_updates = diff["disposition_updates"])
         disposition_updates.each do |actor_id, disposition|
-          resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug)
+          resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug) || known_actor_id(result, actor_id)
           next unless resolved_actor_id
           result["actors"] ||= {}
           result["actors"][resolved_actor_id] ||= {}
@@ -55,7 +65,7 @@ module Arena
 
       if (actor_moved = diff["actor_moved_to"])
         actor_moved.each do |actor_id, scene_id|
-          resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug)
+          resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug) || known_actor_id(result, actor_id)
           resolved_scene_id = resolve_id(scene_id, valid_scene_ids, scene_ids_by_slug)
           next unless resolved_actor_id
           next unless resolved_scene_id
@@ -93,6 +103,29 @@ module Arena
 
     def normalize_slug(value)
       value.to_s.parameterize(separator: "_")
+    end
+
+    def known_actor_id(state, actor_id)
+      (state["actors"] || {}).key?(actor_id) ? actor_id : nil
+    end
+
+    def register_new_actor(state, actor_id, updates)
+      scene_id = updates["scene"] || state["player_scene"]
+      return unless scene_id
+
+      scene_def = (state["generated_scenes"] || {})[scene_id]
+      return unless scene_def
+
+      scene_def["actors"] ||= []
+      return if scene_def["actors"].any? { |a| a["id"] == actor_id }
+
+      scene_def["actors"] << {
+        "id" => actor_id,
+        "name" => updates["name"] || actor_id.tr("_", " ").titleize,
+        "description" => updates["description"],
+        "scene" => scene_id,
+        "default_status" => updates["status"] || "present"
+      }
     end
   end
 end

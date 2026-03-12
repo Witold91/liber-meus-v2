@@ -82,10 +82,12 @@
         <%= render "games/scene_panel", scene_context: @scene_context, game: @game %>
       </div>
 
-      <%= render "games/act_replay", acts_for_replay: @acts_for_replay, scenario: @scenario %>
+      <% unless @game.random_mode? %>
+        <%= render "games/act_replay", acts_for_replay: @acts_for_replay, scenario: @scenario %>
+      <% end %>
 
       <div id="save-panel">
-        <%= render "games/save_panel", saves: @saves, game: @game %>
+        <%= render "games/save_panel", save: @save, game: @game %>
       </div>
     </div>
   </div>

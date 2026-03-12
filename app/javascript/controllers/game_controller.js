@@ -179,6 +179,14 @@ export default class extends Controller {
         }
         Turbo.renderStreamMessage(html)
         this.scheduleScrollToBottom()
+
+        // Check if an ending turn was rendered
+        if (this.turnLog && this.turnLog.querySelector(".turn-entry.ending")) {
+          this.gameEnded = true
+          this.inputTarget.disabled = true
+          this.submitTarget.disabled = true
+          setTimeout(() => window.location.reload(), 3000)
+        }
       })
       .catch(err => {
         console.error("Game submit error:", err)
@@ -188,6 +196,7 @@ export default class extends Controller {
         }
       })
       .finally(() => {
+        if (this.gameEnded) return
         this.inputTarget.value = ""
         this.inputTarget.disabled = false
         this.submitTarget.disabled = false

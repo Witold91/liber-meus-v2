@@ -25,9 +25,6 @@ module ArenaFlows
         # Reactivate target act (may have been completed)
         target_act.update!(status: "active")
 
-        # Delete saves created after this one (they reference now-invalid state)
-        game.saves.where("created_at > ?", save.created_at).destroy_all
-
         game
       end
     end

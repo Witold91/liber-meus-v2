@@ -1,9 +1,9 @@
 <% game = local_assigns[:game] %>
-<% saves = local_assigns[:saves] || [] %>
+<% save = local_assigns[:save] %>
 
 <div class="save-panel">
   <div class="save-panel-header">
-    <span><%= t("views.games.saves.title", default: "Saves") %></span>
+    <span><%= t("views.games.saves.title", default: "Quicksave") %></span>
     <% if game&.status == "active" %>
       <%= button_to t("views.games.saves.save_button", default: "Save"), save_game_game_path(game),
           method: :post,
@@ -12,7 +12,7 @@
     <% end %>
   </div>
 
-  <% saves.first(5).each do |save| %>
+  <% if save %>
     <div class="save-row">
       <div>
         <span class="save-label"><%= save.label %></span>
@@ -22,15 +22,7 @@
           method: :post,
           class: "replay-btn",
           title: "Load this save",
-          form: { data: { turbo_confirm: t("views.games.saves.confirm_load", label: save.label, default: "Load save '#{save.label}'? All progress after this point will be lost.") } } %>
-    </div>
-  <% end %>
-
-  <% if saves.size > 5 %>
-    <div style="margin-top: 0.4rem; text-align: right;">
-      <%= link_to t("views.games.saves.view_all", default: "View all (%{count})" % { count: saves.size }),
-          saves_game_path(game),
-          class: "save-meta", style: "text-decoration: underline;" %>
+          form: { data: { turbo_confirm: t("views.games.saves.confirm_load", label: save.label, default: "Load save '#{save.label}'? Current progress will be lost.") } } %>
     </div>
   <% end %>
 </div>

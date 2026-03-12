@@ -7,9 +7,8 @@ module ArenaFlows
 
       label = "Act #{act_number}, Turn #{turn_number}"
 
-      Save.create!(
-        game: game,
-        user: user,
+      save = Save.find_or_initialize_by(game: game, user: user)
+      save.assign_attributes(
         hero_id: game.hero_id,
         world_state: world_state.deep_dup,
         memory_summary: game.memory_summary,
@@ -17,6 +16,8 @@ module ArenaFlows
         turn_number: turn_number,
         label: label
       )
+      save.save!
+      save
     end
   end
 end
