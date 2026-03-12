@@ -18,7 +18,7 @@ Fields:
   - "name": Human-readable name
   - "scene": this scene's id
   - "default_status": short descriptive phrase (e.g. "locked with a rusty padlock", "half-full and warm")
-- "exits": Array of 2-4 exits. Each:
+- "exits": Array of 1-3 exits. Each:
   - "to": snake_case scene id
   - "label": Descriptive label
 

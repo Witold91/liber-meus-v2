@@ -12,6 +12,7 @@ module ArenaFlows
         user: user,
         hero_id: game.hero_id,
         world_state: world_state.deep_dup,
+        memory_summary: game.memory_summary,
         act_number: act_number,
         turn_number: turn_number,
         label: label

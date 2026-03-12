@@ -18,6 +18,7 @@ module ArenaFlows
         game.update!(
           world_state: save.world_state,
           hero_id: save.hero_id,
+          memory_summary: save.memory_summary,
           status: "active"
         )
 

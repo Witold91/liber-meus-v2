@@ -57,7 +57,7 @@ export default class extends Controller {
   renderStreamingRoll(data) {
     if (!this.streamingEl) return
 
-    const { roll, difficulty, momentum, resolution_tag, health_loss } = data
+    const { roll, difficulty, momentum, resolution_tag, health_loss, health_gain } = data
     const rollArea = this.streamingEl.querySelector(".roll-breakdown")
     if (!rollArea) return
 
@@ -97,6 +97,17 @@ export default class extends Controller {
         `<span class="health-loss-value">\u2212${health_loss}</span>` +
         `<span>health</span>`
       rollArea.insertAdjacentElement("afterend", healthEl)
+    }
+
+    if (health_gain > 0) {
+      const healEl = document.createElement("div")
+      healEl.className = "health-gain"
+      healEl.innerHTML =
+        `<span class="health-gain-icon">\u2665</span>` +
+        `<span class="health-gain-value">+${health_gain}</span>` +
+        `<span>health</span>`
+      const insertAfter = rollArea.parentElement.querySelector(".health-loss") || rollArea
+      insertAfter.insertAdjacentElement("afterend", healEl)
     }
   }
 

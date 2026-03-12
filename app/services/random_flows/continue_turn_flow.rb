@@ -34,7 +34,8 @@ module RandomFlows
       intent = {
         difficulty: difficulty,
         danger: rating["danger"] || "none",
-        impact: rating["impact"] || "positive"
+        impact: rating["impact"] || "positive",
+        healing: rating["healing"] == true
       }
       outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
       resolution_tag = outcome[:resolution_tag]
@@ -46,7 +47,8 @@ module RandomFlows
           difficulty: difficulty,
           momentum: momentum_at_roll,
           resolution_tag: resolution_tag,
-          health_loss: outcome[:health_loss]
+          health_loss: outcome[:health_loss],
+          health_gain: outcome[:health_gain]
         )
       end
 
@@ -55,12 +57,17 @@ module RandomFlows
       world_state = game.world_state
 
       # Step 6: Get narration (AI call 2 — streams narrative chunks if callback provided)
+      last_turn = game.turns.recent(1).first
+      previous_narrative_tail = last_turn&.content&.then { |c| c.lines.last(5).join } || ""
+
       turn_context = {
         world_state_delta: presenter.world_state_delta,
+        memory_summary: game.memory_summary,
         memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
                           .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
         recent_actions: recent_actions,
-        rating_reasoning: rating_reasoning
+        rating_reasoning: rating_reasoning,
+        previous_narrative_tail: previous_narrative_tail.presence
       }
       narration, narrator_tokens = ArenaNarratorService.narrate(
         action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss],
@@ -68,7 +75,11 @@ module RandomFlows
         narrator_style: world_state["narrator_style"],
         prompt_path: NARRATOR_PROMPT_PATH,
         stream: stream&.dig(:on_chunk),
-        hero: game.hero
+        hero: game.hero,
+        turn_number: turn_number,
+        random_mode: true,
+        current_hp: world_state["health"],
+        health_gain: outcome[:health_gain]
       )
 
       # Steps 7-10: DB writes (in transaction)
@@ -98,7 +109,8 @@ module RandomFlows
           "roll" => outcome[:roll],
           "difficulty" => difficulty,
           "momentum_at_roll" => momentum_at_roll,
-          "health_loss" => outcome[:health_loss]
+          "health_loss" => outcome[:health_loss],
+          "health_gain" => outcome[:health_gain]
         }
 
         turn = TurnPersistenceService.create!(
@@ -112,6 +124,9 @@ module RandomFlows
           tokens_used: tokens_used,
           options_payload: roll_payload
         )
+
+        # Step 9.5: Compress memory if threshold reached
+        MemoryCompressionService.maybe_compress!(game)
 
         # Step 10: Check health depletion (only end condition in random mode)
         if world_state["health"].to_i <= 0

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_11_201155) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_185111) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,6 +44,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_201155) do
     t.datetime "created_at", null: false
     t.string "game_language", default: "en", null: false
     t.bigint "hero_id", null: false
+    t.text "memory_summary"
     t.string "mode", default: "scenario", null: false
     t.string "scenario_slug"
     t.string "status", default: "active", null: false
@@ -72,6 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_201155) do
     t.bigint "game_id", null: false
     t.bigint "hero_id", null: false
     t.string "label", null: false
+    t.text "memory_summary"
     t.integer "turn_number", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false

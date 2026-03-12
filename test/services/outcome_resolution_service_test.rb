@@ -114,6 +114,63 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     assert_equal 1, @game.world_state["momentum"]
   end
 
+  # --- healing ---
+
+  test "healing true: success restores 15 health" do
+    @game.update!(world_state: @game.world_state.merge("health" => 60))
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "easy", danger: "none", healing: true })
+    assert_equal 15, outcome[:health_gain]
+    @game.reload
+    assert_equal 75, @game.world_state["health"]
+  end
+
+  test "healing true: partial restores 8 health" do
+    @game.update!(world_state: @game.world_state.merge("health" => 60))
+    OutcomeResolutionService.stubs(:rand).returns(4)
+    outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "medium", danger: "none", healing: true })
+    assert_equal "partial", outcome[:resolution_tag]
+    assert_equal 8, outcome[:health_gain]
+    @game.reload
+    assert_equal 68, @game.world_state["health"]
+  end
+
+  test "healing true: failure restores nothing" do
+    @game.update!(world_state: @game.world_state.merge("health" => 60))
+    OutcomeResolutionService.stubs(:rand).returns(1)
+    outcome = OutcomeResolutionService.resolve(@game, "perform surgery", 1, { difficulty: "hard", danger: "high", healing: true })
+    assert_equal 0, outcome[:health_gain]
+    @game.reload
+    assert_equal 25, @game.world_state["health"]  # 60 - 35 + 0
+  end
+
+  test "healing cannot exceed max health" do
+    @game.update!(world_state: @game.world_state.merge("health" => 95))
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "easy", danger: "none", healing: true })
+    assert_equal 15, outcome[:health_gain]
+    @game.reload
+    assert_equal 100, @game.world_state["health"]
+  end
+
+  test "healing and danger stack on same turn" do
+    @game.update!(world_state: @game.world_state.merge("health" => 60))
+    # partial with high danger: -12 health, +8 healing = net -4
+    OutcomeResolutionService.stubs(:rand).returns(4)
+    outcome = OutcomeResolutionService.resolve(@game, "risky surgery", 1, { difficulty: "medium", danger: "high", healing: true })
+    assert_equal "partial", outcome[:resolution_tag]
+    assert_equal 12, outcome[:health_loss]
+    assert_equal 8, outcome[:health_gain]
+    @game.reload
+    assert_equal 56, @game.world_state["health"]  # 60 - 12 + 8
+  end
+
+  test "healing false returns zero health_gain" do
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    outcome = OutcomeResolutionService.resolve(@game, "look around", 1, { difficulty: "easy", danger: "none", healing: false })
+    assert_equal 0, outcome[:health_gain]
+  end
+
   # --- defaults ---
 
   test "impact defaults to positive when omitted" do

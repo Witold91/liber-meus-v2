@@ -3,13 +3,13 @@ class ArenaNarratorService
   EPILOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_epilogue.txt")
   PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil, stream: nil, hero: nil, turn_number: nil, random_mode: false, encountered_actors: [], current_hp: nil)
+  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil, stream: nil, hero: nil, turn_number: nil, random_mode: false, encountered_actors: [], current_hp: nil, health_gain: 0)
     model = AIClient.narrator_model
 
     system_prompt = File.read(prompt_path || SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
     system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
-    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions, hero: hero, turn_number: turn_number, random_mode: random_mode, encountered_actors: encountered_actors, current_hp: current_hp)
+    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions, hero: hero, turn_number: turn_number, random_mode: random_mode, encountered_actors: encountered_actors, current_hp: current_hp, health_gain: health_gain)
 
     if stream
       narrate_streaming(model, system_prompt, user_message, stream)
@@ -159,7 +159,7 @@ class ArenaNarratorService
 
   HERO_FULL_DESCRIPTION_TURNS = 3
 
-  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [], hero: nil, turn_number: nil, random_mode: false, encountered_actors: [], current_hp: nil)
+  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [], hero: nil, turn_number: nil, random_mode: false, encountered_actors: [], current_hp: nil, health_gain: 0)
     parts = []
 
     if hero
@@ -259,9 +259,13 @@ class ArenaNarratorService
       parts << ""
     end
 
+    memory_summary = turn_context[:memory_summary]
     memory_notes = turn_context[:memory_notes] || []
-    if memory_notes.any?
+    if memory_summary.present? || memory_notes.any?
       parts << I18n.t("services.arena_narrator_service.prompt.story_so_far_header")
+      if memory_summary.present?
+        parts << I18n.t("services.arena_narrator_service.prompt.memory_summary_item", summary: memory_summary)
+      end
       memory_notes.each do |note|
         parts << I18n.t("services.arena_narrator_service.prompt.memory_note_item", turn_number: note[:turn_number], note: note[:note])
       end
@@ -285,6 +289,11 @@ class ArenaNarratorService
 
     if health_loss > 0
       parts << I18n.t("services.arena_narrator_service.prompt.health_loss", amount: health_loss)
+      parts << ""
+    end
+
+    if health_gain > 0
+      parts << I18n.t("services.arena_narrator_service.prompt.health_gain", amount: health_gain)
       parts << ""
     end
 

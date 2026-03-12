@@ -33,7 +33,8 @@ module ArenaFlows
       intent = {
         difficulty: difficulty,
         danger: rating["danger"] || "none",
-        impact: rating["impact"] || "positive"
+        impact: rating["impact"] || "positive",
+        healing: rating["healing"] == true
       }
       outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
       resolution_tag = outcome[:resolution_tag]
@@ -45,7 +46,8 @@ module ArenaFlows
           difficulty: difficulty,
           momentum: momentum_at_roll,
           resolution_tag: resolution_tag,
-          health_loss: outcome[:health_loss]
+          health_loss: outcome[:health_loss],
+          health_gain: outcome[:health_gain]
         )
       end
 
@@ -68,13 +70,14 @@ module ArenaFlows
 
       turn_context = {
         world_state_delta: presenter.world_state_delta,
+        memory_summary: game.memory_summary,
         memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
                           .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
         recent_actions: recent_actions,
         rating_reasoning: rating_reasoning,
         previous_narrative_tail: previous_narrative_tail.presence
       }
-      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"], event_descriptions: event_descriptions, stream: stream&.dig(:on_chunk), hero: game.hero, turn_number: turn_number, random_mode: game.random_mode?, encountered_actors: encountered_actors, current_hp: world_state["health"])
+      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"], event_descriptions: event_descriptions, stream: stream&.dig(:on_chunk), hero: game.hero, turn_number: turn_number, random_mode: game.random_mode?, encountered_actors: encountered_actors, current_hp: world_state["health"], health_gain: outcome[:health_gain])
 
       # Steps 8-11: DB writes (in transaction)
       ActiveRecord::Base.transaction do
@@ -108,7 +111,7 @@ module ArenaFlows
         narrative_content = narration["narrative"] || ""
         tokens_used = difficulty_tokens + narrator_tokens
 
-        roll_payload = { "roll" => outcome[:roll], "difficulty" => difficulty, "momentum_at_roll" => momentum_at_roll, "health_loss" => outcome[:health_loss] }
+        roll_payload = { "roll" => outcome[:roll], "difficulty" => difficulty, "momentum_at_roll" => momentum_at_roll, "health_loss" => outcome[:health_loss], "health_gain" => outcome[:health_gain] }
 
         turn = TurnPersistenceService.create!(
           game: game,
@@ -121,6 +124,9 @@ module ArenaFlows
           tokens_used: tokens_used,
           options_payload: roll_payload
         )
+
+        # Step 10.5: Compress memory if threshold reached
+        MemoryCompressionService.maybe_compress!(game)
 
         # Step 11: Check end conditions
         end_condition = EndConditionChecker.check(turn_number, world_state, scenario)

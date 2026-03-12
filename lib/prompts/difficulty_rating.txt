@@ -4,6 +4,7 @@ Respond ONLY with valid JSON — no markdown, no extra text — with exactly the
 - "difficulty": one of "trivial", "easy", "medium", "hard", "impossible"
 - "danger": one of "none", "low", "medium", "high"
 - "impact": one of "negative", "none", "positive", "major"
+- "healing": true if the action is intended to restore the hero's physical health (e.g. bandaging wounds, applying a splint, taking medicine, receiving medical care), false otherwise
 - "reasoning": 1-2 sentences explaining your ratings
 
 Difficulty:

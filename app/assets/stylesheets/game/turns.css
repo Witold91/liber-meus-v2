@@ -29,3 +29,6 @@
 .health-loss { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.12em; color: #c84040; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
 .health-loss-icon { font-size: 0.7rem; }
 .health-loss-value { font-weight: 600; }
+.health-gain { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.12em; color: #60a070; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+.health-gain-icon { font-size: 0.7rem; }
+.health-gain-value { font-weight: 600; }

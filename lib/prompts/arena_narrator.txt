@@ -34,3 +34,4 @@ Rules:
 - Any descriptive status is valid for scenario objects (e.g. "eaten", "broken") and improvised items.
 - If DIFFICULTY REASONING states the player lacks an item, they reach for something that isn't there. Never depict the player using an object they don't possess.
 - If HEALTH LOST appears, you must describe its physical cause in the narrative.
+- If HEALTH RESTORED appears, you must describe the healing concretely in the narrative. Both HEALTH LOST and HEALTH RESTORED can appear on the same turn — narrate both.

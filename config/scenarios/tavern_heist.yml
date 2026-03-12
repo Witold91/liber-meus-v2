@@ -1,0 +1,617 @@
+slug: tavern_heist
+title: "The Tavern Heist"
+description: "Steal a gem from a tavern, then escape through the market."
+turn_limit: 40
+world_context: |
+  A small medieval town at dusk. No magic, no firearms. The world is realistic.
+  Act 1: the hero is a thief infiltrating a tavern to steal a ruby.
+  Act 2: the hero is the thief's partner, guiding the escape through the market.
+narrator_style: |
+  Short, punchy sentences. 20-40 words max. No flowery language. Direct and simple.
+
+theme:
+  bg_color: "#1a1410"
+  text_color: "#e0d8c8"
+  accent_color: "#c49a4a"
+  font_family: "'Georgia', serif"
+  bg_image: ~
+
+hero:
+  slug: thief
+  name: "The Thief"
+  description: "A slim, quiet figure in a dark cloak. Quick hands, quicker feet."
+  llm_description: "Female, mid-20s. Professional thief. Agile, cunning, unarmed. Relies on stealth and wits."
+  sex: female
+
+acts:
+  # ═══════════════════════════════════════════════════════════════
+  # ACT 1 — The Tavern (thief steals the gem)
+  # ═══════════════════════════════════════════════════════════════
+  - number: 1
+    title: "The Tavern"
+    intro: |
+      Dusk falls over the town. The Golden Mug tavern glows with lantern light.
+      Somewhere inside, a ruby the size of a walnut sits in the barkeep's strongbox.
+      Your partner waits outside. You have one job: get the gem and get out.
+    scenes:
+      - id: tavern_entrance
+        name: "Tavern Entrance"
+        description: "A wooden door with warm light spilling through the cracks."
+        exits:
+          - to: main_hall
+            label: "Enter the tavern"
+          - to: alley
+            label: "Slip around to the alley"
+
+      - id: main_hall
+        name: "Main Hall"
+        description: "A noisy room with drunks, a fireplace, and a long bar counter."
+        exits:
+          - to: tavern_entrance
+            label: "Back to the entrance"
+          - to: back_room
+            label: "Door behind the bar (locked)"
+            locked: true
+          - to: kitchen
+            label: "Kitchen doorway"
+          - to: upstairs
+            label: "Stairs up"
+
+      - id: kitchen
+        name: "Kitchen"
+        description: "Greasy pots, a knife rack, and a window to the alley."
+        exits:
+          - to: main_hall
+            label: "Back to the hall"
+          - to: alley
+            label: "Climb out the window"
+
+      - id: back_room
+        name: "Back Room"
+        description: "A small office. Desk, chair, and a heavy iron strongbox."
+        exits:
+          - to: main_hall
+            label: "Back to the hall"
+          - to: alley
+            label: "Side door to alley"
+
+      - id: upstairs
+        name: "Upstairs Landing"
+        description: "A narrow corridor with two guest rooms and a window overlooking the alley."
+        exits:
+          - to: main_hall
+            label: "Back downstairs"
+          - to: alley
+            label: "Jump from the window"
+
+      - id: alley
+        name: "Alley"
+        description: "A dark, narrow alley behind the tavern. Your partner is here."
+        exits:
+          - to: tavern_entrance
+            label: "Back to the entrance"
+          - to: kitchen
+            label: "Through the kitchen window"
+          - to: market_gate
+            label: "Run to the market"
+
+      - id: market_gate
+        name: "Market Gate"
+        description: "The edge of the market square. Freedom is close."
+        exits:
+          - to: alley
+            label: "Back to the alley"
+
+    actors:
+      - id: guard_pike
+        name: "Guard Pike"
+        description: "A bored town guard drinking at the bar. Dangerous if alert."
+        scene: main_hall
+        default_disposition: hostile
+        status_options:
+          - drinking
+          - suspicious
+          - alerted
+          - unconscious
+        default_status: drinking
+
+      - id: barkeep_mol
+        name: "Barkeep Mol"
+        description: "A heavyset woman with sharp eyes. Owns the ruby."
+        scene: main_hall
+        default_disposition: suspicious
+        status_options:
+          - serving
+          - watching
+          - alerted
+          - unconscious
+        default_status: serving
+
+      - id: drunk_tom
+        name: "Drunk Tom"
+        description: "A loud, harmless drunk. Good for distractions."
+        scene: main_hall
+        default_disposition: neutral
+        status_options:
+          - drinking
+          - singing
+          - passed_out
+          - causing_scene
+        default_status: drinking
+
+      - id: accomplice_ren
+        name: "Ren"
+        description: "Your partner. Waiting in the alley to help with the escape."
+        scene: alley
+        default_disposition: friendly
+        status_options:
+          - waiting
+          - helping
+          - fled
+          - captured
+        default_status: waiting
+
+      - id: cook_bess
+        name: "Cook Bess"
+        description: "The tavern cook. Doesn't care about anything except her kitchen."
+        scene: kitchen
+        default_disposition: neutral
+        status_options:
+          - cooking
+          - distracted
+          - alerted
+        default_status: cooking
+
+      - id: merchant_hale
+        name: "Merchant Hale"
+        description: "A traveling merchant staying upstairs. Might have useful info."
+        scene: upstairs
+        default_disposition: neutral
+        status_options:
+          - resting
+          - awake
+          - helpful
+          - alerted
+        default_status: resting
+
+    objects:
+      - id: ruby
+        name: "The Ruby"
+        scene: back_room
+        status_options:
+          - locked_away
+          - exposed
+          - taken
+        default_status: locked_away
+
+      - id: strongbox
+        name: "Iron Strongbox"
+        scene: back_room
+        status_options:
+          - locked
+          - unlocked
+          - broken_open
+        default_status: locked
+
+      - id: lockpick
+        name: "Lockpick Set"
+        scene: player_inventory
+        status_options:
+          - intact
+          - broken
+        default_status: intact
+
+      - id: kitchen_knife
+        name: "Kitchen Knife"
+        scene: kitchen
+        status_options:
+          - on_rack
+          - taken
+        default_status: on_rack
+
+      - id: back_room_key
+        name: "Back Room Key"
+        scene: main_hall
+        status_options:
+          - on_barkeep
+          - dropped
+          - taken
+        default_status: on_barkeep
+
+      - id: ale_mug
+        name: "Mug of Ale"
+        scene: main_hall
+        status_options:
+          - full
+          - drugged
+          - empty
+        default_status: full
+
+    conditions:
+      # Act goal: reach market gate with the ruby taken
+      - id: escaped_tavern
+        description: "Player reaches the market gate"
+        narrative: "You slip through the gate with the ruby in your pocket. The tavern's lights shrink behind you. Act one is done."
+        type: act_goal
+        next_act: 2
+        check: player_at_scene
+        scene: market_gate
+
+      # Danger: guard alerted
+      - id: guard_catches_you
+        description: "Guard Pike is alerted"
+        narrative: "Pike slams his mug down and grabs your arm. 'Thief!' The whole tavern turns. There is no way out."
+        type: danger
+        check: actor_has_status
+        actor: guard_pike
+        status: alerted
+
+      # Danger: both barkeep and guard alerted (tests all_actors_have_status)
+      - id: full_alarm
+        description: "Both Mol and Pike are alerted — total lockdown"
+        narrative: "Mol screams for the guard. Pike draws his sword. Every door slams shut. You are trapped."
+        type: danger
+        check: all_actors_have_status
+        actors:
+          - guard_pike
+          - barkeep_mol
+        status: alerted
+
+    events:
+      # --- Turn-triggered, no condition ---
+      - id: tom_starts_singing
+        act_turn: 3
+        action:
+          type: actor_enters
+          actor_id: drunk_tom
+          scene: main_hall
+          new_status: singing
+        description: "Drunk Tom breaks into a loud, off-key song. Everyone looks at him."
+
+      # --- Turn-triggered, with condition ---
+      - id: pike_gets_suspicious
+        act_turn: 6
+        condition:
+          actor_status:
+            id: guard_pike
+            status: drinking
+        action:
+          type: actor_enters
+          actor_id: guard_pike
+          scene: main_hall
+          new_status: suspicious
+        description: "Pike finishes his ale and starts looking around with narrowed eyes."
+
+      # --- Turn-triggered (trigger_turn — global) ---
+      - id: merchant_wakes
+        trigger_turn: 8
+        action:
+          type: actor_enters
+          actor_id: merchant_hale
+          scene: upstairs
+          new_status: awake
+        description: "Merchant Hale wakes from a nap and steps into the corridor."
+
+      # --- State-triggered: actor_status ---
+      - id: mol_alerts_pike
+        trigger:
+          actor_status:
+            actor: barkeep_mol
+            status: alerted
+        action:
+          type: actor_enters
+          actor_id: guard_pike
+          scene: main_hall
+          new_status: alerted
+        description: "Mol shouts for the guard. Pike jumps to his feet."
+
+      # --- State-triggered: object_status ---
+      - id: strongbox_noise
+        trigger:
+          object_status:
+            object: strongbox
+            status: broken_open
+        action:
+          type: actor_enters
+          actor_id: barkeep_mol
+          scene: back_room
+          new_status: alerted
+        description: "The crash of the strongbox echoes through the tavern. Mol comes running."
+
+      # --- State-triggered: player_at_scene ---
+      - id: cook_spots_intruder
+        trigger:
+          player_at_scene: kitchen
+        action:
+          type: actor_enters
+          actor_id: cook_bess
+          scene: kitchen
+          new_status: distracted
+        description: "Bess looks up from her pot. 'Who are you? Get out of my kitchen!'"
+
+      # --- world_flag action (no-op, tests the path) ---
+      - id: night_deepens
+        act_turn: 10
+        action:
+          type: world_flag
+          flag: late_night
+          value: true
+        description: "The hour grows late. The tavern starts to empty."
+
+  # ═══════════════════════════════════════════════════════════════
+  # ACT 2 — The Market Escape (hero switches to the partner)
+  # ═══════════════════════════════════════════════════════════════
+  - number: 2
+    title: "The Market Escape"
+    hero:
+      slug: partner
+      name: "Ren"
+      description: "A wiry street runner with a crooked grin. Born in these alleys."
+      sex: male
+    intro: |
+      The thief made it out with the ruby. Now it is your turn.
+      You are Ren. Guide the escape through the night market before the town guard closes in.
+      The ruby is in your partner's hands. Get to the docks and disappear.
+    scenes:
+      - id: market_square
+        name: "Market Square"
+        description: "Empty stalls and long shadows. A few lanterns flicker."
+        exits:
+          - to: cloth_row
+            label: "Duck into Cloth Row"
+          - to: fountain_plaza
+            label: "Cross to the fountain"
+
+      - id: cloth_row
+        name: "Cloth Row"
+        description: "Narrow passage between draped fabric stalls. Good cover."
+        exits:
+          - to: market_square
+            label: "Back to the square"
+          - to: rooftops
+            label: "Climb to the rooftops"
+          - to: dock_alley
+            label: "Through to Dock Alley"
+
+      - id: fountain_plaza
+        name: "Fountain Plaza"
+        description: "An open plaza with a stone fountain. Exposed but direct."
+        exits:
+          - to: market_square
+            label: "Back to the square"
+          - to: dock_alley
+            label: "Run to Dock Alley"
+
+      - id: rooftops
+        name: "Rooftops"
+        description: "Clay tiles and moonlight. You can see the whole town from here."
+        exits:
+          - to: cloth_row
+            label: "Climb back down"
+          - to: dock_alley
+            label: "Jump down to Dock Alley"
+
+      - id: dock_alley
+        name: "Dock Alley"
+        description: "The smell of salt and tar. A small boat is tied to the pier."
+        exits:
+          - to: fountain_plaza
+            label: "Back to the plaza"
+          - to: the_docks
+            label: "Board the boat"
+            arena_exit: true
+
+      - id: the_docks
+        name: "The Docks"
+        description: "Dark water, a waiting boat, and freedom."
+        exits: []
+
+    actors:
+      # Guard Pike: force_status to suspicious (even if unconscious in Act 1, he recovered)
+      - id: guard_pike
+        name: "Guard Pike"
+        description: "Pike has recovered and is now searching the market."
+        scene: fountain_plaza
+        default_disposition: hostile
+        force_status: suspicious
+        status_options:
+          - suspicious
+          - alerted
+          - unconscious
+        default_status: suspicious
+
+      # Ren's partner (the thief from Act 1) — loyal disposition
+      - id: thief_partner
+        name: "The Thief"
+        description: "Your partner, carrying the ruby. Stick together."
+        scene: market_square
+        default_disposition: loyal
+        status_options:
+          - running
+          - hiding
+          - captured
+        default_status: running
+
+      # A new actor for Act 2
+      - id: dock_captain
+        name: "Captain Syl"
+        description: "A smuggler captain. Will take you across the bay for a price."
+        scene: dock_alley
+        default_disposition: neutral
+        status_options:
+          - waiting
+          - negotiating
+          - agreed
+          - refused
+        default_status: waiting
+
+      # Barkeep Mol carries over (cross-act persistence test)
+      - id: barkeep_mol
+        name: "Barkeep Mol"
+        description: "Mol has raised the alarm and is searching the streets."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - searching
+          - alerted
+        default_status: searching
+
+      # Night watch — tests new hostile actor
+      - id: watchman_gris
+        name: "Watchman Gris"
+        description: "A night patrol guard with a lantern. Covers the plaza."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - patrolling
+          - alerted
+          - unconscious
+        default_status: patrolling
+
+    objects:
+      # Ruby carries over from Act 1 — force_status to keep it "taken"
+      - id: ruby
+        name: "The Ruby"
+        scene: player_inventory
+        force_status: taken
+        status_options:
+          - taken
+          - hidden
+          - lost
+        default_status: taken
+
+      # New object for Act 2
+      - id: smoke_bomb
+        name: "Smoke Bomb"
+        scene: cloth_row
+        status_options:
+          - on_ground
+          - taken
+          - used
+        default_status: on_ground
+
+      - id: rope_coil
+        name: "Rope Coil"
+        scene: rooftops
+        status_options:
+          - hanging
+          - taken
+          - deployed
+        default_status: hanging
+
+      - id: boat_key
+        name: "Boat Key"
+        scene: dock_alley
+        status_options:
+          - with_captain
+          - taken
+        default_status: with_captain
+
+    conditions:
+      # Final goal: reach the docks
+      - id: escaped_town
+        description: "Player reaches the docks and escapes"
+        narrative: "The boat pulls away from the pier. The town shrinks into the dark. You made it. The ruby glints in the moonlight."
+        type: goal
+        check: player_at_scene
+        scene: the_docks
+
+      # Danger: Pike alerted in Act 2
+      - id: pike_catches_ren
+        description: "Guard Pike catches up"
+        narrative: "Pike steps out of the shadows, sword drawn. 'End of the road, rat.' There is nowhere left to run."
+        type: danger
+        check: actor_has_status
+        actor: guard_pike
+        status: alerted
+
+      # Danger: partner captured
+      - id: partner_captured
+        description: "The thief is captured — the ruby is lost"
+        narrative: "They grab your partner in the plaza. The ruby changes hands. The heist is over."
+        type: danger
+        check: actor_has_status
+        actor: thief_partner
+        status: captured
+
+      # Danger: both guards alerted (all_actors_have_status in Act 2)
+      - id: town_lockdown
+        description: "Pike and Gris both alerted — the town locks down"
+        narrative: "Torches everywhere. Every gate sealed. The whole town guard is on your trail. There is no way out tonight."
+        type: danger
+        check: all_actors_have_status
+        actors:
+          - guard_pike
+          - watchman_gris
+        status: alerted
+
+    events:
+      # --- Turn-triggered, no condition ---
+      - id: gris_begins_patrol
+        act_turn: 2
+        action:
+          type: actor_enters
+          actor_id: watchman_gris
+          scene: fountain_plaza
+          new_status: patrolling
+        description: "Watchman Gris begins his patrol through the fountain plaza."
+
+      # --- Turn-triggered, with condition ---
+      - id: pike_moves_to_cloth_row
+        act_turn: 5
+        condition:
+          actor_status:
+            id: guard_pike
+            status: suspicious
+        action:
+          type: actor_enters
+          actor_id: guard_pike
+          scene: cloth_row
+          new_status: suspicious
+        description: "Pike moves his search to Cloth Row, checking between the stalls."
+
+      # --- State-triggered: actor_status ---
+      - id: gris_joins_pike
+        trigger:
+          actor_status:
+            actor: guard_pike
+            status: alerted
+        action:
+          type: actor_enters
+          actor_id: watchman_gris
+          scene: market_square
+          new_status: alerted
+        description: "Pike's whistle cuts the air. Gris sprints toward the sound."
+
+      # --- State-triggered: object_status ---
+      - id: smoke_creates_cover
+        trigger:
+          object_status:
+            object: smoke_bomb
+            status: used
+        action:
+          type: actor_enters
+          actor_id: guard_pike
+          scene: offstage
+          new_status: suspicious
+        description: "Smoke fills the passage. Pike loses sight and stumbles back."
+
+      # --- State-triggered: player_at_scene ---
+      - id: captain_negotiates
+        trigger:
+          player_at_scene: dock_alley
+        action:
+          type: actor_enters
+          actor_id: dock_captain
+          scene: dock_alley
+          new_status: negotiating
+        description: "Captain Syl steps out of the shadows. 'You want passage? Let's talk price.'"
+
+      # --- world_flag (no-op path test) ---
+      - id: bells_ring
+        act_turn: 8
+        action:
+          type: world_flag
+          flag: alarm_bells
+          value: true
+        description: "Church bells ring across the town. The alarm is spreading."

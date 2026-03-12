@@ -1,12 +1,13 @@
 module RandomFlows
   class StartRandomGameFlow
     def self.call(world_data:, hero_data:, game_language: "en", user: nil)
-      hero = Hero.find_or_create_by!(slug: hero_data["slug"]) do |h|
-        h.name = hero_data["name"]
-        h.description = hero_data["description_display"] || hero_data["description"]
-        h.llm_description = hero_data["description"]
-        h.sex = hero_data["sex"]
-      end
+      hero = Hero.create!(
+        slug: "#{hero_data["slug"]}_#{SecureRandom.hex(4)}",
+        name: hero_data["name"],
+        description: hero_data["description_display"] || hero_data["description"],
+        llm_description: hero_data["description"],
+        sex: hero_data["sex"]
+      )
 
       initial_scene = world_data["initial_scene"]
       scene_id = initial_scene["id"]

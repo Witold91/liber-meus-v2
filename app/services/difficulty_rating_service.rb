@@ -16,7 +16,7 @@ class DifficultyRatingService
 
   def self.build_user_message(action, scene_context, hero, recent_actions = [])
     parts = []
-    parts << I18n.t("services.difficulty_rating_service.prompt.hero", name: hero.name, description: hero.description)
+    parts << I18n.t("services.difficulty_rating_service.prompt.hero", name: hero.name, description: hero.llm_description || hero.description)
     parts << ""
     parts << I18n.t("services.difficulty_rating_service.prompt.current_scene", scene_name: scene_context.dig(:scene, :name))
     parts << scene_context.dig(:scene, :description).to_s

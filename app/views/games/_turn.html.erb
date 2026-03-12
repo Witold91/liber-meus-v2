@@ -14,6 +14,7 @@
   difficulty   = turn.options_payload["difficulty"]
   momentum     = turn.options_payload["momentum_at_roll"]
   health_loss  = turn.options_payload["health_loss"].to_i
+  health_gain  = turn.options_payload["health_gain"].to_i
   show_roll    = roll && difficulty && !%w[trivial impossible].include?(difficulty) &&
                  !turn.options_payload["ending"] && !turn.options_payload["prologue"]
 
@@ -52,6 +53,13 @@
       <div class="health-loss">
         <span class="health-loss-icon">♥</span>
         <span class="health-loss-value">−<%= health_loss %></span>
+        <span>health</span>
+      </div>
+    <% end %>
+    <% if health_gain > 0 %>
+      <div class="health-gain">
+        <span class="health-gain-icon">♥</span>
+        <span class="health-gain-value">+<%= health_gain %></span>
         <span>health</span>
       </div>
     <% end %>
