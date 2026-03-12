@@ -60,14 +60,21 @@ module ArenaFlows
       event_descriptions = turn_events.filter_map { |e| e["description"] }
 
       # Step 7: Get narration (AI call 2 — streams narrative chunks if callback provided)
+      encountered_actors = world_state["encountered_actors"] || []
+      current_scene_actor_ids = scene_context[:actors].map { |a| a[:id] }
+
+      last_turn = game.turns.recent(1).first
+      previous_narrative_tail = last_turn&.content&.then { |c| c.lines.last(5).join } || ""
+
       turn_context = {
         world_state_delta: presenter.world_state_delta,
         memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
                           .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
         recent_actions: recent_actions,
-        rating_reasoning: rating_reasoning
+        rating_reasoning: rating_reasoning,
+        previous_narrative_tail: previous_narrative_tail.presence
       }
-      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"], event_descriptions: event_descriptions, stream: stream&.dig(:on_chunk), hero: game.hero)
+      narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"], event_descriptions: event_descriptions, stream: stream&.dig(:on_chunk), hero: game.hero, turn_number: turn_number, random_mode: game.random_mode?, encountered_actors: encountered_actors, current_hp: world_state["health"])
 
       # Steps 8-11: DB writes (in transaction)
       ActiveRecord::Base.transaction do
@@ -88,6 +95,7 @@ module ArenaFlows
           end
         end
         world_state["act_turn"] = act_turn_number
+        world_state["encountered_actors"] = (encountered_actors | current_scene_actor_ids).uniq
 
         # Persist updated world state
         game.update!(world_state: world_state)
@@ -245,7 +253,8 @@ module ArenaFlows
       presenter.actors.each do |actor|
         prev = previous_actors[actor["id"]]
         status = actor["force_status"] || (prev && prev["status"]) || actor["default_status"]
-        actors[actor["id"]] = { "scene" => actor["scene"], "status" => status }
+        disposition = (prev && prev["disposition"]) || actor["default_disposition"] || "neutral"
+        actors[actor["id"]] = { "scene" => actor["scene"], "status" => status, "disposition" => disposition }
       end
       presenter.objects.each do |object|
         prev = previous_objects[object["id"]]

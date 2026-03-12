@@ -6,7 +6,6 @@ class ArenaFlows::SaveGameFlowTest < ActiveSupport::TestCase
     @user = users(:one)
     @game.update!(world_state: {
       "health" => 85,
-      "danger_level" => 50,
       "momentum" => 1,
       "act_number" => 1,
       "act_turn" => 4,
@@ -39,7 +38,6 @@ class ArenaFlows::SaveGameFlowTest < ActiveSupport::TestCase
     save = ArenaFlows::SaveGameFlow.call(game: @game, user: @user)
 
     assert_equal 85, save.world_state["health"]
-    assert_equal 50, save.world_state["danger_level"]
     assert_equal "cell_block", save.world_state["player_scene"]
   end
 

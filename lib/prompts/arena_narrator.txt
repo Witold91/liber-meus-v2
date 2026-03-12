@@ -6,6 +6,7 @@ Fields:
 - "diff": a world-state diff with any of these optional keys:
   - "actor_updates": { "actor_id": { "status": "new_status" } }
   - "object_updates": { "object_id": { "status": "new_status" } } — for scenario objects use canonical IDs; for improvised items use a descriptive snake_case id (e.g. "torn_sheet_rope"). To place an item in the player's inventory, include "scene": "player_inventory". To leave it at a location, include "scene": "scene_id". Omit "scene" for improvised items already in inventory.
+  - "disposition_updates": { "actor_id": "new_disposition" } — how an actor feels toward the player: hostile, suspicious, neutral, friendly, loyal. Update when the player's actions meaningfully shift the relationship.
   - "actor_moved_to": { "actor_id": "stage_id" } — use "offstage" to remove
   - "player_moved_to": "stage_id"
 - "memory_note": 1-sentence note about a significant story development (omit if nothing notable happened)

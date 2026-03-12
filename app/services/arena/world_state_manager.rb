@@ -43,6 +43,16 @@ module Arena
         end
       end
 
+      if (disposition_updates = diff["disposition_updates"])
+        disposition_updates.each do |actor_id, disposition|
+          resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug)
+          next unless resolved_actor_id
+          result["actors"] ||= {}
+          result["actors"][resolved_actor_id] ||= {}
+          result["actors"][resolved_actor_id]["disposition"] = disposition.to_s
+        end
+      end
+
       if (actor_moved = diff["actor_moved_to"])
         actor_moved.each do |actor_id, scene_id|
           resolved_actor_id = resolve_id(actor_id, valid_actor_ids, actor_ids_by_slug)

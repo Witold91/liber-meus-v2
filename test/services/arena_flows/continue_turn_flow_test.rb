@@ -6,7 +6,6 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     @game = games(:prison_game)
     @game.update!(world_state: {
       "health" => 100,
-      "danger_level" => 40,
       "momentum" => 0,
       "act_number" => 1,
       "act_turn" => 0,

@@ -46,7 +46,7 @@ module RandomMode
 
       if memory_notes.any?
         parts << "STORY NOTES:"
-        memory_notes.each { |note| parts << "- #{note[:note]}" }
+        memory_notes.each { |note| parts << "T#{note[:turn_number]} - #{note[:note]}" }
         parts << ""
       end
 

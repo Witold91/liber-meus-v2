@@ -115,6 +115,7 @@ acts:
         name: "Guard Rodriguez"
         description: "Heavyset guard, two weeks from retirement. Predictable rounds."
         scene: cell_block
+        default_disposition: hostile
         status_options:
           - awake
           - distracted
@@ -125,6 +126,7 @@ acts:
         name: "Guard Chen"
         description: "Young, eager guard stationed at the control room. Sharp eyes."
         scene: guard_room
+        default_disposition: hostile
         status_options:
           - awake
           - asleep
@@ -134,6 +136,7 @@ acts:
         name: "Inmate Torres"
         description: "Old timer who knows every inch of this prison. Owes you a favor."
         scene: cell
+        default_disposition: friendly
         status_options:
           - sleeping
           - awake

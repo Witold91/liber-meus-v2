@@ -41,6 +41,7 @@ acts:
         name: "Juliet"
         description: "She watches the courtyard with hopeful eyes."
         scene: balcony
+        default_disposition: friendly
         status_options:
           - waiting
           - happy

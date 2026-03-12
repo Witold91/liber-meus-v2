@@ -7,7 +7,6 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
 
     @saved_world_state = {
       "health" => 90,
-      "danger_level" => 45,
       "momentum" => 1,
       "act_number" => 1,
       "act_turn" => 3,
@@ -31,7 +30,6 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
     # Set up game with progress beyond the save point
     @game.update!(world_state: {
       "health" => 60,
-      "danger_level" => 70,
       "momentum" => 2,
       "act_number" => 1,
       "act_turn" => 6,
@@ -64,7 +62,6 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
     @game.reload
 
     assert_equal 90, @game.world_state["health"]
-    assert_equal 45, @game.world_state["danger_level"]
     assert_equal 1, @game.world_state["momentum"]
     assert_equal "cell", @game.world_state["player_scene"]
   end

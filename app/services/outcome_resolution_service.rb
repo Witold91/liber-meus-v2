@@ -1,8 +1,6 @@
 class OutcomeResolutionService
   BASE_HEALTH = 100
-  BASE_DANGER = 40
   BASE_MOMENTUM = 0
-  BASE_ARC_INDEX = 1
 
   DIFFICULTY_THRESHOLD = { "easy" => 1, "medium" => 4, "hard" => 7 }.freeze
 
@@ -12,8 +10,6 @@ class OutcomeResolutionService
     "medium" => { "success" => 0, "partial" =>  5, "failure" => 18 },
     "high"   => { "success" => 0, "partial" => 12, "failure" => 35 }
   }.freeze
-
-  DANGER_INCREASE = { "success" => 0, "partial" => 5, "failure" => 15 }.freeze
 
   MOMENTUM_DELTA = {
     "negative" => { "success" => -1, "partial" => -1, "failure" => -1 },
@@ -25,9 +21,7 @@ class OutcomeResolutionService
   def self.initial_state
     {
       "health" => BASE_HEALTH,
-      "danger_level" => BASE_DANGER,
       "momentum" => BASE_MOMENTUM,
-      "arc_index" => BASE_ARC_INDEX,
       "player_scene" => nil,
       "actors" => {},
       "objects" => {},
@@ -46,10 +40,6 @@ class OutcomeResolutionService
     health_loss = calculate_health_loss(danger, resolution_tag)
 
     world_state["health"] = [ (world_state["health"].to_i - health_loss), 0 ].max
-    world_state["danger_level"] = [
-      world_state["danger_level"].to_i + DANGER_INCREASE.fetch(resolution_tag, 0),
-      100
-    ].min
     world_state["momentum"] = update_momentum(momentum, resolution_tag, impact)
 
     game.update!(world_state: world_state)

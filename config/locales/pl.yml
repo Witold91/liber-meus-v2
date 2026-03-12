@@ -37,7 +37,6 @@ pl:
       action_placeholder: "Co robisz?"
       stats:
         health: "Zdrowie"
-        danger: "Zagrożenie"
         momentum: "Tempo"
       inventory:
         title: "Ekwipunek"
@@ -114,11 +113,14 @@ pl:
     arena_narrator_service:
       prompt:
         protagonist: "BOHATER: %{name} — %{description}"
+        player_hp: "ZDROWIE GRACZA: %{current}/%{max}"
         resolution: "WYNIK: %{resolution} (trudność: %{difficulty})"
         rating_reasoning: "UZASADNIENIE TRUDNOŚCI: %{reasoning}"
         current_scene: "AKTUALNA SCENA: %{scene_name} [id=%{scene_id}]"
         actors_present: "OBECNE POSTACIE:"
         actor_item: "  - %{name} [id=%{id}] (%{description}): %{statuses} [statusy fabularne: %{status_options}]"
+        actor_plot_statuses: "statusy fabularne"
+        actor_disposition: "nastawienie"
         objects_present: "OBECNE OBIEKTY:"
         object_item: "  - %{name} [id=%{id}]: %{statuses}"
         inventory_header: "EKWIPUNEK GRACZA (przedmioty, które niesie):"
@@ -127,10 +129,11 @@ pl:
         world_state_header: "STAN ŚWIATA (zmiany od początku scenariusza):"
         world_state_item: "  - %{name} [id=%{id}]: %{info}"
         story_so_far_header: "HISTORIA DO TEJ PORY:"
-        memory_note_item: "  - %{note}"
+        memory_note_item: "  T%{turn_number} - %{note}"
         recent_actions_header: "OSTATNIE DZIAŁANIA:"
         recent_action_item: "  Tura %{turn_number}: %{action} → %{resolution}"
         health_loss: "UTRACONE ZDROWIE: %{amount} — narracja musi opisać fizyczną przyczynę tych obrażeń (otrzymany cios, rana, upadek, wyczerpanie). Nie pomijaj tego."
+        previous_narrative_header: "OSTATNIA NARRACJA (końcówka — kontynuuj stąd):"
         player_action: "DZIAŁANIE GRACZA: %{action}"
       prologue:
         intro: "PROLOG AKTU:\n%{act_intro}\n\nSCENA OTWIERAJĄCA: %{scene_name}\n%{scene_description}"

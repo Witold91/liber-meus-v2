@@ -40,7 +40,6 @@ class ArenaFlows::StartScenarioFlowTest < ActiveSupport::TestCase
     @game = ArenaFlows::StartScenarioFlow.call(scenario_slug: "prison_break")
     ws = @game.world_state
     assert ws.key?("health")
-    assert ws.key?("danger_level")
     assert ws.key?("momentum")
     assert ws.key?("player_scene")
     assert ws.key?("actors")

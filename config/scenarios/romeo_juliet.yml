@@ -82,78 +82,91 @@ acts:
         name: "Sampson"
         description: "A Capulet servant eager for provocation."
         scene: verona_square
+        default_disposition: hostile
         status_options: [taunting, brawling, scattered]
         default_status: taunting
       - id: gregory
         name: "Gregory"
         description: "Another Capulet servant, loud in quarrel and quick to follow."
         scene: verona_square
+        default_disposition: hostile
         status_options: [taunting, brawling, scattered]
         default_status: taunting
       - id: abram
         name: "Abram"
         description: "A Montague servant pulled into the first clash."
         scene: verona_square
+        default_disposition: friendly
         status_options: [wary, brawling, scattered]
         default_status: wary
       - id: benvolio
         name: "Benvolio"
         description: "Romeo's cousin, always trying to cool hot blood. He is out looking for Romeo."
         scene: verona_square
+        default_disposition: loyal
         status_options: [calm, warning, alarmed]
         default_status: calm
       - id: mercutio
         name: "Mercutio"
         description: "Brilliant and reckless friend of Romeo."
         scene: verona_square
+        default_disposition: friendly
         status_options: [witty, taunting, dueling, dead]
         default_status: witty
       - id: tybalt
         name: "Tybalt"
         description: "Juliet's cousin, proud and dangerous in defense of Capulet honor. Already in the square and spoiling for a fight."
         scene: verona_square
+        default_disposition: hostile
         status_options: [proud, enraged, dueling, dead]
         default_status: proud
       - id: capulet_servant
         name: "Capulet Servant"
         description: "An illiterate servant tasked with delivering feast invitations, wandering the square looking for someone to read the guest list aloud."
         scene: verona_square
+        default_disposition: neutral
         status_options: [searching, helped, departed]
         default_status: searching
       - id: prince_escalus
         name: "Prince Escalus"
         description: "Ruler of Verona, determined to end public bloodshed."
         scene: offstage
+        default_disposition: neutral
         status_options: [stern, condemning, sentencing, grieving]
         default_status: stern
       - id: lord_montague
         name: "Lord Montague"
         description: "Romeo's father, burdened by the feud and quietly worried about his son's strange withdrawal from the world."
         scene: montague_grounds
+        default_disposition: loyal
         status_options: [concerned, defensive, mourning]
         default_status: concerned
       - id: lady_montague
         name: "Lady Montague"
         description: "Romeo's mother, fearful for her son."
         scene: montague_grounds
+        default_disposition: loyal
         status_options: [concerned, fearful, mourning]
         default_status: concerned
       - id: juliet
         name: "Juliet Capulet"
         description: "A young noblewoman whose courage deepens as danger grows."
         scene: capulet_hall
+        default_disposition: neutral
         status_options: [sheltered, curious, in_love]
         default_status: sheltered
       - id: rosaline
         name: "Rosaline"
         description: "A Capulet niece, beautiful and devout — the object of Romeo's unrequited obsession, utterly indifferent to him. If persistently pursued she becomes cold; if publicly humiliated or pushed to the limit, she becomes offended — a closed door."
         scene: capulet_hall
+        default_disposition: suspicious
         status_options: [indifferent, cold, offended, absent]
         default_status: indifferent
       - id: nurse
         name: "Nurse"
         description: "Juliet's caretaker, practical and fiercely devoted."
         scene: capulet_hall
+        default_disposition: suspicious
         status_options: [watchful, calling, worried, grieving]
         default_status: watchful
       - id: lord_capulet
@@ -303,24 +316,28 @@ acts:
         name: "Juliet Capulet"
         description: "Now resolute, willing to defy her house for love — but if overwhelmed by fear, pushed too fast, or left without reassurance, she may withdraw."
         scene: capulet_orchard
+        default_disposition: friendly
         status_options: [in_love, promised, withdrawn, wed, desperate, dead]
         default_status: in_love
       - id: nurse
         name: "Nurse"
         description: "A loyal go-between carrying urgent messages."
         scene: offstage
+        default_disposition: suspicious
         status_options: [watchful, calling, worried, grieving]
         default_status: watchful
       - id: friar_lawrence
         name: "Friar Laurence"
         description: "A learned friar hoping to turn private love into public peace. If rushed or unconvinced of the match, he refuses outright — but his refusal is not necessarily final."
         scene: friar_cell
+        default_disposition: neutral
         status_options: [contemplative, advising, marrying, refusing, desperate]
         default_status: contemplative
       - id: capulet_guard
         name: "Capulet Guard"
         description: "A household sentry making his nightly rounds through the orchard."
         scene: offstage
+        default_disposition: hostile
         status_options: [patrolling, alarmed, searching]
         default_status: patrolling
 
@@ -422,36 +439,42 @@ acts:
         name: "Mercutio"
         description: "Romeo's fierce friend, wounded by feud and pride."
         scene: dueling_square
+        default_disposition: loyal
         status_options: [taunting, dueling, wounded, dead]
         default_status: taunting
       - id: tybalt
         name: "Tybalt"
         description: "Capulet champion demanding satisfaction."
         scene: dueling_square
+        default_disposition: hostile
         status_options: [enraged, dueling, dead]
         default_status: enraged
       - id: benvolio
         name: "Benvolio"
         description: "Voice of restraint amid rising violence. If he succeeds in cooling both sides, he becomes resolved — the duel ends before it begins."
         scene: dueling_square
+        default_disposition: loyal
         status_options: [warning, alarmed, resolved]
         default_status: warning
       - id: juliet
         name: "Juliet Capulet"
         description: "Torn between her love for Romeo and the violence erupting in the streets below."
         scene: juliet_chamber
+        default_disposition: loyal
         status_options: [in_love, promised, wed, distraught, desperate, dead]
         default_status: wed
       - id: nurse
         name: "Nurse"
         description: "Bearer of grim news."
         scene: juliet_chamber
+        default_disposition: friendly
         status_options: [worried, grieving]
         default_status: worried
       - id: prince_escalus
         name: "Prince Escalus"
         description: "Judge of Verona's blood feud."
         scene: offstage
+        default_disposition: neutral
         status_options: [condemning, sentencing, grieving]
         default_status: condemning
     objects:
@@ -582,36 +605,42 @@ acts:
         name: "Romeo Montague"
         description: "Juliet's love, out of reach — banished or in hiding, his fate was sealed in the streets."
         scene: offstage
+        default_disposition: loyal
         status_options: [exiled, hiding, desperate]
         default_status: exiled
       - id: nurse
         name: "Nurse"
         description: "Your lifelong confidante, beginning to counsel surrender."
         scene: juliet_chamber
+        default_disposition: friendly
         status_options: [worried, urging, grieving]
         default_status: worried
       - id: lord_capulet
         name: "Lord Capulet"
         description: "Impatient to secure the marriage to Paris. If pushed beyond fury — if his authority is openly defied or the secret is revealed — he disowns Juliet entirely."
         scene: juliet_chamber
+        default_disposition: suspicious
         status_options: [commanding, furious, disowning, mourning]
         default_status: commanding
       - id: lady_capulet
         name: "Lady Capulet"
         description: "Presses you toward the arranged match."
         scene: juliet_chamber
+        default_disposition: neutral
         status_options: [urging, grieving]
         default_status: urging
       - id: paris
         name: "Count Paris"
         description: "Confident that the wedding will proceed — unless he learns the truth about Romeo."
         scene: offstage
+        default_disposition: friendly
         status_options: [betrothed, suspicious, mourning, dead]
         default_status: betrothed
       - id: friar_lawrence
         name: "Friar Laurence"
         description: "Architect of a perilous rescue plan — but if his nerve breaks or the plan unravels, he may refuse to go further."
         scene: friar_cell
+        default_disposition: friendly
         status_options: [advising, refusing, desperate]
         default_status: advising
 
@@ -740,54 +769,63 @@ acts:
         name: "Juliet Capulet"
         description: "Her fate is the axis of everything that follows — whether she lies in a crypt or walks an open road."
         scene: offstage
+        default_disposition: loyal
         status_options: [entombed, awakened, desperate, fled, dead]
         default_status: desperate
       - id: paris
         name: "Count Paris"
         description: "Mourner at the Capulet tomb — or a pursuer, depending on what Juliet chose."
         scene: capulet_crypt
+        default_disposition: suspicious
         status_options: [mourning, suspicious, dead]
         default_status: mourning
       - id: balthasar
         name: "Balthasar"
         description: "Romeo's servant, searching for his master with urgent news."
         scene: street_at_dawn
+        default_disposition: loyal
         status_options: [searching, grieving]
         default_status: searching
       - id: friar_john
         name: "Friar John"
         description: "Messenger whose delay may prove fatal."
         scene: friar_cell_dawn
+        default_disposition: friendly
         status_options: [dutiful, delayed, apologetic]
         default_status: dutiful
       - id: friar_lawrence
         name: "Friar Laurence"
         description: "Racing against consequences he helped set in motion."
         scene: friar_cell_dawn
+        default_disposition: friendly
         status_options: [advising, desperate, grieving]
         default_status: desperate
       - id: apothecary
         name: "Apothecary"
         description: "A poor seller willing to break the law for coin."
         scene: street_at_dawn
+        default_disposition: neutral
         status_options: [desperate, bargaining, bribed]
         default_status: desperate
       - id: prince_escalus
         name: "Prince Escalus"
         description: "Summons both houses for final reckoning."
         scene: prince_court
+        default_disposition: neutral
         status_options: [stern, grieving, sentencing]
         default_status: stern
       - id: lord_capulet
         name: "Lord Capulet"
         description: "Arrives at court to reckon with what the feud has cost."
         scene: prince_court
+        default_disposition: hostile
         status_options: [furious, mourning]
         default_status: mourning
       - id: lord_montague
         name: "Lord Montague"
         description: "Comes to court ready to end the feud at last."
         scene: prince_court
+        default_disposition: friendly
         status_options: [mourning]
         default_status: mourning
 

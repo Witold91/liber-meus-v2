@@ -3,13 +3,13 @@ class ArenaNarratorService
   EPILOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_epilogue.txt")
   PROLOGUE_PROMPT_PATH = Rails.root.join("lib", "prompts", "arena_prologue.txt")
 
-  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil, stream: nil, hero: nil)
+  def self.narrate(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, world_context: nil, narrator_style: nil, event_descriptions: [], prompt_path: nil, stream: nil, hero: nil, turn_number: nil, random_mode: false, encountered_actors: [], current_hp: nil)
     model = AIClient.narrator_model
 
     system_prompt = File.read(prompt_path || SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
     system_prompt += "\n\nSTYLE DIRECTIVE:\n#{narrator_style.strip}" if narrator_style.present?
-    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions, hero: hero)
+    user_message = build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss, event_descriptions, hero: hero, turn_number: turn_number, random_mode: random_mode, encountered_actors: encountered_actors, current_hp: current_hp)
 
     if stream
       narrate_streaming(model, system_prompt, user_message, stream)
@@ -34,6 +34,7 @@ class ArenaNarratorService
 
   def self.narrate_streaming(model, system_prompt, user_message, on_chunk)
     buffer = +""
+    narrative_buffer = +""
     in_narrative = false
     narrative_done = false
     escape_next = false
@@ -51,7 +52,8 @@ class ArenaNarratorService
       if narrative_done
         # Already finished streaming narrative — skip
       elsif in_narrative
-        # Check each character for end of narrative string
+        # Track each char to detect the closing quote of the narrative value.
+        # Escaped quotes (\") are skipped via escape_next.
         send_up_to = delta.length
         delta.each_char.with_index do |c, i|
           if escape_next
@@ -65,14 +67,20 @@ class ArenaNarratorService
             break
           end
         end
-        chunk = delta[0...send_up_to]
-        on_chunk.call(chunk) unless chunk.empty?
+        part = delta[0...send_up_to]
+        unless part.empty?
+          narrative_buffer << part
+          on_chunk.call(part)
+        end
       elsif buffer.match?(/"narrative"\s*:\s*"/)
         # We just entered the narrative value — extract any content after the opening quote
         in_narrative = true
         if (match = buffer.match(/"narrative"\s*:\s*"([^"]*)$/))
           initial = match[1]
-          on_chunk.call(initial) unless initial.empty?
+          unless initial.empty?
+            narrative_buffer << initial
+            on_chunk.call(initial)
+          end
         end
       end
     end
@@ -90,7 +98,16 @@ class ArenaNarratorService
 
     _response, log = AIClient.chat_streaming(parameters: parameters, service_name: "ArenaNarratorService.streaming")
 
-    parsed = AIClient.parse_json(buffer)
+    parsed = begin
+      AIClient.parse_json(buffer)
+    rescue JSON::ParserError => e
+      Rails.logger.warn("[ArenaNarratorService] JSON parse failed, using streamed narrative fallback: #{e.message}")
+      # Unescape JSON string escapes from the raw narrative buffer
+      fallback_narrative = narrative_buffer
+        .gsub('\n', "\n").gsub('\t', "\t")
+        .gsub('\\\\', "\\").gsub('\\"', '"')
+      { "narrative" => fallback_narrative, "diff" => {}, "memory_note" => nil }
+    end
     AIClient.complete_streaming_log(log, response_body: parsed, tokens: tokens_used)
 
     [ parsed, tokens_used ]
@@ -140,13 +157,22 @@ class ArenaNarratorService
     )
   end
 
-  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [], hero: nil)
+  HERO_FULL_DESCRIPTION_TURNS = 3
+
+  def self.build_user_message(action, resolution_tag, difficulty, scene_context, turn_context, health_loss = 0, event_descriptions = [], hero: nil, turn_number: nil, random_mode: false, encountered_actors: [], current_hp: nil)
     parts = []
 
     if hero
-      parts << I18n.t("services.arena_narrator_service.prompt.protagonist", name: hero.name, description: hero.llm_description || hero.description)
-      parts << ""
+      compact = turn_number.present? && turn_number > HERO_FULL_DESCRIPTION_TURNS && hero.llm_description.present?
+      description = compact ? hero.llm_description : (hero.description || hero.llm_description)
+      parts << I18n.t("services.arena_narrator_service.prompt.protagonist", name: hero.name, description: description)
     end
+
+    if current_hp
+      parts << I18n.t("services.arena_narrator_service.prompt.player_hp", current: current_hp, max: OutcomeResolutionService::BASE_HEALTH)
+    end
+
+    parts << "" if hero || current_hp
 
     localized_resolution = I18n.t("game.resolution_tags.#{resolution_tag}", default: resolution_tag).upcase
     localized_difficulty = I18n.t("game.difficulty_values.#{difficulty}", default: difficulty)
@@ -170,14 +196,8 @@ class ArenaNarratorService
     if scene_context[:actors].any?
       parts << I18n.t("services.arena_narrator_service.prompt.actors_present")
       scene_context[:actors].each do |a|
-        parts << I18n.t(
-          "services.arena_narrator_service.prompt.actor_item",
-          id: a[:id],
-          name: a[:name],
-          description: a[:description],
-          statuses: a[:statuses].join(", "),
-          status_options: a[:status_options].join(", ")
-        )
+        known = encountered_actors.include?(a[:id])
+        parts << format_actor(a, known: known, show_status_options: !random_mode)
       end
       parts << ""
     end
@@ -217,7 +237,13 @@ class ArenaNarratorService
       parts << ""
     end
 
-    delta = turn_context[:world_state_delta] || []
+    # Filter delta to only show entries NOT already visible in current scene actors/objects/inventory
+    visible_ids = Set.new
+    scene_context[:actors].each { |a| visible_ids << a[:id] }
+    scene_context[:objects].each { |o| visible_ids << o[:id] }
+    (scene_context[:inventory] || []).each { |i| visible_ids << i[:id] }
+
+    delta = (turn_context[:world_state_delta] || []).reject { |d| visible_ids.include?(d[:id]) }
     if delta.any?
       parts << I18n.t("services.arena_narrator_service.prompt.world_state_header")
       delta.each do |d|
@@ -237,7 +263,7 @@ class ArenaNarratorService
     if memory_notes.any?
       parts << I18n.t("services.arena_narrator_service.prompt.story_so_far_header")
       memory_notes.each do |note|
-        parts << I18n.t("services.arena_narrator_service.prompt.memory_note_item", note: note[:note])
+        parts << I18n.t("services.arena_narrator_service.prompt.memory_note_item", turn_number: note[:turn_number], note: note[:note])
       end
       parts << ""
     end
@@ -268,8 +294,28 @@ class ArenaNarratorService
       parts << ""
     end
 
+    if (tail = turn_context[:previous_narrative_tail])
+      parts << I18n.t("services.arena_narrator_service.prompt.previous_narrative_header")
+      parts << tail.strip
+      parts << ""
+    end
+
     parts << I18n.t("services.arena_narrator_service.prompt.player_action", action: action)
     parts.join("\n")
   end
   private_class_method :build_user_message
+
+  def self.format_actor(actor, known:, show_status_options:)
+    line = "  - #{actor[:name]} [id=#{actor[:id]}]"
+    line += " (#{actor[:description]})" unless known || actor[:description].blank?
+    line += ": #{actor[:statuses].join(', ')}"
+    disposition_label = I18n.t("services.arena_narrator_service.prompt.actor_disposition")
+    line += " | #{disposition_label}: #{actor[:disposition]}" if actor[:disposition].present?
+    if show_status_options && actor[:status_options]&.any?
+      label = I18n.t("services.arena_narrator_service.prompt.actor_plot_statuses")
+      line += " [#{label}: #{actor[:status_options].join(', ')}]"
+    end
+    line
+  end
+  private_class_method :format_actor
 end

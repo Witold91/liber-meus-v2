@@ -95,6 +95,7 @@ acts:
         scene: scene_a
         status_options: [calm, alerted, dead]
         default_status: calm
+        default_disposition: neutral  # hostile, suspicious, neutral, friendly, loyal
         force_status: alerted  # optional: override carried-over status at act start
 
     objects:
@@ -271,6 +272,11 @@ The narrator service outputs a `diff`. Supported keys:
   ```json
   { "object_id": { "status": "taken", "scene": "player_inventory" } }
   ```
+- `disposition_updates`: change how an actor feels toward the player
+  ```json
+  { "actor_id": "new_disposition" }
+  ```
+  Valid values: `hostile`, `suspicious`, `neutral`, `friendly`, `loyal`. The narrator emits this when the player's actions meaningfully shift a relationship. Disposition carries over across acts.
 - `actor_moved_to`: move actor to a scene
   ```json
   { "actor_id": "scene_id" }
@@ -334,7 +340,7 @@ When using this feature:
 
 ### Cross-act status persistence
 
-Actor and object statuses survive act transitions. If an NPC is killed or an object is broken in Act 1, that status carries forward to all later acts — even if the actor/object is absent from intermediate acts. Only actors/objects appearing for the first time in a new act receive their `default_status`.
+Actor and object statuses survive act transitions. If an NPC is killed or an object is broken in Act 1, that status carries forward to all later acts — even if the actor/object is absent from intermediate acts. Only actors/objects appearing for the first time in a new act receive their `default_status`. Actor dispositions also carry over — if a guard became `friendly` during Act 1, they stay `friendly` in Act 2.
 
 Status resolution priority at act start:
 1. `force_status` (if set on the actor/object in the new act) — always wins
@@ -396,6 +402,7 @@ Not merged by locale overlay:
 - events
 - status_options
 - default_status
+- default_disposition
 - structural additions (new acts/scenes/actors/objects)
 
 ## 9. Authoring Workflow
