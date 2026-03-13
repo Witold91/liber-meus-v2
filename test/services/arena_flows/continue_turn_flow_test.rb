@@ -26,7 +26,9 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
       "improvised_objects" => {}
     })
 
-    # Stub AI calls
+    # Stub AI calls and impression service
+    ImpressionService.stubs(:retrieve).returns([])
+    ImpressionService.stubs(:store!)
     DifficultyRatingService.stubs(:rate).returns([ { "difficulty" => "easy", "reasoning" => "No guards." }, 42 ])
     ArenaNarratorService.stubs(:narrate).returns([
       {

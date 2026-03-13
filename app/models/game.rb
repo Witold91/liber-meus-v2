@@ -4,6 +4,7 @@ class Game < ApplicationRecord
   has_many :acts, dependent: :destroy
   has_many :turns, dependent: :destroy
   has_many :saves, dependent: :destroy
+  has_many :impressions, dependent: :destroy
 
   validates :status, inclusion: { in: %w[active completed failed] }
   validates :game_language, inclusion: { in: I18n.available_locales.map(&:to_s) }

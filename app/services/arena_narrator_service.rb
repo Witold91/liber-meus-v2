@@ -272,6 +272,13 @@ class ArenaNarratorService
       parts << ""
     end
 
+    established_facts = turn_context[:established_facts] || []
+    if established_facts.any?
+      parts << I18n.t("services.arena_narrator_service.prompt.established_facts_header")
+      established_facts.each { |fact| parts << "  - #{fact}" }
+      parts << ""
+    end
+
     recent_actions = turn_context[:recent_actions] || []
     if recent_actions.any?
       parts << I18n.t("services.arena_narrator_service.prompt.recent_actions_header")

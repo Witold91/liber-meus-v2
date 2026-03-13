@@ -1,20 +1,20 @@
 class DifficultyRatingService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "difficulty_rating.txt")
 
-  def self.rate(action, scene_context, hero, recent_actions = [], world_context: nil, memory_summary: nil, memory_notes: [], current_hp: nil)
+  def self.rate(action, scene_context, hero, recent_actions = [], world_context: nil, memory_summary: nil, memory_notes: [], current_hp: nil, established_facts: [])
     system_prompt = File.read(SYSTEM_PROMPT_PATH)
     system_prompt += "\n\nWORLD CONTEXT:\n#{world_context.strip}" if world_context.present?
 
     AIClient.chat_json(
       system_prompt: system_prompt,
-      user_message: build_user_message(action, scene_context, hero, recent_actions, memory_summary: memory_summary, memory_notes: memory_notes, current_hp: current_hp),
+      user_message: build_user_message(action, scene_context, hero, recent_actions, memory_summary: memory_summary, memory_notes: memory_notes, current_hp: current_hp, established_facts: established_facts),
       model: AIClient.difficulty_model,
       temperature: 0.2,
       service_name: "DifficultyRatingService"
     )
   end
 
-  def self.build_user_message(action, scene_context, hero, recent_actions = [], memory_summary: nil, memory_notes: [], current_hp: nil)
+  def self.build_user_message(action, scene_context, hero, recent_actions = [], memory_summary: nil, memory_notes: [], current_hp: nil, established_facts: [])
     parts = []
     parts << I18n.t("services.difficulty_rating_service.prompt.hero", name: hero.name, description: hero.llm_description || hero.description)
     if current_hp
@@ -66,6 +66,12 @@ class DifficultyRatingService
       memory_notes.each do |note|
         parts << "  T#{note[:turn_number]} - #{note[:note]}"
       end
+      parts << ""
+    end
+
+    if established_facts.any?
+      parts << I18n.t("services.difficulty_rating_service.prompt.established_facts_header", default: "ESTABLISHED FACTS:")
+      established_facts.each { |fact| parts << "  - #{fact}" }
       parts << ""
     end
 

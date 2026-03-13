@@ -10,9 +10,10 @@ module ArenaFlows
         # Drop all acts after the saved act (cascades to their turns)
         game.acts.where("number > ?", saved_act_number).destroy_all
 
-        # In the saved act: drop turns after the saved turn number
+        # In the saved act: drop turns and impressions after the saved turn number
         target_act = game.acts.find_by!(number: saved_act_number)
         target_act.turns.where("turn_number > ?", saved_turn_number).destroy_all
+        game.impressions.where("turn_number > ?", saved_turn_number).delete_all
 
         # Restore world state, hero, and game status
         game.update!(

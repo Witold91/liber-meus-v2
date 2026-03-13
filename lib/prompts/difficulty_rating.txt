@@ -35,3 +35,4 @@ Edge cases:
 - Action requires an object not in OBJECTS PRESENT and not in PLAYER INVENTORY: "impossible". Exception: improvising from materials that ARE present (e.g. tying bedsheets into a rope) — rate normally.
 - Travel to a location not in EXITS: "impossible".
 - Account for STORY CONTEXT when rating. If the hero is restrained, wounded, or otherwise impaired, increase difficulty accordingly. If the hero has relevant tools or allies, decrease it.
+- When ESTABLISHED FACTS are provided, account for them when rating.

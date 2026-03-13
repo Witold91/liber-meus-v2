@@ -19,6 +19,13 @@ module RandomFlows
       player_scene = world_state["player_scene"]
       scene_context = presenter.scene_context_for(player_scene, world_state)
 
+      # Step 3.5: Retrieve established facts (vector impressions)
+      established_facts = ImpressionService.retrieve(
+        game: game, scene_id: player_scene,
+        actor_ids: scene_context[:actors].map { |a| a[:id] },
+        action_text: action
+      )
+
       # Step 4: Rate difficulty (AI call 1)
       recent_actions = game.turns.recent(3).to_a.reverse
                            .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
@@ -29,7 +36,8 @@ module RandomFlows
         world_context: world_state["world_context"],
         memory_summary: game.memory_summary,
         memory_notes: memory_notes,
-        current_hp: world_state["health"]
+        current_hp: world_state["health"],
+        established_facts: established_facts
       )
       difficulty = rating["difficulty"]
       rating_reasoning = rating["reasoning"]
@@ -72,7 +80,8 @@ module RandomFlows
                           .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
         recent_actions: recent_actions,
         rating_reasoning: rating_reasoning,
-        previous_narrative_tail: previous_narrative_tail.presence
+        previous_narrative_tail: previous_narrative_tail.presence,
+        established_facts: established_facts
       }
       narration, narrator_tokens = ArenaNarratorService.narrate(
         action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss],
@@ -85,6 +94,13 @@ module RandomFlows
         random_mode: true,
         current_hp: world_state["health"],
         health_gain: outcome[:health_gain]
+      )
+
+      # Store impressions from narration (non-fatal, outside transaction)
+      ImpressionService.store!(
+        game: game, turn_number: turn_number,
+        impressions_data: narration["impressions"],
+        memory_note: narration["memory_note"]
       )
 
       # Steps 7-10: DB writes (in transaction)

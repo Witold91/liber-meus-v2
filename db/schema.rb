@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_185111) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_13_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "vector"
 
   create_table "acts", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -67,6 +68,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_185111) do
     t.index ["slug"], name: "index_heroes_on_slug", unique: true
   end
 
+  create_table "impressions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.vector "embedding", limit: 1536
+    t.text "fact", null: false
+    t.bigint "game_id", null: false
+    t.string "subject_id"
+    t.string "subject_type", null: false
+    t.integer "turn_number", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "subject_type", "subject_id"], name: "index_impressions_on_game_id_and_subject_type_and_subject_id"
+    t.index ["game_id", "turn_number"], name: "index_impressions_on_game_id_and_turn_number"
+    t.index ["game_id"], name: "index_impressions_on_game_id"
+  end
+
   create_table "saves", force: :cascade do |t|
     t.integer "act_number", null: false
     t.datetime "created_at", null: false
@@ -111,6 +126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_185111) do
   end
 
   add_foreign_key "games", "users"
+  add_foreign_key "impressions", "games"
   add_foreign_key "saves", "games"
   add_foreign_key "saves", "heroes"
   add_foreign_key "saves", "users"

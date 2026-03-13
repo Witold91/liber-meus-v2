@@ -9,6 +9,9 @@ Fields:
   - "disposition_updates": { "actor_id": "new_disposition" } — how an actor feels toward the player: hostile, suspicious, neutral, friendly, loyal. Update when the player's actions meaningfully shift the relationship.
   - "actor_moved_to": { "actor_id": "stage_id" } — use "offstage" to remove
   - "player_moved_to": "stage_id"
+- "impressions": array of factual observations. Each: { "subject": "id", "type": "actor|scene", "fact": "statement" }.
+  Extract 1-3 facts per turn about character traits, relationship changes, location details.
+  Omit if nothing notable established.
 - "memory_note": 1-sentence note about a significant story development (omit if nothing notable happened)
 
 If WORLD EVENTS THIS TURN is provided, weave these scripted events into the narrative naturally — do not list them separately.
@@ -35,3 +38,4 @@ Rules:
 - If DIFFICULTY REASONING states the player lacks an item, they reach for something that isn't there. Never depict the player using an object they don't possess.
 - If HEALTH LOST appears, you must describe its physical cause in the narrative.
 - If HEALTH RESTORED appears, you must describe the healing concretely in the narrative. Both HEALTH LOST and HEALTH RESTORED can appear on the same turn — narrate both.
+- When ESTABLISHED FACTS are provided, treat them as ground truth. Never contradict unless the narrative explicitly justifies the change.
