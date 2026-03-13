@@ -17,8 +17,9 @@
             <%= game.hero.name %> &middot; <%= t("views.games.index.turns", count: game.turns.maximum(:turn_number) || 0, default: "%{count} turns") %>
           </div>
         </div>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <div class="game-card-actions">
           <%= link_to t("views.games.index.continue", default: "Continue →"), game_path(game), class: "btn" %>
+          <%= button_to t("views.games.index.delete", default: "Delete"), game_path(game), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("views.games.index.delete_confirm", default: "Are you sure? This will permanently delete this game and all its data. This action cannot be undone.") } } %>
         </div>
       </div>
     <% end %>
@@ -36,7 +37,10 @@
             <%= game.hero.name %> &middot; <%= t("views.games.index.turns", count: game.turns.maximum(:turn_number) || 0, default: "%{count} turns") %>
           </div>
         </div>
-        <span class="game-card-status <%= game.status %>"><%= t("game.statuses.#{game.status}", default: game.status) %></span>
+        <div class="game-card-actions">
+          <span class="game-card-status <%= game.status %>"><%= t("game.statuses.#{game.status}", default: game.status) %></span>
+          <%= button_to t("views.games.index.delete", default: "Delete"), game_path(game), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("views.games.index.delete_confirm", default: "Are you sure? This will permanently delete this game and all its data. This action cannot be undone.") } } %>
+        </div>
       </div>
     <% end %>
   <% end %>

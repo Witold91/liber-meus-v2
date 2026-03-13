@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       post :create_game
     end
 
-    resources :games, only: [ :index, :show ] do
+    resources :games, only: [ :index, :show, :destroy ] do
       member do
         post :continue
         post :replay_act

@@ -53,7 +53,7 @@ module Arena
       scene_objects = objects.select { |o| current_object_scene(o, object_states) == scene_id }
         .map do |o|
           statuses = Array(object_states.dig(o["id"], "statuses") || [ object_states.dig(o["id"], "status") || o["default_status"] ])
-          { id: o["id"], name: o["name"], statuses: statuses }
+          { id: o["id"], name: o["name"], description: o["description"], statuses: statuses }
         end
 
       # Include improvised objects that are at this specific scene only

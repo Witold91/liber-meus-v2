@@ -60,6 +60,12 @@
   color: #4a4030;
   flex-shrink: 0;
 }
+.game-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
 .game-card-status.completed { color: #6a8a78; border-color: #2a4030; }
 .game-card-status.failed    { color: #8a4040; border-color: #3a2020; }
 .dashboard-empty {

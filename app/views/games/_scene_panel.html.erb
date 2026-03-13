@@ -37,7 +37,7 @@
       <% if scene_context[:objects].any? %>
         <div class="scene-section-label"><%= t("views.scene_panel.objects") %></div>
         <% scene_context[:objects].each do |obj| %>
-          <% obj_tooltip = obj[:statuses].map { |s| t("game.status_values.#{s}", default: s) }.join(", ") %>
+          <% obj_tooltip = obj[:description].presence || obj[:statuses].map { |s| t("game.status_values.#{s}", default: s) }.join(", ") %>
           <div class="object-item"<% if obj_tooltip.present? %> data-tooltip="<%= obj_tooltip %>"<% end %>>
             <span class="object-name"><%= obj[:name] %></span>
             <% obj[:statuses].each do |status| %>

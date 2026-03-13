@@ -8,8 +8,8 @@ class GamesController < ApplicationController
   }.freeze
 
   before_action :set_game, except: [ :index ]
-  before_action :set_game_locale, except: [ :index ]
-  before_action :set_theme, except: [ :index ]
+  before_action :set_game_locale, except: [ :index, :destroy ]
+  before_action :set_theme, except: [ :index, :destroy ]
 
   def index
     @active_games = current_user.games.where(status: "active")
@@ -94,6 +94,11 @@ class GamesController < ApplicationController
       format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { message: message }) }
       format.html { redirect_to game_path(@game), alert: message }
     end
+  end
+
+  def destroy
+    @game.destroy!
+    redirect_to root_path, notice: t("controllers.games.notices.game_deleted", default: "Game deleted.")
   end
 
   def save_game

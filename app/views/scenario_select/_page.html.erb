@@ -1,0 +1,26 @@
+<%= turbo_frame_tag "scenarios_page_#{page}" do %>
+  <% scenarios.each do |scenario| %>
+    <div class="scenario-card">
+      <h2 style="color: <%= scenario.dig('theme', 'accent_color') || '#8ab4a0' %>;"><%= scenario["title"] %></h2>
+      <p><%= scenario["description"] %></p>
+      <%= form_with url: scenario_select_path, method: :post, data: { turbo_frame: "_top" } do |f| %>
+        <%= f.hidden_field :scenario_slug, value: scenario["slug"] %>
+        <div class="scenario-form">
+          <div>
+            <%= f.label :game_language, t("views.scenario_select.language_label") %>
+            <%= f.select :game_language, I18n.available_locales.map { |locale| [t("languages.#{locale}"), locale] }, { selected: I18n.locale } %>
+          </div>
+          <%= f.submit t("views.scenario_select.begin"), class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if has_next_page %>
+    <%= turbo_frame_tag "scenarios_page_#{page + 1}", src: scenario_select_path(page: page + 1), loading: :lazy do %>
+      <div class="scenario-card scenario-card--loading">
+        <p><%= t("views.scenario_select.loading", default: "Loading…") %></p>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

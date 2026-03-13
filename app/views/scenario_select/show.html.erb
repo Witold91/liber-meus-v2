@@ -11,23 +11,6 @@
 </div>
 
 <div class="scenario-grid">
-  <% @scenarios.each do |scenario| %>
-    <div class="scenario-card">
-      <h2 style="color: <%= scenario.dig('theme', 'accent_color') || '#8ab4a0' %>;"><%= scenario["title"] %></h2>
-      <p><%= scenario["description"] %></p>
-      <%= form_with url: scenario_select_path, method: :post do |f| %>
-        <%= f.hidden_field :scenario_slug, value: scenario["slug"] %>
-        <div class="scenario-form">
-          <div>
-            <%= f.label :game_language, t("views.scenario_select.language_label") %>
-            <%= f.select :game_language, I18n.available_locales.map { |locale| [t("languages.#{locale}"), locale] }, { selected: I18n.locale } %>
-          </div>
-          <%= f.submit t("views.scenario_select.begin"), class: "btn btn-primary" %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
   <div class="scenario-card">
     <h2 style="color: #c8a86e;"><%= t("views.random_setup.card_title", default: "Random Adventure") %></h2>
     <p><%= t("views.random_setup.card_description", default: "Describe any world you can imagine. AI will generate the setting, scenes, and characters. No script — pure exploration.") %></p>
@@ -35,4 +18,6 @@
       <%= link_to t("views.random_setup.card_begin", default: "Create World"), new_random_setup_path, class: "btn btn-primary" %>
     </div>
   </div>
+
+  <%= render partial: "scenario_select/page", locals: { scenarios: @scenarios, page: @page, has_next_page: @has_next_page } %>
 </div>

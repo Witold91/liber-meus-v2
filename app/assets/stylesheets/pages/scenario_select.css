@@ -21,6 +21,16 @@
   letter-spacing: 0.02em;
 }
 .scenario-grid { display: grid; gap: 1rem; }
+.scenario-grid > turbo-frame {
+  display: contents;
+}
+.scenario-card--loading {
+  text-align: center;
+  color: #4a3e2c;
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 0.86rem;
+}
 .scenario-card {
   border: 1px solid #2a2318;
   padding: 1.5rem;
