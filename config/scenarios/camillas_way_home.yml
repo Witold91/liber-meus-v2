@@ -1,0 +1,321 @@
+slug: camillas_way_home
+title: "Camilla's Way Home"
+description: "A small white mouse is lost in a big apartment. Help her find her way back to her sisters."
+turn_limit: 20
+world_context: |
+  A cozy small apartment with a garden, present day. The world is seen from the perspective of a tiny mouse — furniture towers like buildings, table legs are columns, and a carpet is a vast meadow. There is no violence, no danger of death, no predators. The worst that can happen is getting more lost or a little scared. The tone is warm, gentle, and curious. Camilla is a pet mouse who lives in a cage on a desk in the bedroom with her two sisters. She accidentally slipped out when the cage door was left ajar and now she needs to find her way back.
+narrator_style: |
+  Write in a warm, whimsical style as if narrating a children's storybook. Use gentle sensory details — the softness of carpet under tiny paws, the smell of fresh herbs from the kitchen, the warmth of sunlight through a window. Sentences are short and tender. The world is big and wondrous through Camilla's small eyes. Keep a sense of gentle adventure and quiet courage. 30-60 words.
+
+theme:
+  bg_color: "#faf5ef"
+  text_color: "#4a3728"
+  accent_color: "#e8a87c"
+  font_family: "'Georgia', 'Palatino Linotype', serif"
+  bg_image: ~
+
+hero:
+  slug: camilla
+  name: "Camilla"
+  description: "A small white mouse with dark, shiny eyes. She is agile and curious, but a little clumsy — always tripping over her own tiny paws. Despite being the smallest of three sisters, she has the biggest heart and the most adventurous spirit."
+  llm_description: "Female, small white mouse with dark eyes. Pet mouse, lives in a cage with two sisters. Agile but clumsy. Curious, brave in a gentle way, easily startled by new things but always pushes forward."
+  sex: female
+
+acts:
+  - number: 1
+    title: "The Big World"
+    intro: |
+      The cage door is open — just a sliver, but enough.
+      Camilla didn't mean to fall. She was stretching to sniff the air beyond the bars, leaning just a little too far, and then — whoosh — she tumbled right off the desk.
+      She landed on something soft (a sock, probably) and rolled twice before stopping.
+      Now she sits on the bedroom floor, whiskers trembling, looking up at the enormous room around her.
+      Somewhere far above, she can hear Alicia and Zuzanna squeaking from the cage.
+      She just needs to find her way back up. How hard can it be?
+    scenes:
+      - id: bedroom_floor
+        name: "Bedroom Floor"
+        description: "A vast landscape of wooden floor, dust bunnies, and a pair of slippers that look like sleeping giants. The desk with the cage towers above."
+        exits:
+          - to: under_the_bed
+            label: "Squeeze under the bed"
+          - to: living_room
+            label: "Slip through the door gap into the living room"
+          - to: desk_climb
+            label: "Try to climb back up the desk"
+      - id: under_the_bed
+        name: "Under the Bed"
+        description: "A shadowy cave of forgotten things — a lost earring, crumpled tissues, and a sock that smells like home. Quiet and safe, but not where the cage is."
+        exits:
+          - to: bedroom_floor
+            label: "Scurry back out"
+      - id: desk_climb
+        name: "The Desk"
+        description: "The tall wooden desk where the cage sits. Books are stacked like stepping stones, a lamp cord dangles like a vine, and the cage door is still ajar — home is right there."
+        exits:
+          - to: bedroom_floor
+            label: "Slide back down"
+          - to: cage
+            label: "Squeeze through the cage door"
+            arena_exit: true
+      - id: living_room
+        name: "The Living Room"
+        description: "The heart of the apartment — a warm room with a soft rug that feels like a meadow. Sunlight streams through a big window. A bookshelf stands like a mountain range along one wall, and a cozy armchair invites rest. The kitchen counter is visible on the far side. Doors lead in every direction."
+        exits:
+          - to: bedroom_floor
+            label: "Go back to the bedroom"
+          - to: kitchen
+            label: "Scurry toward the kitchen counter"
+          - to: bathroom
+            label: "Squeeze under the bathroom door"
+          - to: garden
+            label: "Slip through the garden door gap"
+      - id: kitchen
+        name: "The Kitchen"
+        description: "A wonderland of crumbs and smells, connected to the living room by an open counter. The tiles are cold under tiny paws. A bread crumb the size of Camilla's head sits near the fridge. The countertop is impossibly high."
+        exits:
+          - to: living_room
+            label: "Back to the living room"
+      - id: bathroom
+        name: "The Bathroom"
+        description: "A small tiled room that echoes with every tiny step. A big white bathtub rises like a porcelain mountain. Water drips from the tap — each drop sounds like a drum to a little mouse. The floor is cool and slippery, and the air smells of soap."
+        exits:
+          - to: living_room
+            label: "Squeeze back under the door"
+          - to: bathtub
+            label: "Climb into the bathtub"
+      - id: bathtub
+        name: "The Bathtub"
+        description: "A vast white basin, smooth and slippery on all sides. A single drop of water rolls slowly toward the drain. From down here, the rim looks impossibly high. Getting in was easy — getting out might be the real adventure."
+        exits:
+          - to: bathroom
+            label: "Scramble back over the edge"
+      - id: garden
+        name: "The Garden"
+        description: "Grass blades tower like a forest. A butterfly drifts past. The soil is soft and cool. Flowers bloom in colors Camilla has never seen before. It is beautiful — but it is not home."
+        exits:
+          - to: living_room
+            label: "Go back inside through the door gap"
+      - id: cage
+        name: "Home"
+        description: "The familiar warmth of wood shavings, the water bottle, the little wheel. Alicia and Zuzanna are here, squeaking with joy. Home at last."
+        exits: []
+
+    actors:
+      - id: alicia
+        name: "Alicia"
+        description: "Camilla's bigger sister, a dark-furred mouse with calm, watchful eyes. She is protective and steady — the one who always knows what to do."
+        scene: cage
+        default_disposition: loyal
+        status_options:
+          - worried
+          - calling
+          - relieved
+        default_status: worried
+      - id: zuzanna
+        name: "Zuzanna"
+        description: "Camilla's little brown sister, playful and a bit lazy. She would rather nap than worry, but she misses Camilla and keeps squeaking for her."
+        scene: cage
+        default_disposition: loyal
+        status_options:
+          - napping
+          - squeaking
+          - playful
+          - relieved
+        default_status: squeaking
+      - id: butterfly
+        name: "A Garden Butterfly"
+        description: "A gentle orange butterfly that flutters through the garden. Not a friend exactly, but not a threat either — just a beautiful, curious presence."
+        scene: garden
+        default_disposition: neutral
+        status_options:
+          - fluttering
+          - resting
+          - gone
+        default_status: fluttering
+      - id: dust_bunny
+        name: "A Huge Dust Bunny"
+        description: "A fluffy grey ball of dust under the bed. To a tiny mouse, it looks almost alive. Harmless, but startling."
+        scene: under_the_bed
+        default_disposition: neutral
+        status_options:
+          - still
+          - rolling
+          - scattered
+        default_status: still
+
+    objects:
+      - id: breadcrumb
+        name: "A Giant Breadcrumb"
+        description: "A crumb of bread as big as Camilla's head. A perfect snack for a tired little mouse."
+        scene: kitchen
+        status_options:
+          - on_floor
+          - nibbled
+          - carried
+        default_status: on_floor
+      - id: sock
+        name: "A Warm Sock"
+        description: "A soft, worn sock on the bedroom floor. It smells familiar and safe — perfect for resting in."
+        scene: bedroom_floor
+        status_options:
+          - on_floor
+          - nested_in
+        default_status: on_floor
+      - id: earring
+        name: "A Shiny Lost Earring"
+        description: "A tiny golden earring, lost under the bed long ago. It catches the light and sparkles like a treasure."
+        scene: under_the_bed
+        status_options:
+          - hidden
+          - found
+          - carried
+        default_status: hidden
+      - id: herb_leaf
+        name: "A Basil Leaf"
+        description: "A fragrant basil leaf that fell from a potted plant on the kitchen counter. It smells wonderful and would make a fine little umbrella for a mouse."
+        scene: kitchen
+        status_options:
+          - on_plant
+          - picked
+          - carried
+        default_status: on_plant
+      - id: soap_bubble
+        name: "A Soap Bubble"
+        description: "A tiny iridescent bubble clinging to the edge of the bathtub. It wobbles gently and reflects the whole bathroom in miniature. One touch and it will pop."
+        scene: bathtub
+        status_options:
+          - floating
+          - popped
+        default_status: floating
+      - id: lamp_cord
+        name: "The Lamp Cord"
+        description: "A long cord dangling from the desk lamp, reaching almost to the floor. A brave mouse could climb it like a rope."
+        scene: bedroom_floor
+        status_options:
+          - dangling
+          - climbed
+        default_status: dangling
+      - id: popcorn_kernel
+        name: "A Forgotten Popcorn Kernel"
+        description: "A single popcorn kernel wedged between the couch cushions. It is almost as big as Camilla and smells buttery and wonderful. A feast fit for a mouse queen."
+        scene: living_room
+        status_options:
+          - wedged
+          - freed
+          - nibbled
+        default_status: wedged
+      - id: hair_tie
+        name: "A Stretchy Hair Tie"
+        description: "A purple hair tie lying on the living room rug. Wonderfully bouncy — a mouse could use it as a trampoline, or drag it along as the world's tiniest lasso."
+        scene: living_room
+        status_options:
+          - on_rug
+          - played_with
+          - carried
+        default_status: on_rug
+      - id: rubber_duck
+        name: "A Yellow Rubber Duck"
+        description: "A small rubber duck sitting on the edge of the bathtub, smiling its eternal smile. To Camilla it is enormous — a bright yellow giant with kind painted eyes."
+        scene: bathtub
+        status_options:
+          - perched
+          - knocked_over
+          - floating
+        default_status: perched
+      - id: cotton_ball
+        name: "A Fluffy Cotton Ball"
+        description: "A cotton ball that rolled behind the bathroom bin. It is impossibly soft — softer even than the wood shavings back home. A perfect little cloud to rest on."
+        scene: bathroom
+        status_options:
+          - on_floor
+          - nested_in
+          - carried
+        default_status: on_floor
+      - id: button
+        name: "A Red Button"
+        description: "A small red button that fell off someone's coat, now lying forgotten under the desk. It is smooth and round and fits perfectly under a mouse's paw — like a tiny shield."
+        scene: desk_climb
+        status_options:
+          - on_desk
+          - found
+          - carried
+        default_status: on_desk
+      - id: sunflower_seed
+        name: "A Sunflower Seed"
+        description: "A single sunflower seed near the garden door, dropped by a bird long ago. It smells like outside and tastes like a little piece of sunshine."
+        scene: garden
+        status_options:
+          - on_ground
+          - cracked
+          - eaten
+        default_status: on_ground
+      - id: thimble
+        name: "A Silver Thimble"
+        description: "A tiny sewing thimble tucked behind the bookshelf in the living room. For a mouse, it makes a perfect helmet — or a very fancy bathtub."
+        scene: living_room
+        status_options:
+          - hidden
+          - found
+          - worn
+        default_status: hidden
+      - id: petal
+        name: "A Fallen Rose Petal"
+        description: "A single soft pink petal lying in the garden grass, still faintly fragrant. It curls at the edges like a little boat. Camilla could sit on it like a throne."
+        scene: garden
+        status_options:
+          - on_ground
+          - picked_up
+          - carried
+        default_status: on_ground
+
+    conditions:
+      - id: camilla_home
+        description: "Camilla reaches the cage and reunites with her sisters"
+        narrative: "Tiny paws on familiar wood shavings. The smell of home. Alicia nuzzles close, and Zuzanna does a happy little spin. The adventure is over — and what a wonderful, terrifying, beautiful adventure it was."
+        type: goal
+        check: player_at_scene
+        scene: cage
+      - id: lost_in_garden
+        description: "Camilla wanders too deep into the garden and gets overwhelmed"
+        narrative: "The garden is so big, and the apartment feels so far away. Camilla curls up under a leaf, whiskers trembling. But then she hears it — faintly, through the open door — her sisters squeaking. She is not lost. She just needs to follow their voices home."
+        type: danger
+        check: actor_has_status
+        actor: butterfly
+        status: gone
+
+    events:
+      - id: sisters_call
+        act_turn: 3
+        action:
+          type: actor_enters
+          actor_id: alicia
+          scene: cage
+          new_status: calling
+        description: "Alicia presses her nose against the cage bars and squeaks loudly — a long, high call that echoes through the apartment. She is calling Camilla home."
+      - id: zuzanna_wakes
+        act_turn: 5
+        action:
+          type: actor_enters
+          actor_id: zuzanna
+          scene: cage
+          new_status: playful
+        description: "Zuzanna, tired of worrying, starts running on the wheel — her way of coping. The rhythmic squeak-squeak-squeak carries through the quiet apartment like a tiny heartbeat."
+      - id: butterfly_leaves
+        act_turn: 10
+        condition:
+          player_at_scene: garden
+        action:
+          type: actor_enters
+          actor_id: butterfly
+          scene: garden
+          new_status: gone
+        description: "The butterfly drifts away over the garden wall, leaving Camilla alone among the towering grass blades."
+      - id: dust_bunny_rolls
+        trigger:
+          player_at_scene: under_the_bed
+        action:
+          type: actor_enters
+          actor_id: dust_bunny
+          scene: under_the_bed
+          new_status: rolling
+        description: "A tiny draft sends the dust bunny rolling toward Camilla. For a heartbeat she freezes — but it is just fluff and nothing more."
