@@ -1,0 +1,165 @@
+title: "Droga Camilli do domu"
+description: "Mała biała myszka gubi się w wielkim mieszkaniu. Pomóż jej odnaleźć drogę z powrotem do swoich sióstr."
+world_context: |
+  Przytulne niewielkie mieszkanie z ogrodem, współczesność. Świat oglądamy z perspektywy maleńkiej myszki — meble górują jak budynki, nogi stołu są kolumnami, a dywan rozciąga się jak ogromna łąka. Nie ma tu przemocy, śmiertelnego niebezpieczeństwa ani drapieżników. Najgorsze, co może się zdarzyć, to jeszcze bardziej się zgubić albo trochę się przestraszyć. Ton opowieści ma być ciepły, łagodny i pełen ciekawości. Camilla jest domową myszką, która mieszka w klatce na biurku w sypialni razem z dwiema siostrami. Przypadkiem wymknęła się na zewnątrz, gdy drzwiczki klatki zostały uchylone, i teraz musi znaleźć drogę z powrotem.
+narrator_style: |
+  Pisz ciepłym, baśniowym stylem, jak narrator książeczki dla dzieci. Używaj łagodnych detali zmysłowych — miękkości dywanu pod drobnymi łapkami, zapachu świeżych ziół z kuchni, ciepła słońca wpadającego przez okno. Zdania są krótkie i czułe. W oczach Camilli świat jest wielki i pełen cudów. Zachowaj poczucie łagodnej przygody i cichej odwagi. 30-60 słów.
+
+hero:
+  name: "Camilla"
+  description: "Mała biała myszka o ciemnych, błyszczących oczach. Jest zwinna i ciekawska, ale trochę niezdarna — bez przerwy potyka się o własne drobne łapki. Choć jest najmniejsza z trzech sióstr, ma największe serce i najbardziej przygodowego ducha."
+  llm_description: "Samica, mała biała myszka o ciemnych oczach. Domowa myszka mieszkająca w klatce z dwiema siostrami. Zwinna, ale niezdarna. Ciekawska, delikatnie odważna, łatwo płoszy się nowościami, lecz zawsze idzie dalej."
+
+acts:
+  - number: 1
+    title: "Wielki świat"
+    intro: |
+      Drzwiczki klatki są otwarte — tylko odrobinę, ale to wystarczy.
+      Camilla nie chciała spaść. Wyciągała się, żeby powąchać powietrze za prętami, wychyliła się odrobinę za daleko i wtedy — fiuu — zleciała prosto z biurka.
+      Wylądowała na czymś miękkim (pewnie na skarpetce) i przeturlała się dwa razy, zanim się zatrzymała.
+      Teraz siedzi na podłodze w sypialni, a jej wąsiki drżą, gdy patrzy w górę na ogromny pokój wokół siebie.
+      Gdzieś wysoko nad sobą słyszy, jak Alicia i Zuzanna popiskują z klatki.
+      Musi tylko znaleźć drogę z powrotem. Jak trudne to może być?
+    scenes:
+      - id: bedroom_floor
+        name: "Podłoga w sypialni"
+        description: "Ogromny krajobraz drewnianej podłogi, kłębków kurzu i pary kapci, które wyglądają jak śpiące olbrzymy. Wysoko nad wszystkim góruje biurko z klatką."
+        exits:
+          - to: under_the_bed
+            label: "Przeciśnij się pod łóżko"
+          - to: living_room
+            label: "Przemknij przez szparę w drzwiach do salonu"
+          - to: desk_climb
+            label: "Spróbuj wspiąć się z powrotem na biurko"
+      - id: under_the_bed
+        name: "Pod łóżkiem"
+        description: "Cienista jaskinia zapomnianych rzeczy — zgubionego kolczyka, zmiętych chusteczek i skarpetki pachnącej domem. Cicho i bezpiecznie, ale klatki tu nie ma."
+        exits:
+          - to: bedroom_floor
+            label: "Wymyknij się z powrotem"
+      - id: desk_climb
+        name: "Biurko"
+        description: "Wysokie drewniane biurko, na którym stoi klatka. Książki leżą w stosach jak kamienie do przeprawy, kabel lampki zwisa jak liana, a drzwiczki klatki wciąż są uchylone — dom jest tuż obok."
+        exits:
+          - to: bedroom_floor
+            label: "Zsuń się z powrotem w dół"
+          - to: cage
+            label: "Przeciśnij się przez drzwiczki klatki"
+      - id: living_room
+        name: "Salon"
+        description: "Serce mieszkania — ciepły pokój z miękkim dywanem, który przypomina łąkę. Przez wielkie okno wpada strumień słońca. Wzdłuż jednej ściany stoi regał niczym pasmo górskie, a przytulny fotel zachęca do odpoczynku. Po drugiej stronie widać kuchenny blat. Drzwi prowadzą we wszystkie strony."
+        exits:
+          - to: bedroom_floor
+            label: "Wróć do sypialni"
+          - to: kitchen
+            label: "Pobiegnij w stronę kuchennego blatu"
+          - to: bathroom
+            label: "Przeciśnij się pod drzwiami łazienki"
+          - to: garden
+            label: "Przemknij przez szparę przy drzwiach do ogrodu"
+      - id: kitchen
+        name: "Kuchnia"
+        description: "Kraina okruszków i zapachów, połączona z salonem otwartym blatem. Płytki są chłodne pod maleńkimi łapkami. Przy lodówce leży okruszek chleba wielkości głowy Camilli. Blat kuchenny wydaje się niewyobrażalnie wysoki."
+        exits:
+          - to: living_room
+            label: "Wróć do salonu"
+      - id: bathroom
+        name: "Łazienka"
+        description: "Mały wykafelkowany pokój, w którym każdy drobny krok odbija się echem. Wielka biała wanna wznosi się jak porcelanowa góra. Z kranu kapie woda — każda kropla brzmi dla małej myszki jak bęben. Podłoga jest chłodna i śliska, a powietrze pachnie mydłem."
+        exits:
+          - to: living_room
+            label: "Przeciśnij się z powrotem pod drzwiami"
+          - to: bathtub
+            label: "Wdrap się do wanny"
+      - id: bathtub
+        name: "Wanna"
+        description: "Ogromna biała misa, gładka i śliska z każdej strony. Pojedyncza kropla wody wolno toczy się w stronę odpływu. Stąd brzeg wydaje się niewyobrażalnie wysoko. Wejść było łatwo — wyjść może okazać się prawdziwą przygodą."
+        exits:
+          - to: bathroom
+            label: "Wdrap się z powrotem na krawędź"
+      - id: garden
+        name: "Ogród"
+        description: "Źdźbła trawy wyrastają tu jak las. Obok przelatuje motyl. Ziemia jest miękka i chłodna. Kwitną kwiaty w kolorach, jakich Camilla nigdy wcześniej nie widziała. Jest tu pięknie — ale to nie jest dom."
+        exits:
+          - to: living_room
+            label: "Wróć do środka przez szparę przy drzwiach"
+      - id: cage
+        name: "Dom"
+        description: "Znajome ciepło wiórków, poidełko i małe kołowrotki. Alicia i Zuzanna są tutaj, popiskując z radości. Wreszcie w domu."
+        exits: []
+
+    actors:
+      - id: alicia
+        name: "Alicia"
+        description: "Większa siostra Camilli, myszka o ciemnym futerku i spokojnych, czujnych oczach. Jest opiekuńcza i stateczna — to ona zawsze wie, co robić."
+      - id: zuzanna
+        name: "Zuzanna"
+        description: "Mała brązowa siostra Camilli, figlarna i trochę leniwa. Wolałaby spać, niż się martwić, ale tęskni za Camillą i wciąż ją nawołuje."
+      - id: butterfly
+        name: "Ogrodowy motyl"
+        description: "Łagodny pomarańczowy motyl, który frunie po ogrodzie. Nie jest przyjacielem, ale nie stanowi też zagrożenia — to po prostu piękna, ciekawska obecność."
+      - id: dust_bunny
+        name: "Ogromny kłębek kurzu"
+        description: "Puchata szara kulka kurzu pod łóżkiem. Dla maleńkiej myszki wygląda niemal jak żywa. Jest niegroźna, ale potrafi przestraszyć."
+
+    objects:
+      - id: breadcrumb
+        name: "Olbrzymi okruszek chleba"
+        description: "Okruszek chleba wielkości głowy Camilli. Idealna przekąska dla zmęczonej małej myszki."
+      - id: sock
+        name: "Ciepła skarpetka"
+        description: "Miękka, znoszona skarpetka na podłodze w sypialni. Pachnie znajomo i bezpiecznie — idealna do odpoczynku."
+      - id: earring
+        name: "Błyszczący zgubiony kolczyk"
+        description: "Maleńki złoty kolczyk, zgubiony dawno temu pod łóżkiem. Łapie światło i błyszczy jak skarb."
+      - id: herb_leaf
+        name: "Listek bazylii"
+        description: "Pachnący listek bazylii, który spadł z doniczki stojącej na kuchennym blacie. Cudownie pachnie i mógłby zostać śliczną małą parasolką dla myszki."
+      - id: soap_bubble
+        name: "Bańka mydlana"
+        description: "Maleńka tęczowa bańka przyklejona do brzegu wanny. Delikatnie drży i odbija całą łazienkę w miniaturze. Jeden dotyk i pęknie."
+      - id: lamp_cord
+        name: "Kabel lampki"
+        description: "Długi kabel zwisający z lampki na biurku, sięgający niemal do samej podłogi. Odważna myszka mogłaby wspiąć się po nim jak po linie."
+      - id: popcorn_kernel
+        name: "Zapomniane ziarnko popcornu"
+        description: "Jedno ziarnko popcornu zaklinowane między poduszkami kanapy. Jest prawie tak duże jak Camilla i pachnie cudownie, maślanie. Uczta godna mysiej królowej."
+      - id: hair_tie
+        name: "Elastyczna gumka do włosów"
+        description: "Fioletowa gumka do włosów leżąca na dywanie w salonie. Cudownie sprężysta — myszka mogłaby używać jej jak trampoliny albo ciągnąć za sobą niczym najmniejsze lasso na świecie."
+      - id: rubber_duck
+        name: "Żółta gumowa kaczuszka"
+        description: "Mała gumowa kaczuszka siedząca na brzegu wanny i uśmiechająca się swoim wiecznym uśmiechem. Dla Camilli jest ogromna — to jasna żółta olbrzymka o życzliwie namalowanych oczach."
+      - id: cotton_ball
+        name: "Puchata kulka waty"
+        description: "Kulka waty, która potoczyła się za łazienkowy kosz. Jest niewiarygodnie miękka — jeszcze miększa niż wiórki w domu. Idealna mała chmurka do odpoczynku."
+      - id: button
+        name: "Czerwony guzik"
+        description: "Mały czerwony guzik, który odpadł komuś od płaszcza i teraz leży zapomniany pod biurkiem. Jest gładki, okrągły i idealnie mieści się pod mysią łapką — jak maleńka tarcza."
+      - id: sunflower_seed
+        name: "Pestka słonecznika"
+        description: "Pojedyncza pestka słonecznika przy drzwiach do ogrodu, upuszczona dawno temu przez ptaka. Pachnie światem na zewnątrz i smakuje jak odrobina słońca."
+      - id: thimble
+        name: "Srebrny naparstek"
+        description: "Mały krawiecki naparstek schowany za regałem w salonie. Dla myszki byłby idealnym hełmem — albo bardzo elegancką wanienką."
+      - id: petal
+        name: "Opadły płatek róży"
+        description: "Pojedynczy miękki różowy płatek leżący w trawie w ogrodzie, wciąż lekko pachnący. Zawija się na brzegach jak mała łódeczka. Camilla mogłaby usiąść na nim jak na tronie."
+
+    conditions:
+      - id: camilla_home
+        description: "Camilla wraca do klatki i znów jest z siostrami"
+        narrative: "Maleńkie łapki na znajomych wiórkach. Zapach domu. Alicia przytula się blisko, a Zuzanna robi radosny mały piruet. Przygoda dobiegła końca — i była zarazem cudowna, trochę straszna i piękna."
+      - id: lost_in_garden
+        description: "Camilla zapuszcza się zbyt głęboko w ogród i czuje się przytłoczona"
+        narrative: "Ogród jest taki wielki, a mieszkanie wydaje się tak daleko. Camilla zwija się pod liściem, a jej wąsiki drżą. Ale wtedy to słyszy — cichutko, przez otwarte drzwi — popiskiwanie sióstr. Nie zgubiła się. Musi tylko wrócić do domu, podążając za ich głosami."
+
+    events:
+      - id: sisters_call
+        description: "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Camillę do domu."
+      - id: zuzanna_wakes
+        description: "Zuzanna, zmęczona zamartwianiem się, zaczyna biegać w kołowrotku — tak sobie radzi. Rytmiczne piski, skrzyp-skrzyp-skrzyp, niosą się przez ciche mieszkanie jak maleńkie bicie serca."
+      - id: butterfly_leaves
+        description: "Motyl odlatuje ponad ogrodowym murem, zostawiając Camillę samą pośród wysokich źdźbeł trawy."
+      - id: dust_bunny_rolls
+        description: "Lekki przeciąg popycha kłębek kurzu prosto w stronę Camilli. Przez ułamek sekundy zastyga ze strachu — ale to tylko puszek i nic więcej."

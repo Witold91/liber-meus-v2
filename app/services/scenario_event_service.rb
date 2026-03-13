@@ -1,9 +1,9 @@
 class ScenarioEventService
-  def self.events_for_turn(turn_number:, world_state:, act_turn_number: nil)
+  def self.events_for_turn(turn_number:, world_state:, act_turn_number: nil, locale: "en")
     scenario_slug = world_state["scenario_slug"]
     return [] unless scenario_slug
 
-    scenario = ScenarioCatalog.find(scenario_slug)
+    scenario = ScenarioCatalog.find(scenario_slug, locale: locale)
     return [] unless scenario
 
     presenter = Arena::ScenarioPresenter.new(scenario, world_state["act_number"] || 1, world_state)

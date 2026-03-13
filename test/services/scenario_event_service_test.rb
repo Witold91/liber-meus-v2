@@ -72,6 +72,30 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
     assert events.any? { |e| e["id"] == "act1_brawl_escalates" }
   end
 
+  test "returns localized event descriptions when locale is provided" do
+    state = {
+      "scenario_slug" => "camillas_way_home",
+      "act_number" => 1,
+      "player_scene" => "bedroom_floor",
+      "actors" => {},
+      "objects" => {}
+    }
+
+    events = ScenarioEventService.events_for_turn(
+      turn_number: 99,
+      act_turn_number: 3,
+      world_state: state,
+      locale: "pl"
+    )
+
+    event = events.find { |e| e["id"] == "sisters_call" }
+    assert_not_nil event
+    assert_equal(
+      "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Camillę do domu.",
+      event["description"]
+    )
+  end
+
   test "state-triggered event fires when actor condition is met" do
     state = @world_state.merge(
       "actors" => {

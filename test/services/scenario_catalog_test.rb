@@ -66,6 +66,12 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert_equal "Romeo i Julia", scenario["title"]
   end
 
+  test "find with locale pl returns Polish title for camillas_way_home" do
+    scenario = ScenarioCatalog.find("camillas_way_home", locale: "pl")
+    assert_not_nil scenario
+    assert_equal "Droga Camilli do domu", scenario["title"]
+  end
+
   test "find with locale pl merges scene name" do
     scenario = ScenarioCatalog.find("prison_break", locale: "pl")
     act = scenario["acts"].first
@@ -89,6 +95,21 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     scene = act["scenes"].find { |s| s["id"] == "verona_square" }
     assert_not_nil scene
     assert_equal "Plac w Weronie", scene["name"]
+  end
+
+  test "find with locale pl merges hero llm_description and event description" do
+    scenario = ScenarioCatalog.find("camillas_way_home", locale: "pl")
+
+    assert_equal(
+      "Samica, mała biała myszka o ciemnych oczach. Domowa myszka mieszkająca w klatce z dwiema siostrami. Zwinna, ale niezdarna. Ciekawska, delikatnie odważna, łatwo płoszy się nowościami, lecz zawsze idzie dalej.",
+      scenario.dig("hero", "llm_description")
+    )
+
+    event = scenario.dig("acts", 0, "events").find { |e| e["id"] == "sisters_call" }
+    assert_equal(
+      "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Camillę do domu.",
+      event["description"]
+    )
   end
 
   test "find with unsupported locale falls back to English" do
@@ -118,6 +139,7 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     scenarios = ScenarioCatalog.all
     assert scenarios.all? { |s| s["slug"].present? }
     slugs = scenarios.map { |s| s["slug"] }
+    assert_includes slugs, "camillas_way_home"
     assert_includes slugs, "prison_break"
     assert_includes slugs, "romeo_juliet"
     assert_includes slugs, "romeo_juliet_test"

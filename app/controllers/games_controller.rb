@@ -27,6 +27,14 @@ class GamesController < ApplicationController
   end
 
   def continue
+    unless @game.status == "active"
+      respond_to do |format|
+        format.turbo_stream { head :unprocessable_entity }
+        format.html { redirect_to game_path(@game) }
+      end
+      return
+    end
+
     action = params[:action_text].to_s.strip
 
     if action.blank?
@@ -61,6 +69,14 @@ class GamesController < ApplicationController
         ]
         streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: ending_turn }) if ending_turn
         streams << turbo_stream.append("turn-log", partial: "games/turn", locals: { turn: prologue_turn }) if prologue_turn&.options_payload&.dig("prologue")
+        if ending_turn && !prologue_turn&.options_payload&.dig("prologue")
+          banner_html = helpers.content_tag(:div, class: "game-over-banner") do
+            t("views.games.game_over", status: t("game.statuses.#{@game.status}")).html_safe +
+              " ".html_safe +
+              helpers.link_to(t("views.games.start_new_game"), root_path)
+          end
+          streams << turbo_stream.update("action-area", html: banner_html)
+        end
         render turbo_stream: streams
       end
       format.html { redirect_to game_path(@game) }

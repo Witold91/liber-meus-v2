@@ -66,7 +66,7 @@ module ArenaFlows
 
       # Step 6.5: Collect turn-triggered event descriptions for narrator context
       turn_events = ScenarioEventService.events_for_turn(
-        turn_number: turn_number, act_turn_number: act_turn_number, world_state: world_state
+        turn_number: turn_number, act_turn_number: act_turn_number, world_state: world_state, locale: game.game_language
       ).reject { |e| e.key?("trigger") }
       event_descriptions = turn_events.filter_map { |e| e["description"] }
 
@@ -104,7 +104,12 @@ module ArenaFlows
 
         # Step 9: Apply scenario events
         new_event_memories = []
-        ScenarioEventService.events_for_turn(turn_number: turn_number, act_turn_number: act_turn_number, world_state: world_state).each do |event|
+        ScenarioEventService.events_for_turn(
+          turn_number: turn_number,
+          act_turn_number: act_turn_number,
+          world_state: world_state,
+          locale: game.game_language
+        ).each do |event|
           event_diff = ScenarioEventService.event_to_scene_diff(event)
           next if event_diff.empty?
           world_state = Arena::WorldStateManager.new(world_state).apply_scene_diff(event_diff, scenario: scenario)

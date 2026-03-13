@@ -5,7 +5,7 @@ Arena-based interactive fiction engine. Players navigate multi-stage scenarios d
 ## Stack
 
 - **Ruby** 3.4.8 / **Rails** 8.1.2
-- **PostgreSQL** (jsonb for world state and options payloads)
+- **PostgreSQL** + **pgvector** (jsonb for world state, vector embeddings for narrative impressions)
 - **Hotwire** (Turbo Streams + Stimulus) for live turn appending
 - **OpenAI API** — `gpt-4o-mini` by default for both AI calls
 - **Minitest + Mocha** for tests
@@ -15,7 +15,7 @@ Arena-based interactive fiction engine. Players navigate multi-stage scenarios d
 ## Prerequisites
 
 - Ruby 3.4.8 (via mise, rbenv, or asdf)
-- PostgreSQL 14+
+- PostgreSQL 14+ with **pgvector** extension
 - Bundler 2.x
 
 ---
@@ -61,6 +61,7 @@ Visit `http://localhost:3000` — you'll land on the scenario selection screen.
 | `OPENAI_API_KEY` | **Yes** | — | OpenAI API key for AI calls |
 | `AI_DIFFICULTY_MODEL` | No | `gpt-4o-mini` | Model used for difficulty rating (call 1) |
 | `AI_NARRATOR_MODEL` | No | `gpt-4o-mini` | Model used for narration (call 2) |
+| `AI_EMBEDDING_MODEL` | No | `text-embedding-3-small` | Model used for narrative impression embeddings |
 | `DB_HOST` | No | local socket | PostgreSQL host |
 | `DB_PORT` | No | `5432` | PostgreSQL port |
 | `DB_USERNAME` | No | current OS user | PostgreSQL username |
@@ -128,6 +129,18 @@ Stored as jsonb on the `games` table:
 ```
 
 `momentum` tracks consecutive successes/failures and shifts outcome probabilities for medium/hard actions.
+
+### Narrative Impressions (pgvector)
+
+In long games, the AI narrator can lose track of established facts about characters and locations. To fix this, the engine extracts short factual "impressions" from each narrator response and stores them with vector embeddings in PostgreSQL via pgvector.
+
+Before each turn's AI calls, relevant impressions are retrieved via hybrid search (deterministic by scene/actor ID + semantic nearest-neighbor by action text) and injected as "ESTABLISHED FACTS" into the prompts.
+
+- **`ImpressionService.store!`** — extracts impressions from narrator JSON, batch-embeds via `EmbeddingService`, persists to `impressions` table
+- **`ImpressionService.retrieve`** — hybrid retrieval (max 10 facts), excludes memory-type entries
+- **`EmbeddingService`** — thin wrapper around the OpenAI embeddings endpoint (model: `AI_EMBEDDING_MODEL`)
+- Impressions are tagged by `subject_type` (`actor`, `scene`, `memory`) and `subject_id`
+- Non-fatal: if the embedding API is down, the game continues without impressions
 
 ---
 

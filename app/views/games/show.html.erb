@@ -47,22 +47,24 @@
         <% end %>
       </div>
 
-      <% if @game.status == "active" %>
-        <div class="action-area">
-          <%= form_with url: continue_game_path(@game), method: :post,
-                data: { action: "submit->game#handleSubmit", turbo: false } do |f| %>
-            <div class="action-form">
-              <span class="action-prompt">›</span>
-              <%= f.text_field :action_text,
-                    placeholder: t("views.games.action_placeholder"),
-                    class: "action-input",
-                    autocomplete: "off",
-                    data: { game_target: "input" } %>
-              <%= f.submit "→", class: "btn", data: { game_target: "submit" } %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
+      <div id="action-area">
+        <% if @game.status == "active" %>
+          <div class="action-area">
+            <%= form_with url: continue_game_path(@game), method: :post,
+                  data: { action: "submit->game#handleSubmit", turbo: false } do |f| %>
+              <div class="action-form">
+                <span class="action-prompt">›</span>
+                <%= f.text_field :action_text,
+                      placeholder: t("views.games.action_placeholder"),
+                      class: "action-input",
+                      autocomplete: "off",
+                      data: { game_target: "input" } %>
+                <%= f.submit "→", class: "btn", data: { game_target: "submit" } %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
 
     <%# Right: Scene panel + hero stats — becomes full-screen overlay on mobile %>

@@ -53,11 +53,7 @@ module ScenarioCatalog
     end
 
     if overlay.key?("hero") && base.key?("hero")
-      hero = base["hero"].dup
-      %w[name description].each do |key|
-        hero[key] = overlay["hero"][key] if overlay["hero"].key?(key)
-      end
-      result["hero"] = hero
+      result["hero"] = merge_hero(base["hero"], overlay["hero"])
     end
 
     if overlay.key?("acts") && base.key?("acts")
@@ -79,6 +75,10 @@ module ScenarioCatalog
         act[key] = overlay_act[key] if overlay_act.key?(key)
       end
 
+      if overlay_act.key?("hero") && base_act.key?("hero")
+        act["hero"] = merge_hero(base_act["hero"], overlay_act["hero"])
+      end
+
       if overlay_act.key?("scenes") && base_act.key?("scenes")
         act["scenes"] = merge_scenes(base_act["scenes"], overlay_act["scenes"])
       end
@@ -96,7 +96,9 @@ module ScenarioCatalog
       if overlay_act.key?("objects") && base_act.key?("objects")
         act["objects"] = merge_by_key(base_act["objects"], overlay_act["objects"], "id") do |base_item, overlay_item|
           item = base_item.dup
-          item["name"] = overlay_item["name"] if overlay_item.key?("name")
+          %w[name description].each do |key|
+            item[key] = overlay_item[key] if overlay_item.key?(key)
+          end
           item
         end
       end
@@ -104,7 +106,17 @@ module ScenarioCatalog
       if overlay_act.key?("conditions") && base_act.key?("conditions")
         act["conditions"] = merge_by_key(base_act["conditions"], overlay_act["conditions"], "id") do |base_item, overlay_item|
           item = base_item.dup
-          item["narrative"] = overlay_item["narrative"] if overlay_item.key?("narrative")
+          %w[description narrative].each do |key|
+            item[key] = overlay_item[key] if overlay_item.key?(key)
+          end
+          item
+        end
+      end
+
+      if overlay_act.key?("events") && base_act.key?("events")
+        act["events"] = merge_by_key(base_act["events"], overlay_act["events"], "id") do |base_item, overlay_item|
+          item = base_item.dup
+          item["description"] = overlay_item["description"] if overlay_item.key?("description")
           item
         end
       end
@@ -131,6 +143,17 @@ module ScenarioCatalog
       scene
     end
   end
+
+  def self.merge_hero(base_hero, overlay_hero)
+    hero = base_hero.dup
+
+    %w[name description llm_description].each do |key|
+      hero[key] = overlay_hero[key] if overlay_hero.key?(key)
+    end
+
+    hero
+  end
+  private_class_method :merge_hero
 
   def self.merge_by_key(base_arr, overlay_arr, key, &block)
     overlay_by_key = overlay_arr.index_by { |item| item[key] }
