@@ -1,4 +1,4 @@
 act_one:
-  game: prison_game
+  game: romeo_game
   number: 1
   status: active

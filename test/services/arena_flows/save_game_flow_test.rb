@@ -2,14 +2,14 @@ require "test_helper"
 
 class ArenaFlows::SaveGameFlowTest < ActiveSupport::TestCase
   setup do
-    @game = games(:prison_game)
+    @game = games(:romeo_game)
     @user = users(:one)
     @game.update!(world_state: {
       "health" => 85,
       "momentum" => 1,
       "act_number" => 1,
       "act_turn" => 4,
-      "scenario_slug" => "prison_break",
+      "scenario_slug" => "romeo_juliet",
       "player_scene" => "cell_block",
       "actors" => {},
       "objects" => {},

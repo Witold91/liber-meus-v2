@@ -3,25 +3,23 @@ require "test_helper"
 class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
   setup do
     ScenarioCatalog.reload!
-    @game = games(:prison_game)
+    @game = games(:romeo_game)
     @game.update!(world_state: {
       "health" => 100,
       "momentum" => 0,
       "act_number" => 1,
       "act_turn" => 0,
-      "scenario_slug" => "prison_break",
-      "player_scene" => "cell",
+      "scenario_slug" => "romeo_juliet",
+      "player_scene" => "sycamore_grove",
       "actors" => {
-        "guard_rodriguez" => { "scene" => "cell_block", "status" => "awake" },
-        "guard_chen" => { "scene" => "guard_room", "status" => "asleep" },
-        "inmate_torres" => { "scene" => "cell", "status" => "sleeping" }
+        "sampson" => { "scene" => "verona_square", "status" => "taunting" },
+        "benvolio" => { "scene" => "verona_square", "status" => "calm" },
+        "juliet" => { "scene" => "capulet_hall", "status" => "sheltered" }
       },
       "objects" => {
-        "loose_grate" => { "scene" => "cell", "status" => "in_place" },
-        "guard_keys" => { "scene" => "guard_room", "status" => "on_belt" },
-        "uniform" => { "scene" => "storage_room", "status" => "on_shelf" },
-        "master_switch" => { "scene" => "control_room", "status" => "locked" },
-        "rope" => { "scene" => "cell", "status" => "not_made" }
+        "romeo_sword" => { "scene" => "player_inventory", "status" => "sheathed" },
+        "capulet_guest_list" => { "scene" => "verona_square", "status" => "servant_carried" },
+        "masquerade_mask" => { "scene" => "capulet_hall", "status" => "unused" }
       },
       "improvised_objects" => {}
     })
@@ -32,8 +30,8 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     DifficultyRatingService.stubs(:rate).returns([ { "difficulty" => "easy", "reasoning" => "No guards." }, 42 ])
     ArenaNarratorService.stubs(:narrate).returns([
       {
-        "narrative" => "You carefully remove the grate.",
-        "diff" => { "object_updates" => { "loose_grate" => { "status" => "removed" } } }
+        "narrative" => "You draw your sword cautiously.",
+        "diff" => { "object_updates" => { "romeo_sword" => { "status" => "drawn" } } }
       },
       87
     ])
@@ -42,50 +40,45 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
   test "creates a new turn" do
     assert_difference "Turn.count", 1 do
-      ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+      ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
     end
   end
 
   test "turn has correct content and action" do
-    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
-    assert_equal "You carefully remove the grate.", turn.content
-    assert_equal "Remove the grate", turn.option_selected
+    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
+    assert_equal "You draw your sword cautiously.", turn.content
+    assert_equal "Draw sword", turn.option_selected
   end
 
   test "turn has a resolution_tag" do
-    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
     assert_includes %w[success partial failure], turn.resolution_tag
   end
 
   test "applies world state diff from narration" do
-    ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+    ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
     @game.reload
-    assert_equal "removed", @game.world_state.dig("objects", "loose_grate", "status")
+    assert_equal "drawn", @game.world_state.dig("objects", "romeo_sword", "status")
   end
 
   test "increments turn_number" do
-    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
     assert_equal 1, turn.turn_number
   end
 
   test "persists summed token usage from both AI calls" do
-    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+    turn = ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
     assert_equal 129, turn.tokens_used  # 42 (difficulty) + 87 (narrator)
   end
 
   test "creates ending sequence turn and marks game completed at goal" do
-    @game.update!(world_state: @game.world_state.merge("player_scene" => "perimeter_wall"))
-    ArenaNarratorService.stubs(:narrate).returns([
-      {
-        "narrative" => "You slip through the last opening.",
-        "diff" => { "player_moved_to" => "freedom" }
-      },
-      87
-    ])
+    EndConditionChecker.stubs(:check).returns(
+      { "id" => "goal_reached", "type" => "goal", "narrative" => "The lovers reunite." }
+    )
     ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "Freedom stretches out before you." }, 55 ])
 
     assert_difference "Turn.count", 2 do
-      ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Climb over the wall")
+      ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Reach the goal")
     end
 
     @game.reload
@@ -99,7 +92,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
   test "advances to next act when act_goal condition is met" do
     two_act_scenario = {
-      "slug" => "prison_break",
+      "slug" => "romeo_juliet",
       "world_context" => "",
       "narrator_style" => "",
       "turn_limit" => 20,
@@ -107,7 +100,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
         {
           "number" => 1,
           "intro" => "Act I intro",
-          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "scenes" => [ { "id" => "sycamore_grove", "name" => "Sycamore Grove", "description" => "", "exits" => [] } ],
           "actors" => [],
           "objects" => [],
           "conditions" => [],
@@ -171,14 +164,10 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
   end
 
   test "creates ending sequence turn and marks game failed on danger condition" do
-    ArenaNarratorService.stubs(:narrate).returns([
-      {
-        "narrative" => "A shadow crosses the bars.",
-        "diff" => { "actor_updates" => { "guard_rodriguez" => { "status" => "alerted" } } }
-      },
-      87
-    ])
-    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "The cell closes around you once more." }, 55 ])
+    EndConditionChecker.stubs(:check).returns(
+      { "id" => "danger_hit", "type" => "danger", "narrative" => "The danger strikes." }
+    )
+    ArenaNarratorService.stubs(:narrate_epilogue).returns([ { "narrative" => "The tragedy closes around you." }, 55 ])
 
     assert_difference "Turn.count", 2 do
       ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Rattle the door loudly")
@@ -190,7 +179,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
     ending_turn = @game.turns.order(:turn_number).last
     assert ending_turn.options_payload["ending"]
     assert_equal "failed", ending_turn.options_payload["ending_status"]
-    assert_includes ending_turn.content, "The cell closes around you once more."
+    assert_includes ending_turn.content, "The tragedy closes around you."
   end
 
   test "raises when no active act" do
@@ -202,7 +191,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
   test "carries actor statuses across act transitions" do
     two_act_scenario = {
-      "slug" => "prison_break",
+      "slug" => "romeo_juliet",
       "world_context" => "",
       "narrator_style" => "",
       "turn_limit" => 20,
@@ -210,12 +199,12 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
         {
           "number" => 1,
           "intro" => "Act I",
-          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "scenes" => [ { "id" => "sycamore_grove", "name" => "Sycamore Grove", "description" => "", "exits" => [] } ],
           "actors" => [
-            { "id" => "npc_a", "name" => "NPC A", "scene" => "cell", "default_status" => "alive", "status_options" => %w[alive dead] }
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "sycamore_grove", "default_status" => "alive", "status_options" => %w[alive dead] }
           ],
           "objects" => [
-            { "id" => "obj_x", "name" => "Object X", "scene" => "cell", "default_status" => "intact", "status_options" => %w[intact broken] }
+            { "id" => "obj_x", "name" => "Object X", "scene" => "sycamore_grove", "default_status" => "intact", "status_options" => %w[intact broken] }
           ],
           "conditions" => [],
           "events" => []
@@ -239,8 +228,8 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
     # NPC A was killed and Object X was broken in Act 1
     @game.update!(world_state: @game.world_state.merge(
-      "actors" => { "npc_a" => { "scene" => "cell", "status" => "dead" } },
-      "objects" => { "obj_x" => { "scene" => "cell", "status" => "broken" } }
+      "actors" => { "npc_a" => { "scene" => "sycamore_grove", "status" => "dead" } },
+      "objects" => { "obj_x" => { "scene" => "sycamore_grove", "status" => "broken" } }
     ))
 
     ScenarioCatalog.stubs(:find!).returns(two_act_scenario)
@@ -270,7 +259,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
   test "carries actor status through an act where the actor is absent" do
     three_act_scenario = {
-      "slug" => "prison_break",
+      "slug" => "romeo_juliet",
       "world_context" => "",
       "narrator_style" => "",
       "turn_limit" => 20,
@@ -278,9 +267,9 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
         {
           "number" => 1,
           "intro" => "Act I",
-          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "scenes" => [ { "id" => "sycamore_grove", "name" => "Sycamore Grove", "description" => "", "exits" => [] } ],
           "actors" => [
-            { "id" => "npc_a", "name" => "NPC A", "scene" => "cell", "default_status" => "alive", "status_options" => %w[alive dead] }
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "sycamore_grove", "default_status" => "alive", "status_options" => %w[alive dead] }
           ],
           "objects" => [],
           "conditions" => [],
@@ -313,7 +302,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
     # NPC A was killed in Act 1
     @game.update!(world_state: @game.world_state.merge(
-      "actors" => { "npc_a" => { "scene" => "cell", "status" => "dead" } }
+      "actors" => { "npc_a" => { "scene" => "sycamore_grove", "status" => "dead" } }
     ))
 
     ScenarioCatalog.stubs(:find!).returns(three_act_scenario)
@@ -349,7 +338,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
   test "force_status overrides carried-over status" do
     two_act_scenario = {
-      "slug" => "prison_break",
+      "slug" => "romeo_juliet",
       "world_context" => "",
       "narrator_style" => "",
       "turn_limit" => 20,
@@ -357,12 +346,12 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
         {
           "number" => 1,
           "intro" => "Act I",
-          "scenes" => [ { "id" => "cell", "name" => "Cell", "description" => "", "exits" => [] } ],
+          "scenes" => [ { "id" => "sycamore_grove", "name" => "Sycamore Grove", "description" => "", "exits" => [] } ],
           "actors" => [
-            { "id" => "npc_a", "name" => "NPC A", "scene" => "cell", "default_status" => "calm", "status_options" => %w[calm hostile friendly] }
+            { "id" => "npc_a", "name" => "NPC A", "scene" => "sycamore_grove", "default_status" => "calm", "status_options" => %w[calm hostile friendly] }
           ],
           "objects" => [
-            { "id" => "obj_x", "name" => "Object X", "scene" => "cell", "default_status" => "intact", "status_options" => %w[intact broken repaired] }
+            { "id" => "obj_x", "name" => "Object X", "scene" => "sycamore_grove", "default_status" => "intact", "status_options" => %w[intact broken repaired] }
           ],
           "conditions" => [],
           "events" => []
@@ -386,8 +375,8 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
     # NPC A became friendly and Object X was broken in Act 1
     @game.update!(world_state: @game.world_state.merge(
-      "actors" => { "npc_a" => { "scene" => "cell", "status" => "friendly" } },
-      "objects" => { "obj_x" => { "scene" => "cell", "status" => "broken" } }
+      "actors" => { "npc_a" => { "scene" => "sycamore_grove", "status" => "friendly" } },
+      "objects" => { "obj_x" => { "scene" => "sycamore_grove", "status" => "broken" } }
     ))
 
     ScenarioCatalog.stubs(:find!).returns(two_act_scenario)
@@ -417,7 +406,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
     assert_no_difference "Turn.count" do
       assert_raises(::AIConnectionError) do
-        ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+        ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
       end
     end
   end
@@ -428,7 +417,7 @@ class ArenaFlows::ContinueTurnFlowTest < ActiveSupport::TestCase
 
     assert_no_difference "Turn.count" do
       assert_raises(::AIConnectionError) do
-        ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Remove the grate")
+        ArenaFlows::ContinueTurnFlow.call(game: @game, action: "Draw sword")
       end
     end
 

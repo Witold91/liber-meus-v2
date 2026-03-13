@@ -1,5 +1,5 @@
 intro_turn:
-  game: prison_game
+  game: romeo_game
   act: act_one
   content: "The fluorescent lights flicker overhead..."
   options_payload: '{"prologue":true}'

@@ -4,7 +4,7 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
   setup do
     ENV["OPENAI_API_KEY"] = "test-key-placeholder"
     ScenarioCatalog.reload!
-    @game = games(:prison_game)
+    @game = games(:romeo_game)
     @game.update!(world_state: OutcomeResolutionService.initial_state.merge(
       "act_number" => 1, "act_turn" => 0, "player_scene" => "cell"
     ))

@@ -2,7 +2,7 @@ require "test_helper"
 
 class OutcomeResolutionServiceTest < ActiveSupport::TestCase
   setup do
-    @game = games(:prison_game)
+    @game = games(:romeo_game)
     @game.update!(world_state: OutcomeResolutionService.initial_state.merge("chapter_number" => 1))
   end
 

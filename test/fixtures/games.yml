@@ -1,7 +1,7 @@
-prison_game:
-  hero: convict
+romeo_game:
+  hero: romeo
   user: one
-  scenario_slug: prison_break
-  world_state: '{"health":100,"momentum":0,"act_number":1,"act_turn":0,"player_scene":"cell","actors":{},"objects":{},"improvised_objects":{}}'
+  scenario_slug: romeo_juliet
+  world_state: '{"health":100,"momentum":0,"act_number":1,"act_turn":0,"player_scene":"sycamore_grove","actors":{},"objects":{},"improvised_objects":{}}'
   game_language: en
   status: active

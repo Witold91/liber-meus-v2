@@ -3,7 +3,7 @@ require "test_helper"
 class ImpressionServiceTest < ActiveSupport::TestCase
   setup do
     ENV["OPENAI_API_KEY"] = "test-key-placeholder"
-    @game = games(:prison_game)
+    @game = games(:romeo_game)
   end
 
   test "store! creates impressions from narration data" do

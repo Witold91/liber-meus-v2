@@ -3,15 +3,16 @@ require "test_helper"
 class Arena::ScenarioPresenterTest < ActiveSupport::TestCase
   setup do
     ScenarioCatalog.reload!
-    @scenario = ScenarioCatalog.find("prison_break")
+    @scenario = ScenarioCatalog.find("romeo_juliet")
     @world_state = {
-      "player_scene" => "cell",
+      "player_scene" => "sycamore_grove",
       "actors" => {
-        "guard_rodriguez" => { "scene" => "cell_block", "status" => "awake" },
-        "guard_chen" => { "scene" => "guard_room", "status" => "asleep" }
+        "sampson" => { "scene" => "verona_square", "status" => "taunting" },
+        "benvolio" => { "scene" => "verona_square", "status" => "calm" }
       },
       "objects" => {
-        "loose_grate" => { "scene" => "cell", "status" => "in_place" }
+        "romeo_sword" => { "scene" => "player_inventory", "status" => "sheathed" },
+        "capulet_guest_list" => { "scene" => "verona_square", "status" => "servant_carried" }
       }
     }
     @presenter = Arena::ScenarioPresenter.new(@scenario, 1, @world_state)
@@ -37,26 +38,26 @@ class Arena::ScenarioPresenterTest < ActiveSupport::TestCase
   end
 
   test "turn_limit returns integer" do
-    assert_equal 20, @presenter.turn_limit
+    assert_equal 999, @presenter.turn_limit
   end
 
-  test "scene_context_for returns context for cell" do
-    ctx = @presenter.scene_context_for("cell", @world_state)
+  test "scene_context_for returns context for sycamore_grove" do
+    ctx = @presenter.scene_context_for("sycamore_grove", @world_state)
     assert_not_nil ctx
-    assert_equal "cell", ctx.dig(:scene, :id)
-    assert_equal "Your Cell", ctx.dig(:scene, :name)
+    assert_equal "sycamore_grove", ctx.dig(:scene, :id)
+    assert_equal "Sycamore Grove", ctx.dig(:scene, :name)
   end
 
   test "scene_context_for includes actors at that scene" do
-    ctx = @presenter.scene_context_for("cell_block", @world_state)
+    ctx = @presenter.scene_context_for("verona_square", @world_state)
     actor_ids = ctx[:actors].map { |a| a[:id] }
-    assert_includes actor_ids, "guard_rodriguez"
+    assert_includes actor_ids, "sampson"
   end
 
   test "scene_context_for includes objects at that scene" do
-    ctx = @presenter.scene_context_for("cell", @world_state)
+    ctx = @presenter.scene_context_for("verona_square", @world_state)
     obj_ids = ctx[:objects].map { |o| o[:id] }
-    assert_includes obj_ids, "loose_grate"
+    assert_includes obj_ids, "capulet_guest_list"
   end
 
   test "scene_context_for returns nil for unknown scene" do
@@ -64,16 +65,12 @@ class Arena::ScenarioPresenterTest < ActiveSupport::TestCase
   end
 
   test "adjacent_scene_ids returns reachable scenes" do
-    adj = @presenter.adjacent_scene_ids("cell")
-    assert_includes adj, "cell_block"
-    assert_includes adj, "vent_shaft"
+    adj = @presenter.adjacent_scene_ids("sycamore_grove")
+    assert_includes adj, "verona_square"
+    assert_includes adj, "montague_grounds"
   end
 
-  test "exit_scene? returns false for cell" do
-    refute @presenter.exit_scene?("cell")
-  end
-
-  test "exit_scene? returns true for perimeter_wall" do
-    assert @presenter.exit_scene?("perimeter_wall")
+  test "exit_scene? returns false for sycamore_grove" do
+    refute @presenter.exit_scene?("sycamore_grove")
   end
 end

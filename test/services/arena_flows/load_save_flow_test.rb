@@ -2,7 +2,7 @@ require "test_helper"
 
 class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
   setup do
-    @game = games(:prison_game)
+    @game = games(:romeo_game)
     @user = users(:one)
 
     @saved_world_state = {
@@ -10,7 +10,7 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
       "momentum" => 1,
       "act_number" => 1,
       "act_turn" => 3,
-      "scenario_slug" => "prison_break",
+      "scenario_slug" => "romeo_juliet",
       "player_scene" => "cell",
       "actors" => {},
       "objects" => {},
@@ -33,7 +33,7 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
       "momentum" => 2,
       "act_number" => 1,
       "act_turn" => 6,
-      "scenario_slug" => "prison_break",
+      "scenario_slug" => "romeo_juliet",
       "player_scene" => "guard_room",
       "actors" => {},
       "objects" => {},
@@ -108,9 +108,9 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
 
   test "raises error if save does not belong to game" do
     other_game = Game.create!(
-      hero: heroes(:convict),
+      hero: heroes(:romeo),
       user: @user,
-      scenario_slug: "prison_break",
+      scenario_slug: "romeo_juliet",
       game_language: "en",
       status: "active",
       world_state: { "health" => 100 }
@@ -118,7 +118,7 @@ class ArenaFlows::LoadSaveFlowTest < ActiveSupport::TestCase
     other_save = Save.create!(
       game: other_game,
       user: @user,
-      hero: heroes(:convict),
+      hero: heroes(:romeo),
       world_state: { "health" => 100 },
       act_number: 1,
       turn_number: 0,

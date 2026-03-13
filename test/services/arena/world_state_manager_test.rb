@@ -3,66 +3,66 @@ require "test_helper"
 class Arena::WorldStateManagerTest < ActiveSupport::TestCase
   setup do
     ScenarioCatalog.reload!
-    @scenario = ScenarioCatalog.find("prison_break")
+    @scenario = ScenarioCatalog.find("romeo_juliet")
     @world_state = {
       "act_number" => 1,
-      "player_scene" => "cell",
+      "player_scene" => "sycamore_grove",
       "actors" => {
-        "guard_rodriguez" => { "scene" => "cell_block", "status" => "awake" },
-        "guard_chen" => { "scene" => "guard_room", "status" => "asleep" }
+        "sampson" => { "scene" => "verona_square", "status" => "taunting" },
+        "benvolio" => { "scene" => "verona_square", "status" => "calm" }
       },
       "objects" => {
-        "loose_grate" => { "scene" => "cell", "status" => "in_place" }
+        "romeo_sword" => { "scene" => "player_inventory", "status" => "sheathed" }
       }
     }
   end
 
   test "apply_scene_diff updates actor status" do
-    diff = { "actor_updates" => { "guard_rodriguez" => { "status" => "alerted" } } }
+    diff = { "actor_updates" => { "sampson" => { "status" => "brawling" } } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "alerted", result.dig("actors", "guard_rodriguez", "status")
+    assert_equal "brawling", result.dig("actors", "sampson", "status")
   end
 
   test "apply_scene_diff allows any status on a known actor" do
-    diff = { "actor_updates" => { "guard_rodriguez" => { "status" => "unconscious" } } }
+    diff = { "actor_updates" => { "sampson" => { "status" => "unconscious" } } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "unconscious", result.dig("actors", "guard_rodriguez", "status")
+    assert_equal "unconscious", result.dig("actors", "sampson", "status")
   end
 
   test "apply_scene_diff updates object status" do
-    diff = { "object_updates" => { "loose_grate" => { "status" => "removed" } } }
+    diff = { "object_updates" => { "romeo_sword" => { "status" => "drawn" } } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "removed", result.dig("objects", "loose_grate", "status")
+    assert_equal "drawn", result.dig("objects", "romeo_sword", "status")
   end
 
   test "apply_scene_diff moves actor" do
-    diff = { "actor_moved_to" => { "guard_rodriguez" => "guard_room" } }
+    diff = { "actor_moved_to" => { "sampson" => "montague_grounds" } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "guard_room", result.dig("actors", "guard_rodriguez", "scene")
+    assert_equal "montague_grounds", result.dig("actors", "sampson", "scene")
   end
 
   test "apply_scene_diff rejects invalid actor scene" do
-    diff = { "actor_moved_to" => { "guard_rodriguez" => "mars" } }
+    diff = { "actor_moved_to" => { "sampson" => "mars" } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "cell_block", result.dig("actors", "guard_rodriguez", "scene")
+    assert_equal "verona_square", result.dig("actors", "sampson", "scene")
   end
 
   test "apply_scene_diff moves player" do
-    diff = { "player_moved_to" => "vent_shaft" }
+    diff = { "player_moved_to" => "verona_square" }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "vent_shaft", result["player_scene"]
+    assert_equal "verona_square", result["player_scene"]
   end
 
   test "apply_scene_diff rejects invalid player scene" do
     diff = { "player_moved_to" => "moon" }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "cell", result["player_scene"]
+    assert_equal "sycamore_grove", result["player_scene"]
   end
 
   test "apply_scene_diff allows any status on a known object" do
-    diff = { "object_updates" => { "loose_grate" => { "status" => "buried" } } }
+    diff = { "object_updates" => { "romeo_sword" => { "status" => "broken" } } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
-    assert_equal "buried", result.dig("objects", "loose_grate", "status")
+    assert_equal "broken", result.dig("objects", "romeo_sword", "status")
   end
 
   test "apply_scene_diff ignores unknown actors" do
@@ -78,10 +78,10 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
   end
 
   test "apply_scene_diff stores scene for scene-bound improvised object" do
-    diff = { "object_updates" => { "campfire" => { "status" => "burning", "scene" => "yard_entrance" } } }
+    diff = { "object_updates" => { "campfire" => { "status" => "burning", "scene" => "capulet_grounds" } } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
     assert_equal "burning", result.dig("improvised_objects", "campfire", "status")
-    assert_equal "yard_entrance", result.dig("improvised_objects", "campfire", "scene")
+    assert_equal "capulet_grounds", result.dig("improvised_objects", "campfire", "scene")
   end
 
   test "apply_scene_diff defaults improvised object status to acquired when no status given" do
@@ -90,19 +90,17 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     assert_equal "acquired", result.dig("improvised_objects", "torn_sheet_rope", "status")
   end
 
-  test "apply_scene_diff resolves localized slug ids to canonical ids" do
-    scenario_pl = ScenarioCatalog.find("prison_break", locale: "pl")
+  test "apply_scene_diff works with localized scenario" do
+    scenario_pl = ScenarioCatalog.find("romeo_juliet", locale: "pl")
     diff = {
-      "actor_updates" => { "wiezien_torres" => { "status" => "awake" } },
-      "object_updates" => { "poluzowana_kratka_wentylacyjna" => { "status" => "removed" } },
-      "player_moved_to" => "szyb_wentylacyjny"
+      "actor_updates" => { "sampson" => { "status" => "brawling" } },
+      "player_moved_to" => "verona_square"
     }
 
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: scenario_pl)
 
-    assert_equal "awake", result.dig("actors", "inmate_torres", "status")
-    assert_equal "removed", result.dig("objects", "loose_grate", "status")
-    assert_equal "vent_shaft", result["player_scene"]
+    assert_equal "brawling", result.dig("actors", "sampson", "status")
+    assert_equal "verona_square", result["player_scene"]
   end
 
   test "apply_scene_diff registers new actor in random mode" do
@@ -170,7 +168,7 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
 
   test "apply_scene_diff ignores unknown actors without new_actor flag" do
     original = @world_state.dup
-    diff = { "player_moved_to" => "vent_shaft" }
+    diff = { "player_moved_to" => "verona_square" }
     Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
     assert_equal original["player_scene"], @world_state["player_scene"]
   end

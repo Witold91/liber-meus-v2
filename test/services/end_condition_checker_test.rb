@@ -3,11 +3,11 @@ require "test_helper"
 class EndConditionCheckerTest < ActiveSupport::TestCase
   setup do
     ScenarioCatalog.reload!
-    @scenario = ScenarioCatalog.find("prison_break")
+    @scenario = ScenarioCatalog.find("romeo_juliet")
     @world_state = {
       "act_number" => 1,
       "health" => 100,
-      "player_scene" => "cell",
+      "player_scene" => "sycamore_grove",
       "actors" => {},
       "objects" => {}
     }
@@ -19,13 +19,13 @@ class EndConditionCheckerTest < ActiveSupport::TestCase
   end
 
   test "returns failure condition when turn limit reached" do
-    result = EndConditionChecker.check(20, @world_state, @scenario)
+    result = EndConditionChecker.check(999, @world_state, @scenario)
     assert_not_nil result
     assert_equal "turn_limit_reached", result["id"]
   end
 
   test "returns failure when turn exceeds limit" do
-    result = EndConditionChecker.check(25, @world_state, @scenario)
+    result = EndConditionChecker.check(1000, @world_state, @scenario)
     assert_not_nil result
   end
 
@@ -34,12 +34,5 @@ class EndConditionCheckerTest < ActiveSupport::TestCase
     result = EndConditionChecker.check(5, state, @scenario)
     assert_not_nil result
     assert_equal "health_depleted", result["id"]
-  end
-
-  test "returns goal condition when player at exit scene" do
-    state = @world_state.merge("player_scene" => "freedom")
-    result = EndConditionChecker.check(5, state, @scenario)
-    assert_not_nil result
-    assert_equal "player_at_exit", result["id"]
   end
 end

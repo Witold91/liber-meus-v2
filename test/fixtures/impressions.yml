@@ -1,15 +1,15 @@
 one:
-  game: prison_game
+  game: romeo_game
   turn_number: 1
   subject_type: actor
-  subject_id: guard_rodriguez
-  fact: "Rodriguez is suspicious of the player after hearing noise"
+  subject_id: sampson
+  fact: "Sampson is taunting the Montague servants"
   embedding: <%= [0.1] * 1536 %>
 
 two:
-  game: prison_game
+  game: romeo_game
   turn_number: 1
   subject_type: scene
-  subject_id: cell
-  fact: "The cell has a loose grate near the floor"
+  subject_id: sycamore_grove
+  fact: "The grove is quiet and dappled with light"
   embedding: <%= [0.2] * 1536 %>

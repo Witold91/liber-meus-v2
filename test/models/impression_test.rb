@@ -3,7 +3,7 @@ require "test_helper"
 class ImpressionTest < ActiveSupport::TestCase
   test "valid impression" do
     impression = Impression.new(
-      game: games(:prison_game),
+      game: games(:romeo_game),
       turn_number: 1,
       subject_type: "actor",
       subject_id: "guard_rodriguez",
@@ -15,7 +15,7 @@ class ImpressionTest < ActiveSupport::TestCase
 
   test "invalid without fact" do
     impression = Impression.new(
-      game: games(:prison_game),
+      game: games(:romeo_game),
       turn_number: 1,
       subject_type: "actor"
     )
@@ -25,7 +25,7 @@ class ImpressionTest < ActiveSupport::TestCase
 
   test "invalid with wrong subject_type" do
     impression = Impression.new(
-      game: games(:prison_game),
+      game: games(:romeo_game),
       turn_number: 1,
       subject_type: "invalid",
       fact: "some fact"
@@ -37,7 +37,7 @@ class ImpressionTest < ActiveSupport::TestCase
   test "accepts actor, scene, and memory subject types" do
     %w[actor scene memory].each do |type|
       impression = Impression.new(
-        game: games(:prison_game),
+        game: games(:romeo_game),
         turn_number: 1,
         subject_type: type,
         fact: "some fact",
@@ -49,6 +49,6 @@ class ImpressionTest < ActiveSupport::TestCase
 
   test "belongs to game" do
     impression = impressions(:one)
-    assert_equal games(:prison_game), impression.game
+    assert_equal games(:romeo_game), impression.game
   end
 end

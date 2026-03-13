@@ -4,12 +4,12 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
   setup do
     ScenarioCatalog.reload!
     @world_state = {
-      "scenario_slug" => "prison_break",
+      "scenario_slug" => "romeo_juliet",
       "act_number" => 1,
-      "player_scene" => "cell",
+      "player_scene" => "verona_square",
       "actors" => {
-        "guard_rodriguez" => { "scene" => "cell_block", "status" => "asleep" },
-        "guard_chen" => { "scene" => "guard_room", "status" => "asleep" }
+        "sampson" => { "scene" => "verona_square", "status" => "taunting" },
+        "capulet_servant" => { "scene" => "verona_square", "status" => "searching" }
       }
     }
   end
@@ -19,32 +19,32 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
     assert_equal [], events
   end
 
-  test "returns events matching trigger_turn and condition" do
-    events = ScenarioEventService.events_for_turn(turn_number: 5, world_state: @world_state)
-    assert events.any?, "Should have rodriguez_wakes event at turn 5"
-    assert events.any? { |e| e["id"] == "rodriguez_wakes" }
+  test "returns events matching act_turn trigger" do
+    events = ScenarioEventService.events_for_turn(turn_number: 99, act_turn_number: 3, world_state: @world_state)
+    assert events.any?, "Should have act1_brawl_escalates event at act_turn 3"
+    assert events.any? { |e| e["id"] == "act1_brawl_escalates" }
   end
 
   test "does not return event if condition not met" do
     state = @world_state.merge(
-      "actors" => { "guard_rodriguez" => { "scene" => "cell_block", "status" => "awake" } }
+      "actors" => { "capulet_servant" => { "scene" => "verona_square", "status" => "departed" } }
     )
-    events = ScenarioEventService.events_for_turn(turn_number: 5, world_state: state)
-    refute events.any? { |e| e["id"] == "rodriguez_wakes" }
+    events = ScenarioEventService.events_for_turn(turn_number: 99, act_turn_number: 8, world_state: state)
+    refute events.any? { |e| e["id"] == "act1_servant_returns" }
   end
 
   test "event_to_scene_diff returns actor_moved_to for actor_enters" do
     event = {
       "action" => {
         "type" => "actor_enters",
-        "actor_id" => "guard_rodriguez",
-        "scene" => "cell_block",
-        "new_status" => "awake"
+        "actor_id" => "tybalt",
+        "scene" => "verona_square",
+        "new_status" => "enraged"
       }
     }
     diff = ScenarioEventService.event_to_scene_diff(event)
-    assert_equal "cell_block", diff.dig("actor_moved_to", "guard_rodriguez")
-    assert_equal "awake", diff.dig("actor_updates", "guard_rodriguez", "status")
+    assert_equal "verona_square", diff.dig("actor_moved_to", "tybalt")
+    assert_equal "enraged", diff.dig("actor_updates", "tybalt", "status")
   end
 
   test "event_to_scene_diff returns empty for world_flag type" do
@@ -97,57 +97,93 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
   end
 
   test "state-triggered event fires when actor condition is met" do
-    state = @world_state.merge(
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "act_number" => 3,
+      "player_scene" => "dueling_square",
       "actors" => {
-        "guard_rodriguez" => { "scene" => "cell_block", "status" => "alerted" },
-        "guard_chen" => { "scene" => "guard_room", "status" => "asleep" }
+        "mercutio" => { "scene" => "dueling_square", "status" => "dead" },
+        "tybalt" => { "scene" => "dueling_square", "status" => "dueling" }
       }
-    )
+    }
     events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: state)
-    assert events.any? { |e| e["id"] == "chen_alerted_by_rodriguez" }, "Should fire chen_alerted_by_rodriguez when rodriguez is alerted"
+    assert events.any? { |e| e["id"] == "act3_tybalt_turns_on_romeo" }, "Should fire act3_tybalt_turns_on_romeo when mercutio is dead"
   end
 
   test "state-triggered event does not fire when actor condition is not met" do
-    events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: @world_state)
-    refute events.any? { |e| e["id"] == "chen_alerted_by_rodriguez" }, "Should not fire when rodriguez is asleep"
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "act_number" => 3,
+      "player_scene" => "dueling_square",
+      "actors" => {
+        "mercutio" => { "scene" => "dueling_square", "status" => "dueling" },
+        "tybalt" => { "scene" => "dueling_square", "status" => "dueling" }
+      }
+    }
+    events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: state)
+    refute events.any? { |e| e["id"] == "act3_tybalt_turns_on_romeo" }, "Should not fire when mercutio is not dead"
   end
 
   test "state-triggered event does not fire if already in fired_events" do
-    state = @world_state.merge(
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "act_number" => 3,
+      "player_scene" => "dueling_square",
       "actors" => {
-        "guard_rodriguez" => { "scene" => "cell_block", "status" => "alerted" },
-        "guard_chen" => { "scene" => "guard_room", "status" => "asleep" }
+        "mercutio" => { "scene" => "dueling_square", "status" => "dead" },
+        "tybalt" => { "scene" => "dueling_square", "status" => "dueling" }
       },
-      "fired_events" => [ "chen_alerted_by_rodriguez" ]
-    )
+      "fired_events" => [ "act3_tybalt_turns_on_romeo" ]
+    }
     events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: state)
-    refute events.any? { |e| e["id"] == "chen_alerted_by_rodriguez" }, "Should not re-fire already-fired event"
+    refute events.any? { |e| e["id"] == "act3_tybalt_turns_on_romeo" }, "Should not re-fire already-fired event"
   end
 
   test "object_status trigger fires when object condition is met" do
-    state = @world_state.merge(
-      "objects" => { "rope" => { "status" => "deployed" } }
-    )
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "act_number" => 4,
+      "player_scene" => "juliet_chamber",
+      "actors" => {},
+      "objects" => { "sleeping_draught" => { "status" => "taken" } }
+    }
     events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: state)
-    assert events.any? { |e| e["id"] == "rope_noise_wakes_guard" }, "Should fire rope_noise_wakes_guard when rope is deployed"
+    assert events.any? { |e| e["id"] == "act4_plan_in_motion" }, "Should fire act4_plan_in_motion when sleeping_draught is taken"
   end
 
   test "object_status trigger does not fire when object condition is not met" do
-    state = @world_state.merge(
-      "objects" => { "rope" => { "status" => "made" } }
-    )
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "act_number" => 4,
+      "player_scene" => "juliet_chamber",
+      "actors" => {},
+      "objects" => { "sleeping_draught" => { "status" => "prepared" } }
+    }
     events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: state)
-    refute events.any? { |e| e["id"] == "rope_noise_wakes_guard" }, "Should not fire when rope is not deployed"
+    refute events.any? { |e| e["id"] == "act4_plan_in_motion" }, "Should not fire when sleeping_draught is not taken"
   end
 
   test "player_at_scene trigger fires when player is at the specified scene" do
-    state = @world_state.merge("player_scene" => "guard_station")
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "act_number" => 5,
+      "player_scene" => "capulet_crypt",
+      "actors" => {},
+      "objects" => {}
+    }
     events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: state)
-    assert events.any? { |e| e["id"] == "rodriguez_spots_intruder" }, "Should fire when player enters guard_station"
+    assert events.any? { |e| e["id"] == "act5_romeo_enters_crypt" }, "Should fire when player enters capulet_crypt"
   end
 
   test "player_at_scene trigger does not fire when player is elsewhere" do
-    events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: @world_state)
-    refute events.any? { |e| e["id"] == "rodriguez_spots_intruder" }, "Should not fire when player is not at guard_station"
+    state = {
+      "scenario_slug" => "romeo_juliet",
+      "act_number" => 5,
+      "player_scene" => "mantua_street",
+      "actors" => {},
+      "objects" => {}
+    }
+    events = ScenarioEventService.events_for_turn(turn_number: 99, world_state: state)
+    refute events.any? { |e| e["id"] == "act5_romeo_enters_crypt" }, "Should not fire when player is not at capulet_crypt"
   end
 end

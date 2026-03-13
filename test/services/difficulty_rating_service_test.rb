@@ -4,7 +4,7 @@ class DifficultyRatingServiceTest < ActiveSupport::TestCase
   setup do
     @original_key = ENV["OPENAI_API_KEY"]
     ENV["OPENAI_API_KEY"] = "test-key-placeholder"
-    @hero = heroes(:convict)
+    @hero = heroes(:romeo)
     @scene_context = {
       scene: { id: "cell", name: "Your Cell", description: "A 6x9 concrete box." },
       actors: [],
