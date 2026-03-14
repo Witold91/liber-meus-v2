@@ -1,5 +1,7 @@
 module ArenaFlows
   class ContinueTurnFlow
+    extend TurnFlowSteps
+
     def self.call(game:, action:, stream: nil)
       # Steps 1-7: AI calls and resolution (outside transaction)
 
@@ -8,7 +10,7 @@ module ArenaFlows
       world_state = game.world_state
 
       # Step 2: Determine turn number
-      turn_number = (game.turns.maximum(:turn_number) || 0) + 1
+      turn_number = game.next_turn_number
 
       # Step 3: Get current act
       act = game.current_act
@@ -29,37 +31,19 @@ module ArenaFlows
       )
 
       # Step 5: Rate difficulty (AI call 1)
-      recent_actions = game.turns.recent(3).to_a.reverse
-                           .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
-      memory_notes = game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
-                         .map { |t| { turn_number: t.turn_number, note: t.llm_memory } }
-      rating, difficulty_tokens = DifficultyRatingService.rate(action, scene_context, game.hero, recent_actions, world_context: scenario["world_context"], memory_summary: game.memory_summary, memory_notes: memory_notes, current_hp: world_state["health"], established_facts: established_facts)
+      recent_actions = fetch_recent_actions(game)
+      memory_notes = fetch_memory_notes(game)
+      rating, difficulty_tokens = rate_difficulty(action, scene_context, game.hero, recent_actions, world_context: scenario["world_context"], memory_summary: game.memory_summary, memory_notes: memory_notes, current_hp: world_state["health"], established_facts: established_facts)
       difficulty = rating["difficulty"]
       rating_reasoning = rating["reasoning"]
 
       # Step 6: Resolve outcome (deterministic)
       momentum_at_roll = world_state["momentum"].to_i
-      intent = {
-        difficulty: difficulty,
-        danger: rating["danger"] || "none",
-        impact: rating["impact"] || "positive",
-        stance: rating["stance"] || rating["exposure"] || "active",
-        healing: rating["healing"] == true
-      }
-      outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
+      outcome = resolve_outcome(game, action, turn_number, rating)
       resolution_tag = outcome[:resolution_tag]
 
       # Broadcast roll result immediately so player sees it while narrative streams
-      if stream&.dig(:on_roll)
-        stream[:on_roll].call(
-          roll: outcome[:roll],
-          difficulty: difficulty,
-          momentum: momentum_at_roll,
-          resolution_tag: resolution_tag,
-          health_loss: outcome[:health_loss],
-          health_gain: outcome[:health_gain]
-        )
-      end
+      broadcast_roll(stream, outcome, difficulty, momentum_at_roll)
 
       # Reload world_state after outcome update
       game.reload
@@ -78,16 +62,7 @@ module ArenaFlows
       last_turn = game.turns.recent(1).first
       previous_narrative_tail = last_turn&.content&.then { |c| c.lines.last(5).join } || ""
 
-      turn_context = {
-        world_state_delta: presenter.world_state_delta,
-        memory_summary: game.memory_summary,
-        memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
-                          .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
-        recent_actions: recent_actions,
-        rating_reasoning: rating_reasoning,
-        previous_narrative_tail: previous_narrative_tail.presence,
-        established_facts: established_facts
-      }
+      turn_context = build_turn_context(presenter, game, recent_actions, rating_reasoning, previous_narrative_tail, established_facts)
       narration, narrator_tokens = ArenaNarratorService.narrate(action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss], world_context: scenario["world_context"], narrator_style: scenario["narrator_style"], event_descriptions: event_descriptions, stream: stream&.dig(:on_chunk), hero: game.hero, turn_number: turn_number, random_mode: game.random_mode?, encountered_actors: encountered_actors, current_hp: world_state["health"], health_gain: outcome[:health_gain])
 
       # Store impressions from narration (non-fatal, outside transaction)
@@ -116,7 +91,7 @@ module ArenaFlows
           world_state = Arena::WorldStateManager.new(world_state).apply_scene_diff(event_diff, scenario: scenario)
           if event.key?("trigger")
             world_state["fired_events"] ||= []
-            world_state["fired_events"] |= [ event["id"] ]
+            world_state["fired_events"] |= [event["id"]]
             new_event_memories << event["description"] if event["description"].present?
           end
         end
@@ -129,14 +104,13 @@ module ArenaFlows
         # Step 10: Persist turn
         llm_memory = narration["memory_note"]
         if new_event_memories.any?
-          llm_memory = [ llm_memory, *new_event_memories ].compact.join(" | ")
+          llm_memory = [llm_memory, *new_event_memories].compact.join(" | ")
         end
         narrative_content = narration["narrative"] || ""
         tokens_used = difficulty_tokens + narrator_tokens
+        roll_payload = build_roll_payload(outcome, difficulty, momentum_at_roll, rating)
 
-        roll_payload = { "roll" => outcome[:roll], "difficulty" => difficulty, "momentum_at_roll" => momentum_at_roll, "health_loss" => outcome[:health_loss], "damage_dice" => outcome[:damage_dice], "health_gain" => outcome[:health_gain], "healing_dice" => outcome[:healing_dice], "stance" => rating["stance"] || rating["exposure"] || "active" }
-
-        turn = TurnPersistenceService.create!(
+        turn = Turn.create!(
           game: game,
           act: act,
           content: narrative_content,
@@ -166,7 +140,7 @@ module ArenaFlows
             next_act_number = resolve_next_act_number(end_condition: end_condition, act_number: act_number)
 
             # Act-closing turn (AI epilogue for current act)
-            TurnPersistenceService.create!(
+            Turn.create!(
               game: game,
               act: act,
               content: epilogue_content,
@@ -196,7 +170,7 @@ module ArenaFlows
             )
 
             # New act prologue turn (AI-generated opening for next act)
-            TurnPersistenceService.create!(
+            Turn.create!(
               game: game,
               act: next_act,
               content: act_prologue["narrative"].to_s,
@@ -211,7 +185,7 @@ module ArenaFlows
           else
             final_status = %w[goal act_goal].include?(end_condition["type"]) ? "completed" : "failed"
 
-            TurnPersistenceService.create!(
+            Turn.create!(
               game: game,
               act: act,
               content: epilogue_content,
@@ -233,10 +207,7 @@ module ArenaFlows
       end # transaction
 
       # Deduct all tokens used in this turn (main + any epilogue/prologue) from user's budget
-      if game.user.present?
-        all_tokens = game.turns.where(turn_number: turn_number..(turn_number + 2)).sum(:tokens_used)
-        game.user.deduct_tokens!(all_tokens)
-      end
+      deduct_user_tokens(game, turn_number..(turn_number + 2))
 
       turn
     end
@@ -280,13 +251,9 @@ module ArenaFlows
       previous_actors = world_state["actors"] || {}
       previous_objects = world_state["objects"] || {}
 
-      # Start with carried-over entries for actors/objects not in the new act
-      # (so statuses survive even if an actor skips an act entirely)
       actors = previous_actors.dup
       objects = previous_objects.dup
 
-      # Layer on the new act's definitions
-      # Priority: force_status > carried-over status > default_status
       presenter.actors.each do |actor|
         prev = previous_actors[actor["id"]]
         status = actor["force_status"] || (prev && prev["status"]) || actor["default_status"]

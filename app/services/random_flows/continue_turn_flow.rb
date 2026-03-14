@@ -1,5 +1,7 @@
 module RandomFlows
   class ContinueTurnFlow
+    extend TurnFlowSteps
+
     NARRATOR_PROMPT_PATH = Rails.root.join("lib", "prompts", "random_narrator.txt")
 
     def self.call(game:, action:, stream: nil)
@@ -7,7 +9,7 @@ module RandomFlows
       world_state = game.world_state
 
       # Step 1: Determine turn number
-      turn_number = (game.turns.maximum(:turn_number) || 0) + 1
+      turn_number = game.next_turn_number
 
       # Step 2: Get current act
       act = game.current_act
@@ -27,11 +29,9 @@ module RandomFlows
       )
 
       # Step 4: Rate difficulty (AI call 1)
-      recent_actions = game.turns.recent(3).to_a.reverse
-                           .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
-      memory_notes = game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
-                         .map { |t| { turn_number: t.turn_number, note: t.llm_memory } }
-      rating, difficulty_tokens = DifficultyRatingService.rate(
+      recent_actions = fetch_recent_actions(game)
+      memory_notes = fetch_memory_notes(game)
+      rating, difficulty_tokens = rate_difficulty(
         action, scene_context, game.hero, recent_actions,
         world_context: world_state["world_context"],
         memory_summary: game.memory_summary,
@@ -44,27 +44,11 @@ module RandomFlows
 
       # Step 5: Resolve outcome (deterministic)
       momentum_at_roll = world_state["momentum"].to_i
-      intent = {
-        difficulty: difficulty,
-        danger: rating["danger"] || "none",
-        impact: rating["impact"] || "positive",
-        stance: rating["stance"] || rating["exposure"] || "active",
-        healing: rating["healing"] == true
-      }
-      outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
+      outcome = resolve_outcome(game, action, turn_number, rating)
       resolution_tag = outcome[:resolution_tag]
 
       # Broadcast roll result immediately so player sees it while narrative streams
-      if stream&.dig(:on_roll)
-        stream[:on_roll].call(
-          roll: outcome[:roll],
-          difficulty: difficulty,
-          momentum: momentum_at_roll,
-          resolution_tag: resolution_tag,
-          health_loss: outcome[:health_loss],
-          health_gain: outcome[:health_gain]
-        )
-      end
+      broadcast_roll(stream, outcome, difficulty, momentum_at_roll)
 
       # Reload world_state after outcome update
       game.reload
@@ -74,16 +58,7 @@ module RandomFlows
       last_turn = game.turns.recent(1).first
       previous_narrative_tail = last_turn&.content&.then { |c| c.lines.last(5).join } || ""
 
-      turn_context = {
-        world_state_delta: presenter.world_state_delta,
-        memory_summary: game.memory_summary,
-        memory_notes: game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
-                          .map { |t| { turn_number: t.turn_number, note: t.llm_memory } },
-        recent_actions: recent_actions,
-        rating_reasoning: rating_reasoning,
-        previous_narrative_tail: previous_narrative_tail.presence,
-        established_facts: established_facts
-      }
+      turn_context = build_turn_context(presenter, game, recent_actions, rating_reasoning, previous_narrative_tail, established_facts)
       narration, narrator_tokens = ArenaNarratorService.narrate(
         action, resolution_tag, difficulty, scene_context, turn_context, outcome[:health_loss],
         world_context: world_state["world_context"],
@@ -133,19 +108,9 @@ module RandomFlows
         llm_memory = narration["memory_note"]
         narrative_content = narration["narrative"] || ""
         tokens_used = difficulty_tokens + narrator_tokens
+        roll_payload = build_roll_payload(outcome, difficulty, momentum_at_roll, rating)
 
-        roll_payload = {
-          "roll" => outcome[:roll],
-          "difficulty" => difficulty,
-          "momentum_at_roll" => momentum_at_roll,
-          "health_loss" => outcome[:health_loss],
-          "damage_dice" => outcome[:damage_dice],
-          "health_gain" => outcome[:health_gain],
-          "healing_dice" => outcome[:healing_dice],
-          "stance" => rating["stance"] || rating["exposure"] || "active"
-        }
-
-        turn = TurnPersistenceService.create!(
+        turn = Turn.create!(
           game: game,
           act: act,
           content: narrative_content,
@@ -169,7 +134,7 @@ module RandomFlows
             narrator_style: world_state["narrator_style"]
           )
 
-          TurnPersistenceService.create!(
+          Turn.create!(
             game: game,
             act: act,
             content: epilogue_narration["narrative"].to_s,
@@ -189,10 +154,7 @@ module RandomFlows
       end # transaction
 
       # Deduct all tokens used in this turn from user's budget
-      if game.user.present?
-        all_tokens = game.turns.where(turn_number: turn_number..(turn_number + 1)).sum(:tokens_used)
-        game.user.deduct_tokens!(all_tokens)
-      end
+      deduct_user_tokens(game, turn_number..(turn_number + 1))
 
       turn
     end
@@ -205,8 +167,7 @@ module RandomFlows
       # Gather context
       presenter = RandomMode::WorldPresenter.new(world_state)
       inventory = presenter.send(:player_inventory, world_state)
-      memory_notes = game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
-                         .map { |t| { turn_number: t.turn_number, note: t.llm_memory } }
+      memory_notes = fetch_memory_notes(game)
 
       scene_data, _tokens = RandomMode::SceneGeneratorService.generate(
         world_context: world_state["world_context"],

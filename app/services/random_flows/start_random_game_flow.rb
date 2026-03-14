@@ -90,7 +90,7 @@ module RandomFlows
         narrator_style: world_data["narrator_style"]
       )
 
-      TurnPersistenceService.create!(
+      Turn.create!(
         game: game,
         act: act,
         content: prologue["narrative"].to_s,

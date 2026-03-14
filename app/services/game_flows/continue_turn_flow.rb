@@ -2,10 +2,10 @@ module GameFlows
   class ContinueTurnFlow
     def self.call(game:, action:)
       # Placeholder for non-arena game flow
-      turn_number = (game.turns.maximum(:turn_number) || 0) + 1
+      turn_number = game.next_turn_number
       act = game.current_act
 
-      TurnPersistenceService.create!(
+      Turn.create!(
         game: game,
         act: act,
         content: I18n.t("services.game_flows.continue_turn.not_implemented", action: action),

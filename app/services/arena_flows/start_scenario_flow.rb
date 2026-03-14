@@ -33,7 +33,7 @@ module ArenaFlows
         narrator_style: scenario["narrator_style"]
       )
 
-      TurnPersistenceService.create!(
+      Turn.create!(
         game: game,
         act: act,
         content: prologue["narrative"].to_s,

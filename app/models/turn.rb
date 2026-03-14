@@ -4,4 +4,5 @@ class Turn < ApplicationRecord
 
   scope :recent, ->(n = 5) { order(turn_number: :desc).limit(n) }
   scope :ending, -> { where("options_payload @> ?", '{"ending":true}') }
+  scope :with_memory, -> { where.not(llm_memory: [nil, ""]) }
 end

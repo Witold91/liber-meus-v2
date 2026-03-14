@@ -1,0 +1,20 @@
+<% if health_loss > 0 %>
+  <div class="health-loss">
+    <span class="health-loss-icon">♥</span>
+    <% if damage_dice.any? %>
+      <span class="damage-dice"><%= damage_dice.size %>d6 [<%= damage_dice.join(", ") %>]</span>
+      <span class="roll-op">=</span>
+    <% end %>
+    <span class="health-loss-value">−<%= health_loss %></span>
+  </div>
+<% end %>
+<% if health_gain > 0 %>
+  <div class="health-gain">
+    <span class="health-gain-icon">♥</span>
+    <% if healing_dice.any? %>
+      <span class="healing-dice"><%= healing_dice.size %>d6 [<%= healing_dice.join(", ") %>]</span>
+      <span class="roll-op">=</span>
+    <% end %>
+    <span class="health-gain-value">+<%= health_gain %></span>
+  </div>
+<% end %>
