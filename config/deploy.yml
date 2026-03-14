@@ -31,7 +31,7 @@ env:
     - GOOGLE_CLIENT_SECRET
   clear:
     SOLID_QUEUE_IN_PUMA: true
-    DB_HOST: liber-meus-v2-db
+    DB_HOST: liber_meus_v2-db
     DB_USERNAME: liber_meus_v2
     DB_NAME: liber_meus_v2_production
 
@@ -60,7 +60,7 @@ builder:
 # PostgreSQL as a Kamal accessory (runs on the same server).
 accessories:
   db:
-    image: postgres:17
+    image: pgvector/pgvector:pg17
     host: <%= ENV.fetch("DEPLOY_HOST", "TODO") %>
     port: "127.0.0.1:5432:5432"
     env:
