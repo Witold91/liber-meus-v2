@@ -62,6 +62,7 @@ Visit `http://localhost:3000` — you'll land on the game index screen.
 | `AI_DIFFICULTY_MODEL` | No | `gpt-4o-mini` | Model used for difficulty rating (call 1) |
 | `AI_NARRATOR_MODEL` | No | `gpt-4o-mini` | Model used for narration (call 2) |
 | `AI_EMBEDDING_MODEL` | No | `text-embedding-3-small` | Model used for narrative impression embeddings |
+| `HIDDEN_SCENARIOS` | No | _(empty)_ | Comma-separated scenario slugs to hide from selection screen |
 | `DB_HOST` | No | local socket | PostgreSQL host |
 | `DB_PORT` | No | `5432` | PostgreSQL port |
 | `DB_USERNAME` | No | current OS user | PostgreSQL username |
@@ -166,7 +167,7 @@ app/
     outcome_resolution_service.rb
     end_condition_checker.rb
     scenario_event_service.rb
-    turn_persistence_service.rb
+    turn_flow_steps.rb               # shared turn pipeline helpers
     embedding_service.rb
     impression_service.rb
     memory_compression_service.rb
@@ -244,6 +245,7 @@ All game routes are scoped under an optional locale prefix (`/en/...` or `/pl/..
 1. Create `config/scenarios/your_scenario.yml` following the structure of `tavern_heist.yml`
 2. The scenario is auto-loaded at boot (or call `ScenarioCatalog.reload!` in the console)
 3. No code changes required — the engine adapts to any scene/actor/object layout
+4. To hide a scenario from the selection screen (e.g. WIP or environment-specific), add its slug to `HIDDEN_SCENARIOS`
 
 For full authoring details (multi-act scenarios, endings, events, localization, and validation), see [`SCENARIO_MANUAL.md`](SCENARIO_MANUAL.md).
 
