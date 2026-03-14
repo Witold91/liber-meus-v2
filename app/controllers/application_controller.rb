@@ -32,6 +32,6 @@ class ApplicationController < ActionController::Base
   def normalized_locale(value)
     locale = value.to_s.presence&.to_sym
     return if locale.blank?
-    return locale if I18n.available_locales.include?(locale)
+    locale if I18n.available_locales.include?(locale)
   end
 end

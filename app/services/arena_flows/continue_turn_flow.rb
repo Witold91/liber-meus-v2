@@ -31,7 +31,7 @@ module ArenaFlows
       # Step 5: Rate difficulty (AI call 1)
       recent_actions = game.turns.recent(3).to_a.reverse
                            .map { |t| { turn_number: t.turn_number, action: t.option_selected, resolution: t.resolution_tag } }
-      memory_notes = game.turns.where.not(llm_memory: [nil, ""]).order(:turn_number)
+      memory_notes = game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
                          .map { |t| { turn_number: t.turn_number, note: t.llm_memory } }
       rating, difficulty_tokens = DifficultyRatingService.rate(action, scene_context, game.hero, recent_actions, world_context: scenario["world_context"], memory_summary: game.memory_summary, memory_notes: memory_notes, current_hp: world_state["health"], established_facts: established_facts)
       difficulty = rating["difficulty"]

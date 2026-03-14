@@ -1,6 +1,6 @@
 # Liber Meus v2
 
-Arena-based interactive fiction engine. Players navigate multi-stage scenarios driven by two AI calls per turn — one to rate action difficulty, one to narrate the outcome. World state is deterministic math on top of AI prose; everything is defined in YAML.
+Arena-based interactive fiction engine. Players navigate multi-act scenarios driven by two AI calls per turn — one to rate action difficulty, one to narrate the outcome. World state is deterministic math on top of AI prose; everything is defined in YAML.
 
 ## Stack
 
@@ -50,7 +50,7 @@ rails db:create db:migrate
 rails server
 ```
 
-Visit `http://localhost:3000` — you'll land on the scenario selection screen.
+Visit `http://localhost:3000` — you'll land on the game index screen.
 
 ---
 
@@ -77,7 +77,7 @@ Visit `http://localhost:3000` — you'll land on the scenario selection screen.
 rails test
 ```
 
-Tests use Mocha for mocking the OpenAI client. All 59 tests run without a live API key.
+Tests use Mocha for mocking the OpenAI client. All 171 tests run without a live API key.
 
 ---
 
@@ -85,28 +85,31 @@ Tests use Mocha for mocking the OpenAI client. All 59 tests run without a live A
 
 ### Turn Pipeline (`ArenaFlows::ContinueTurnFlow`)
 
-Each player action goes through a 10-step pipeline:
+Each player action goes through a multi-step pipeline:
 
 1. Load scenario from `ScenarioCatalog`
 2. Determine turn number
-3. Fetch the active chapter
-4. Build stage context (which actors/objects are in the player's current stage)
-5. **AI call 1** — `DifficultyRatingService` rates the action as `easy`, `medium`, or `hard`
-6. **Deterministic** — `OutcomeResolutionService` resolves to `success`, `partial`, or `failure` based on difficulty + momentum
-7. **AI call 2** — `ArenaNarratorService` writes the narrative and returns a world-state diff
-8. Apply the world-state diff via `Arena::WorldStateManager`
-9. Apply any scenario events triggered by the turn number
-10. Persist the turn, check end conditions
+3. Fetch the active act
+4. Build scene context (which actors/objects are in the player's current scene)
+5. Retrieve established facts (vector impressions) for narrator context
+6. **AI call 1** — `DifficultyRatingService` rates the action as `easy`, `medium`, or `hard`
+7. **Deterministic** — `OutcomeResolutionService` resolves to `success`, `partial`, or `failure` based on difficulty + momentum
+8. **AI call 2** — `ArenaNarratorService` writes the narrative and returns a world-state diff
+9. Store narrative impressions via `ImpressionService`
+10. Apply the world-state diff via `Arena::WorldStateManager`
+11. Apply any scenario events triggered by the turn number
+12. Persist the turn, check end conditions
 
 ### Scenarios
 
 Scenarios live in `config/scenarios/*.yml`. Each defines:
 
-- **Stages** — named locations with exits (one can be `arena_exit: true`)
-- **Actors** — NPCs with `stage`, `default_status`, and `status_options`
+- **Acts** — numbered story arcs, each containing scenes
+- **Scenes** — named locations with exits (one can be `arena_exit: true`)
+- **Actors** — NPCs with `scene`, `default_status`, and `status_options`
 - **Objects** — items with the same structure
-- **Conditions** — win/lose checks (`player_at_stage`, `actor_has_status`, etc.)
-- **Events** — turn-triggered world changes
+- **Conditions** — win/lose checks (`player_at_scene`, `actor_has_status`, etc.)
+- **Events** — turn-triggered or state-triggered world changes
 
 `ScenarioCatalog` loads all scenarios at boot via `config.to_prepare` and caches them in memory. Call `ScenarioCatalog.reload!` to refresh without restarting.
 
@@ -117,14 +120,11 @@ Stored as jsonb on the `games` table:
 ```json
 {
   "health": 100,
-  "danger_level": 40,
   "momentum": 0,
-  "arc_index": 1,
-  "player_stage": "cell",
-  "scenario_slug": "prison_break",
-  "chapter_number": 1,
-  "actors": { "guard_rodriguez": { "stage": "cell_block", "status": "awake" } },
-  "objects": { "loose_grate": { "stage": "cell", "status": "in_place" } }
+  "player_scene": "tavern_main",
+  "actors": { "barkeep": { "scene": "tavern_main", "status": "working" } },
+  "objects": { "ruby": { "scene": "tavern_vault", "status": "locked" } },
+  "improvised_objects": {}
 }
 ```
 
@@ -149,54 +149,103 @@ Before each turn's AI calls, relevant impressions are retrieved via hybrid searc
 ```
 app/
   controllers/
-    games_controller.rb          # show + continue (Turbo Stream)
-    scenario_select_controller.rb
+    games_controller.rb              # index, show, continue (Turbo Stream), replay_act, save/load
+    scenario_select_controller.rb    # scenario picker
+    random_setup_controller.rb       # random game creation wizard
+    profiles_controller.rb           # user profile
+    sessions_controller.rb           # Google OAuth sign-in
   models/
-    hero.rb  game.rb  chapter.rb  turn.rb
+    hero.rb  game.rb  act.rb  turn.rb
+    impression.rb  save.rb  user.rb  a_i_request_log.rb
   services/
-    scenario_catalog.rb          # YAML cache
-    game_service.rb              # routes to arena or non-arena flow
+    ai_client.rb                     # OpenAI API wrapper
+    scenario_catalog.rb              # YAML cache
+    game_service.rb                  # routes to arena or non-arena flow
     difficulty_rating_service.rb
     arena_narrator_service.rb
     outcome_resolution_service.rb
     end_condition_checker.rb
     scenario_event_service.rb
     turn_persistence_service.rb
+    embedding_service.rb
+    impression_service.rb
+    memory_compression_service.rb
     arena/
-      scenario_presenter.rb      # stage context builder
-      world_state_manager.rb     # apply diffs
+      scenario_presenter.rb          # scene context builder
+      world_state_manager.rb         # apply diffs
     arena_flows/
       start_scenario_flow.rb
       continue_turn_flow.rb
+      replay_act_flow.rb
+      save_game_flow.rb
+      load_save_flow.rb
     game_flows/
-      continue_turn_flow.rb      # stub for non-arena games
+      continue_turn_flow.rb          # stub for non-arena games
   javascript/controllers/
-    game_controller.js           # immediate user message + form submit
-    stage_panel_controller.js    # toggle stage panel
+    game_controller.js               # immediate user message + form submit
+    scene_panel_controller.js        # toggle scene panel
   views/
+    games/
+      index.html.erb
+      show.html.erb
+      _turn.html.erb
+      _scene_panel.html.erb
+      _hero_stats.html.erb
+      _save_panel.html.erb
+      _inventory.html.erb
+      _act_replay.html.erb
     scenario_select/show.html.erb
-    games/show.html.erb
-    games/_turn.html.erb
-    games/_stage_panel.html.erb
+    random_setup/new.html.erb
+    profiles/show.html.erb
+    sessions/new.html.erb
 
 config/
   scenarios/
-    prison_break.yml
+    tavern_heist.yml
+    romeo_juliet.yml
+    camillas_way_home.yml
 
 lib/prompts/
   difficulty_rating.txt
   arena_narrator.txt
+  arena_prologue.txt
+  arena_epilogue.txt
+  memory_compression.txt
+  random_narrator.txt
+  random_hero_generator.txt
+  random_world_generator.txt
+  random_scene_generator.txt
 ```
+
+---
+
+## Routes
+
+All game routes are scoped under an optional locale prefix (`/en/...` or `/pl/...`).
+
+| Method | Path | Controller#Action |
+|--------|------|-------------------|
+| GET | `/` | `games#index` |
+| GET | `/scenario_select` | `scenario_select#show` |
+| POST | `/scenario_select` | `scenario_select#create` |
+| GET | `/random_setup/new` | `random_setup#new` |
+| GET | `/games/:id` | `games#show` |
+| POST | `/games/:id/continue` | `games#continue` (Turbo Stream) |
+| POST | `/games/:id/replay_act` | `games#replay_act` |
+| POST | `/games/:id/save_game` | `games#save_game` |
+| POST | `/games/:id/load_save` | `games#load_save` |
+| GET | `/profile` | `profiles#show` |
+| GET | `/sign_in` | `sessions#new` |
 
 ---
 
 ## Adding a Scenario
 
-1. Create `config/scenarios/your_scenario.yml` following the structure of `prison_break.yml`
+1. Create `config/scenarios/your_scenario.yml` following the structure of `tavern_heist.yml`
 2. The scenario is auto-loaded at boot (or call `ScenarioCatalog.reload!` in the console)
-3. No code changes required — the engine adapts to any stage/actor/object layout
+3. No code changes required — the engine adapts to any scene/actor/object layout
 
-For full authoring details (multi-chapter acts, endings, events, localization, and validation), see [`SCENARIO_MANUAL.md`](SCENARIO_MANUAL.md).
+For full authoring details (multi-act scenarios, endings, events, localization, and validation), see [`SCENARIO_MANUAL.md`](SCENARIO_MANUAL.md).
 
 ---
 

@@ -63,5 +63,4 @@ class Arena::ScenarioPresenterTest < ActiveSupport::TestCase
   test "scene_context_for returns nil for unknown scene" do
     assert_nil @presenter.scene_context_for("bogus_scene", @world_state)
   end
-
 end

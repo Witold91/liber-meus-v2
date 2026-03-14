@@ -58,7 +58,7 @@ class ArenaNarratorService
         delta.each_char.with_index do |c, i|
           if escape_next
             escape_next = false
-          elsif c == '\\'
+          elsif c == "\\"
             escape_next = true
           elsif c == '"'
             send_up_to = i
@@ -105,7 +105,7 @@ class ArenaNarratorService
       # Unescape JSON string escapes from the raw narrative buffer
       fallback_narrative = narrative_buffer
         .gsub('\n', "\n").gsub('\t', "\t")
-        .gsub('\\\\', "\\").gsub('\\"', '"')
+        .gsub("\\\\", "\\").gsub('\\"', '"')
       { "narrative" => fallback_narrative, "diff" => {}, "memory_note" => nil }
     end
     AIClient.complete_streaming_log(log, response_body: parsed, tokens: tokens_used)

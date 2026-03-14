@@ -39,7 +39,7 @@ class ImpressionService
 
   def self.retrieve(game:, scene_id:, actor_ids:, action_text:)
     # 1. Deterministic: impressions for current scene + present actors
-    subject_ids = [scene_id, *Array(actor_ids)].compact.uniq
+    subject_ids = [ scene_id, *Array(actor_ids) ].compact.uniq
     deterministic = game.impressions
       .where(subject_type: %w[actor scene])
       .where(subject_id: subject_ids)

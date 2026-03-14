@@ -5,7 +5,7 @@ class MemoryCompressionService
 
   def self.maybe_compress!(game)
     uncompressed_turns = game.turns
-                             .where.not(llm_memory: [nil, ""])
+                             .where.not(llm_memory: [ nil, "" ])
                              .order(:turn_number)
 
     return false if uncompressed_turns.count < COMPRESSION_THRESHOLD
@@ -35,7 +35,7 @@ class MemoryCompressionService
       service_name: "MemoryCompressionService"
     )
 
-    [result["summary"], tokens]
+    [ result["summary"], tokens ]
   end
 
   def self.build_user_message(existing_summary, notes)

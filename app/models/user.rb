@@ -7,7 +7,7 @@ class User < ApplicationRecord
   validates :tokens_remaining, numericality: { greater_than_or_equal_to: 0 }
 
   def deduct_tokens!(amount)
-    new_balance = [tokens_remaining - amount.to_i, 0].max
+    new_balance = [ tokens_remaining - amount.to_i, 0 ].max
     update!(tokens_remaining: new_balance)
   end
 

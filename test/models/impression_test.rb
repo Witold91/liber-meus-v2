@@ -8,7 +8,7 @@ class ImpressionTest < ActiveSupport::TestCase
       subject_type: "actor",
       subject_id: "guard_rodriguez",
       fact: "Rodriguez is grumpy",
-      embedding: [0.1] * 1536
+      embedding: [ 0.1 ] * 1536
     )
     assert impression.valid?
   end
@@ -41,7 +41,7 @@ class ImpressionTest < ActiveSupport::TestCase
         turn_number: 1,
         subject_type: type,
         fact: "some fact",
-        embedding: [0.1] * 1536
+        embedding: [ 0.1 ] * 1536
       )
       assert impression.valid?, "Expected subject_type '#{type}' to be valid"
     end

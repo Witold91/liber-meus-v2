@@ -22,6 +22,6 @@ class EmbeddingService
   end
 
   def self.embed_single(text)
-    embed([text]).first
+    embed([ text ]).first
   end
 end
