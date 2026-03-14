@@ -1,13 +1,13 @@
 # Name of your application. Used to uniquely configure containers.
 service: liber_meus_v2
 
-# Name of the container image.
-image: liber_meus_v2
+# Name of the container image (must include GitHub username for GHCR).
+image: witold91/liber_meus_v2
 
 # Deploy to these servers (overridden per destination).
 servers:
   web:
-    - <%= ENV.fetch("DEPLOY_HOST") %>
+    - <%= ENV.fetch("DEPLOY_HOST", "TODO") %>
 
 # Enable SSL auto certification via Let's Encrypt (enable later when you have a domain).
 # proxy:
@@ -17,7 +17,7 @@ servers:
 # Use GitHub Container Registry (free for private repos up to 500MB).
 registry:
   server: ghcr.io
-  username: <%= ENV.fetch("GITHUB_USERNAME") %>
+  username: witold91
   password:
     - KAMAL_REGISTRY_PASSWORD
 
@@ -55,54 +55,19 @@ ssh:
 
 # Configure the image builder.
 builder:
-  arch: amd64
+  arch: arm64
 
 # PostgreSQL as a Kamal accessory (runs on the same server).
 accessories:
   db:
     image: postgres:17
-    host: <%= ENV.fetch("DEPLOY_HOST") %>
+    host: <%= ENV.fetch("DEPLOY_HOST", "TODO") %>
     port: "127.0.0.1:5432:5432"
     env:
       secret:
-        - DB_PASSWORD
+        - POSTGRES_PASSWORD:DB_PASSWORD
       clear:
         POSTGRES_USER: liber_meus_v2
         POSTGRES_DB: liber_meus_v2_production
     directories:
       - liber_meus_v2_postgres_data:/var/lib/postgresql/data
-
-# Destination-specific overrides.
-destinations:
-  staging:
-    servers:
-      web:
-        - <%= ENV.fetch("STAGING_HOST") %>
-    accessories:
-      db:
-        host: <%= ENV.fetch("STAGING_HOST") %>
-    env:
-      clear:
-        RAILS_LOG_LEVEL: debug
-        DB_NAME: liber_meus_v2_staging
-        AI_BASE_URL: https://openrouter.ai/api/v1
-        AI_DIFFICULTY_MODEL: mistralai/mistral-small-3.2-24b-instruct
-        AI_NARRATOR_MODEL: deepseek/deepseek-v3.2
-        AI_JSON_MODE: true
-      secret:
-        - RAILS_MASTER_KEY
-        - OPENAI_API_KEY
-        - DB_PASSWORD
-        - GOOGLE_CLIENT_ID
-        - GOOGLE_CLIENT_SECRET
-
-  production:
-    servers:
-      web:
-        - <%= ENV.fetch("PRODUCTION_HOST", "TODO") %>
-    accessories:
-      db:
-        host: <%= ENV.fetch("PRODUCTION_HOST", "TODO") %>
-    env:
-      clear:
-        WEB_CONCURRENCY: 2

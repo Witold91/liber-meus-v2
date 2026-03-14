@@ -1,0 +1,22 @@
+servers:
+  web:
+    - <%= ENV.fetch("STAGING_HOST", "TODO") %>
+
+accessories:
+  db:
+    host: <%= ENV.fetch("STAGING_HOST", "TODO") %>
+
+env:
+  clear:
+    RAILS_LOG_LEVEL: debug
+    DB_NAME: liber_meus_v2_staging
+    AI_BASE_URL: https://openrouter.ai/api/v1
+    AI_DIFFICULTY_MODEL: mistralai/mistral-small-3.2-24b-instruct
+    AI_NARRATOR_MODEL: deepseek/deepseek-v3.2
+    AI_JSON_MODE: true
+  secret:
+    - RAILS_MASTER_KEY
+    - OPENAI_API_KEY
+    - DB_PASSWORD
+    - GOOGLE_CLIENT_ID
+    - GOOGLE_CLIENT_SECRET
