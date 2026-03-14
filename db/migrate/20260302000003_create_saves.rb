@@ -12,7 +12,7 @@ class CreateSaves < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :saves, [:game_id, :created_at]
+    add_index :saves, [ :game_id, :created_at ]
     add_foreign_key :saves, :heroes
   end
 end

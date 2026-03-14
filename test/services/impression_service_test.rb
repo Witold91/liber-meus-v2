@@ -11,7 +11,7 @@ class ImpressionServiceTest < ActiveSupport::TestCase
       { "subject" => "guard_rodriguez", "type" => "actor", "fact" => "Rodriguez is suspicious" },
       { "subject" => "cell", "type" => "scene", "fact" => "The cell smells damp" }
     ]
-    EmbeddingService.stubs(:embed).returns([[0.1] * 1536, [0.2] * 1536])
+    EmbeddingService.stubs(:embed).returns([ [ 0.1 ] * 1536, [ 0.2 ] * 1536 ])
 
     assert_difference "Impression.count", 2 do
       ImpressionService.store!(game: @game, turn_number: 5, impressions_data: impressions_data)
@@ -24,7 +24,7 @@ class ImpressionServiceTest < ActiveSupport::TestCase
   end
 
   test "store! appends memory_note as memory-type impression" do
-    EmbeddingService.stubs(:embed).returns([[0.3] * 1536])
+    EmbeddingService.stubs(:embed).returns([ [ 0.3 ] * 1536 ])
 
     assert_difference "Impression.count", 1 do
       ImpressionService.store!(game: @game, turn_number: 3, impressions_data: [], memory_note: "Player befriended the guard")
@@ -46,7 +46,7 @@ class ImpressionServiceTest < ActiveSupport::TestCase
       { "subject" => "guard", "type" => "actor", "fact" => "" },
       { "subject" => "cell", "type" => "scene", "fact" => "Valid fact" }
     ]
-    EmbeddingService.stubs(:embed).returns([[0.1] * 1536])
+    EmbeddingService.stubs(:embed).returns([ [ 0.1 ] * 1536 ])
 
     assert_difference "Impression.count", 1 do
       ImpressionService.store!(game: @game, turn_number: 1, impressions_data: impressions_data)
@@ -59,17 +59,17 @@ class ImpressionServiceTest < ActiveSupport::TestCase
     assert_nothing_raised do
       ImpressionService.store!(
         game: @game, turn_number: 1,
-        impressions_data: [{ "subject" => "cell", "type" => "scene", "fact" => "test" }]
+        impressions_data: [ { "subject" => "cell", "type" => "scene", "fact" => "test" } ]
       )
     end
   end
 
   test "retrieve returns facts for matching scene and actor ids" do
-    EmbeddingService.stubs(:embed_single).returns([0.1] * 1536)
+    EmbeddingService.stubs(:embed_single).returns([ 0.1 ] * 1536)
 
     facts = ImpressionService.retrieve(
       game: @game, scene_id: "cell",
-      actor_ids: ["guard_rodriguez"],
+      actor_ids: [ "guard_rodriguez" ],
       action_text: "look around"
     )
 
@@ -82,7 +82,7 @@ class ImpressionServiceTest < ActiveSupport::TestCase
 
     facts = ImpressionService.retrieve(
       game: @game, scene_id: "cell",
-      actor_ids: ["guard_rodriguez"],
+      actor_ids: [ "guard_rodriguez" ],
       action_text: "look around"
     )
 
@@ -90,10 +90,10 @@ class ImpressionServiceTest < ActiveSupport::TestCase
   end
 
   test "retrieve excludes memory-type impressions" do
-    EmbeddingService.stubs(:embed).returns([[0.1] * 1536])
+    EmbeddingService.stubs(:embed).returns([ [ 0.1 ] * 1536 ])
     ImpressionService.store!(game: @game, turn_number: 1, impressions_data: [], memory_note: "Secret memory")
 
-    EmbeddingService.stubs(:embed_single).returns([0.1] * 1536)
+    EmbeddingService.stubs(:embed_single).returns([ 0.1 ] * 1536)
 
     facts = ImpressionService.retrieve(
       game: @game, scene_id: "nonexistent",

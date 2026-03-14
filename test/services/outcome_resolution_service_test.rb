@@ -30,7 +30,7 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
   test "danger low: failure rolls 2d6 for health loss" do
     OutcomeResolutionService.stubs(:rand).returns(1)
     outcome = OutcomeResolutionService.resolve(@game, "climb the fence", 1, { difficulty: "medium", danger: "low", impact: "positive" })
-    assert_equal [1, 1], outcome[:damage_dice]
+    assert_equal [ 1, 1 ], outcome[:damage_dice]
     assert_equal 2, outcome[:health_loss]
   end
 
@@ -39,7 +39,7 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     OutcomeResolutionService.stubs(:rand).returns(4)
     outcome = OutcomeResolutionService.resolve(@game, "fight the guard", 1, { difficulty: "medium", danger: "medium", impact: "positive" })
     assert_equal "partial", outcome[:resolution_tag]
-    assert_equal [4, 4], outcome[:damage_dice]
+    assert_equal [ 4, 4 ], outcome[:damage_dice]
     assert_equal 8, outcome[:health_loss]
   end
 
@@ -123,7 +123,7 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     @game.update!(world_state: @game.world_state.merge("health" => 60))
     OutcomeResolutionService.stubs(:rand).returns(5)
     outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "easy", danger: "none", healing: true })
-    assert_equal [5, 5, 5, 5], outcome[:healing_dice]
+    assert_equal [ 5, 5, 5, 5 ], outcome[:healing_dice]
     assert_equal 20, outcome[:health_gain]
     @game.reload
     assert_equal 80, @game.world_state["health"]
@@ -134,7 +134,7 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     OutcomeResolutionService.stubs(:rand).returns(4)
     outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "medium", danger: "none", healing: true })
     assert_equal "partial", outcome[:resolution_tag]
-    assert_equal [4, 4], outcome[:healing_dice]
+    assert_equal [ 4, 4 ], outcome[:healing_dice]
     assert_equal 8, outcome[:health_gain]
     @game.reload
     assert_equal 68, @game.world_state["health"]

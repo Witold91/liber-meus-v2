@@ -13,7 +13,7 @@ class CreateImpressions < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :impressions, [:game_id, :subject_type, :subject_id]
-    add_index :impressions, [:game_id, :turn_number]
+    add_index :impressions, [ :game_id, :subject_type, :subject_id ]
+    add_index :impressions, [ :game_id, :turn_number ]
   end
 end

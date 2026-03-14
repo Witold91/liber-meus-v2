@@ -6,7 +6,7 @@
       --theme-bg: <%= @theme["bg_color"] %>;
       --theme-text: <%= @theme["text_color"] %>;
       --theme-accent: <%= @theme["accent_color"] %>;
-      --theme-font: <%= raw @theme["font_family"] %>;
+      --theme-font: <%= sanitize(@theme["font_family"], tags: [], attributes: []) %>;
       --theme-bg-image: <%= @theme["bg_image"].present? ? "url(/#{@theme["bg_image"]})" : "none" %>;
       /* Derived adaptive colors — work for both dark and light themes */
       --panel-bg: color-mix(in srgb, var(--theme-bg) 92%, var(--theme-text));

@@ -27,7 +27,7 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
                    content: "Narrative #{i}", llm_memory: "Note #{i}")
     end
 
-    AIClient.stubs(:chat_json).returns([{ "summary" => "Compressed story summary." }, 50])
+    AIClient.stubs(:chat_json).returns([ { "summary" => "Compressed story summary." }, 50 ])
 
     result = MemoryCompressionService.maybe_compress!(@game)
     assert_equal true, result
@@ -35,7 +35,7 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
     @game.reload
     assert_equal "Compressed story summary.", @game.memory_summary
 
-    remaining = @game.turns.where.not(llm_memory: [nil, ""]).order(:turn_number)
+    remaining = @game.turns.where.not(llm_memory: [ nil, "" ]).order(:turn_number)
     assert_equal 5, remaining.count
     assert_equal (6..10).to_a, remaining.pluck(:turn_number)
   end
@@ -51,7 +51,7 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
     AIClient.stubs(:chat_json).with do |args|
       captured_message = args[:user_message]
       true
-    end.returns([{ "summary" => "Updated summary." }, 50])
+    end.returns([ { "summary" => "Updated summary." }, 50 ])
 
     MemoryCompressionService.maybe_compress!(@game)
 
@@ -72,7 +72,7 @@ class MemoryCompressionServiceTest < ActiveSupport::TestCase
 
     AIClient.stubs(:chat_json).with do |args|
       args[:model] == AIClient.difficulty_model && args[:temperature] == 0.2
-    end.returns([{ "summary" => "Summary." }, 50])
+    end.returns([ { "summary" => "Summary." }, 50 ])
 
     result = MemoryCompressionService.maybe_compress!(@game)
     assert_equal true, result

@@ -67,17 +67,17 @@ class OutcomeResolutionService
     threshold = DIFFICULTY_THRESHOLD.fetch(difficulty, 4)
     total = roll + momentum
     tag = if total > threshold then "success"
-          elsif total == threshold then "partial"
-          else "failure"
-          end
+    elsif total == threshold then "partial"
+    else "failure"
+    end
     [ roll, tag ]
   end
 
   def self.roll_damage(danger, resolution_tag, stance = "active")
     effective_resolution = case stance
-      when "safe", "none" then return { dice: [], total: 0 }
-      when "exposed", "undefended" then "failure"
-      else resolution_tag
+    when "safe", "none" then return { dice: [], total: 0 }
+    when "exposed", "undefended" then "failure"
+    else resolution_tag
     end
 
     num_dice = DAMAGE_DICE.fetch(danger, DAMAGE_DICE["none"]).fetch(effective_resolution, 0)
