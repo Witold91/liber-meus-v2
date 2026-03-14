@@ -34,14 +34,12 @@ acts:
     scenes:
       - id: bedroom_floor
         name: "Bedroom Floor"
-        description: "A vast landscape of wooden floor, dust bunnies, and a pair of slippers that look like sleeping giants. The desk with the cage towers above."
+        description: "A vast landscape of wooden floor, dust bunnies, and a pair of slippers that look like sleeping giants. The desk with the cage towers above — but it is impossibly tall and smooth, with no way to climb it from down here."
         exits:
           - to: under_the_bed
             label: "Squeeze under the bed"
           - to: living_room
             label: "Slip through the door gap into the living room"
-          - to: desk_climb
-            label: "Try to climb back up the desk"
       - id: under_the_bed
         name: "Under the Bed"
         description: "A shadowy cave of forgotten things — a lost earring, crumpled tissues, and a sock that smells like home. Quiet and safe, but not where the cage is."
@@ -50,10 +48,10 @@ acts:
             label: "Scurry back out"
       - id: desk_climb
         name: "The Desk"
-        description: "The tall wooden desk where the cage sits. Books are stacked like stepping stones, a lamp cord dangles like a vine, and the cage door is still ajar — home is right there."
+        description: "The tall wooden desk where the cage sits. Books are stacked like stepping stones, and the cage door is still ajar — home is right there. Camilla made it up through the window. The last stretch."
         exits:
-          - to: bedroom_floor
-            label: "Slide back down"
+          - to: windowsill
+            label: "Go back to the windowsill"
           - to: cage
             label: "Squeeze through the cage door"
             arena_exit: true
@@ -91,10 +89,28 @@ acts:
             label: "Scramble back over the edge"
       - id: garden
         name: "The Garden"
-        description: "Grass blades tower like a forest. A butterfly drifts past. The soil is soft and cool. Flowers bloom in colors Camilla has never seen before. It is beautiful — but it is not home."
+        description: "Grass blades tower like a forest. A butterfly drifts past. The soil is soft and cool. Flowers bloom in colors Camilla has never seen before. It is beautiful — but it is not home. Along the apartment wall, old ivy vines climb upward toward the bedroom window."
         exits:
           - to: living_room
             label: "Go back inside through the door gap"
+          - to: wall_vines
+            label: "Start climbing the ivy vines on the wall"
+      - id: wall_vines
+        name: "The Wall Vines"
+        description: "A tangled web of old ivy clinging to the apartment wall. The leaves are thick and the stems are woody, but the climb is steep and the wind tugs at Camilla's fur. Every step upward is a battle against gravity. Her clumsy paws slip on the smooth leaves, and the ground below gets further and further away."
+        exits:
+          - to: garden
+            label: "Give up and climb back down"
+          - to: windowsill
+            label: "Keep climbing toward the window"
+      - id: windowsill
+        name: "The Bedroom Windowsill"
+        description: "The top of the climb. A narrow stone ledge outside the bedroom window, warm from the sun. The window is cracked open just enough for a small mouse to squeeze through. From here, the garden below looks like a green ocean, and inside — the desk, the cage, her sisters."
+        exits:
+          - to: wall_vines
+            label: "Climb back down the vines"
+          - to: desk_climb
+            label: "Squeeze through the window gap to the desk"
       - id: cage
         name: "Home"
         description: "The familiar warmth of wood shavings, the water bottle, the little wheel. Alicia and Zuzanna are here, squeaking with joy. Home at last."
@@ -132,6 +148,17 @@ acts:
           - resting
           - gone
         default_status: fluttering
+      - id: wild_mouse
+        name: "A Wild Mouse"
+        description: "A wild mouse about Camilla's size, with dark brown fur and a distinctive yellow stripe running down her back. She lives somewhere in the garden and knows every root, stone, and hiding spot. She is wary of pet mice at first — she has never met one — but curious and not unkind. She moves quickly and confidently, the way someone moves through a place they know by heart."
+        scene: garden
+        default_disposition: suspicious
+        status_options:
+          - hiding
+          - curious
+          - friendly
+          - guiding
+        default_status: hiding
       - id: dust_bunny
         name: "A Huge Dust Bunny"
         description: "A fluffy grey ball of dust under the bed. To a tiny mouse, it looks almost alive. Harmless, but startling."
@@ -187,14 +214,6 @@ acts:
           - floating
           - popped
         default_status: floating
-      - id: lamp_cord
-        name: "The Lamp Cord"
-        description: "A long cord dangling from the desk lamp, reaching almost to the floor. A brave mouse could climb it like a rope."
-        scene: bedroom_floor
-        status_options:
-          - dangling
-          - climbed
-        default_status: dangling
       - id: popcorn_kernel
         name: "A Forgotten Popcorn Kernel"
         description: "A single popcorn kernel wedged between the couch cushions. It is almost as big as Camilla and smells buttery and wonderful. A feast fit for a mouse queen."
@@ -268,6 +287,52 @@ acts:
           - carried
         default_status: on_ground
 
+      - id: stuffed_bear
+        name: "A Giant Stuffed Bear"
+        description: "An enormous brown teddy bear slumped against the bedroom wall, its glassy eyes staring into nothing. To Camilla it looks like a real bear — frozen mid-growl, towering and terrible. Its fur smells like dust and lavender. Completely harmless, obviously. But try telling that to a mouse."
+        scene: bedroom_floor
+        status_options:
+          - looming
+          - sniffed
+          - cuddled_against
+        default_status: looming
+      - id: toy_snake
+        name: "A Rubber Snake"
+        description: "A coiled green rubber snake left on the living room floor. Its painted tongue sticks out and its beady eyes gleam. For one horrifying moment Camilla's heart stops — then she notices it smells like plastic and hasn't moved once. Not even a little."
+        scene: living_room
+        status_options:
+          - coiled
+          - poked
+          - stepped_over
+        default_status: coiled
+      - id: garden_gnome
+        name: "A Garden Gnome"
+        description: "A small ceramic gnome standing among the flowers, frozen in a cheerful pose with a tiny painted shovel. His rosy cheeks and wide smile should be reassuring, but at mouse-height his face is enormous and his unblinking eyes follow you everywhere. Deeply unsettling. Entirely decorative."
+        scene: garden
+        status_options:
+          - staring
+          - inspected
+          - hidden_behind
+        default_status: staring
+      - id: drain_gurgle
+        name: "The Bathtub Drain"
+        description: "A dark metal circle at the bottom of the bathtub that occasionally makes a deep, rumbling gurgle — like something enormous is breathing far below. It is just old pipes. Probably. Almost certainly. Camilla does not want to get any closer."
+        scene: bathtub
+        status_options:
+          - quiet
+          - gurgling
+          - investigated
+        default_status: quiet
+      - id: broom
+        name: "A Tall Broom"
+        description: "A broom leaning against the kitchen wall. Its bristles splay out like wild hair, and from below it looks like a strange creature standing on one leg, watching. When a draft passes it sways slightly — and Camilla's whiskers go flat against her face."
+        scene: kitchen
+        status_options:
+          - leaning
+          - swayed
+          - knocked_over
+        default_status: leaning
+
     conditions:
       - id: camilla_home
         description: "Camilla reaches the cage and reunites with her sisters"
@@ -303,6 +368,15 @@ acts:
           scene: garden
           new_status: gone
         description: "The butterfly drifts away over the garden wall, leaving Camilla alone among the towering grass blades."
+      - id: wild_mouse_appears
+        trigger:
+          player_at_scene: garden
+        action:
+          type: actor_enters
+          actor_id: wild_mouse
+          scene: garden
+          new_status: curious
+        description: "A rustle in the grass — and two dark eyes appear between the blades. A wild mouse, brown-furred with a bright yellow stripe down her back, watches Camilla with twitching whiskers. She has never seen a white mouse before."
       - id: dust_bunny_rolls
         trigger:
           player_at_scene: under_the_bed

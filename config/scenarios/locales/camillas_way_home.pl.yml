@@ -1,48 +1,46 @@
 title: "Droga Kamili do domu"
 description: "Mała biała myszka gubi się w wielkim mieszkaniu. Pomóż jej odnaleźć drogę z powrotem do swoich sióstr."
 world_context: |
-  Przytulne niewielkie mieszkanie z ogrodem, współczesność. Świat oglądamy z perspektywy maleńkiej myszki — meble górują jak budynki, nogi stołu są kolumnami, a dywan rozciąga się jak ogromna łąka. Nie ma tu przemocy, śmiertelnego niebezpieczeństwa ani drapieżników. Najgorsze, co może się zdarzyć, to jeszcze bardziej się zgubić albo trochę się przestraszyć. Ton opowieści ma być ciepły, łagodny i pełen ciekawości. Kamila jest domową myszką, która mieszka w klatce na biurku w sypialni razem z dwiema siostrami. Przypadkiem wymknęła się na zewnątrz, gdy drzwiczki klatki zostały uchylone, i teraz musi znaleźć drogę z powrotem.
+  Przytulne niewielkie mieszkanie z ogrodem, współczesność. Świat oglądamy z perspektywy maleńkiej myszki — meble górują jak budynki, nogi stołu są kolumnami, a dywan rozciąga się jak ogromna łąka. Nie ma tu przemocy, śmiertelnego niebezpieczeństwa ani drapieżników. Najgorsze, co może się zdarzyć, to zgubić się jeszcze bardziej albo trochę się przestraszyć. Ton opowieści ma być ciepły, łagodny i pełen ciekawości. Kamila jest domową myszką, która mieszka w klatce stojącej na biurku w sypialni razem z dwiema siostrami. Przypadkiem wymknęła się na zewnątrz, gdy drzwiczki klatki zostały uchylone, i teraz musi znaleźć drogę z powrotem.
 narrator_style: |
-  Pisz ciepłym, baśniowym stylem, jak narrator książeczki dla dzieci. Używaj łagodnych detali zmysłowych — miękkości dywanu pod drobnymi łapkami, zapachu świeżych ziół z kuchni, ciepła słońca wpadającego przez okno. Zdania są krótkie i czułe. W oczach Kamili świat jest wielki i pełen cudów. Zachowaj poczucie łagodnej przygody i cichej odwagi. 30-60 słów.
+  Pisz ciepłym, baśniowym stylem, jak narrator książeczki dla dzieci. Używaj łagodnych detali zmysłowych — miękkości dywanu pod drobnymi łapkami, zapachu świeżych ziół z kuchni, ciepła słońca wpadającego przez okno. Zdania mają być krótkie i czułe. W oczach Kamili świat jest wielki i pełen cudów. Zachowaj poczucie łagodnej przygody i cichej odwagi. 30-60 słów.
 
 hero:
   name: "Kamila"
-  description: "Mała biała myszka o ciemnych, błyszczących oczach. Jest zwinna i ciekawska, ale trochę niezdarna — bez przerwy potyka się o własne drobne łapki. Choć jest najmniejsza z trzech sióstr, ma największe serce i najbardziej przygodowego ducha."
-  llm_description: "Samica, mała biała myszka o ciemnych oczach. Domowa myszka mieszkająca w klatce z dwiema siostrami. Zwinna, ale niezdarna. Ciekawska, delikatnie odważna, łatwo płoszy się nowościami, lecz zawsze idzie dalej."
+  description: "Mała biała myszka o ciemnych, błyszczących oczach. Jest zwinna i ciekawska, ale trochę niezdarna — bez przerwy potyka się o własne drobne łapki. Choć jest najmniejsza z trzech sióstr, ma największe serce i największy zapał do przygód."
+  llm_description: "Samica, mała biała myszka o ciemnych oczach. Domowa myszka mieszkająca w klatce z dwiema siostrami. Zwinna, ale niezdarna. Ciekawska, łagodnie odważna, łatwo płoszy się nowościami, lecz zawsze idzie dalej."
 
 acts:
   - number: 1
     title: "Wielki świat"
     intro: |
-      Drzwiczki klatki są otwarte — tylko odrobinę, ale to wystarczy.
-      Kamila nie chciała spaść. Wyciągała się, żeby powąchać powietrze za prętami, wychyliła się odrobinę za daleko i wtedy — fiuu — zleciała prosto z biurka.
+      Drzwiczki klatki są otwarte — ledwie odrobinę, ale to wystarczy.
+      Kamila nie chciała spaść. Wyciągała się, żeby powąchać powietrze za prętami, wychyliła się ciut za daleko i wtedy — fiuu — zleciała prosto z biurka.
       Wylądowała na czymś miękkim (pewnie na skarpetce) i przeturlała się dwa razy, zanim się zatrzymała.
       Teraz siedzi na podłodze w sypialni, a jej wąsiki drżą, gdy patrzy w górę na ogromny pokój wokół siebie.
       Gdzieś wysoko nad sobą słyszy, jak Alicia i Zuzanna popiskują z klatki.
-      Musi tylko znaleźć drogę z powrotem. Jak trudne to może być?
+      Musi tylko znaleźć drogę z powrotem na górę. Jak trudne to może być?
     scenes:
       - id: bedroom_floor
         name: "Podłoga w sypialni"
-        description: "Ogromny krajobraz drewnianej podłogi, kłębków kurzu i pary kapci, które wyglądają jak śpiące olbrzymy. Wysoko nad wszystkim góruje biurko z klatką."
+        description: "Ogromny krajobraz drewnianej podłogi, kłębków kurzu i pary kapci, które wyglądają jak śpiące olbrzymy. Biurko z klatką góruje nad wszystkim — ale z dołu wydaje się niewiarygodnie wysokie i gładkie, bez żadnej drogi wspinaczki."
         exits:
           - to: under_the_bed
             label: "Przeciśnij się pod łóżko"
           - to: living_room
             label: "Przemknij przez szparę w drzwiach do salonu"
-          - to: desk_climb
-            label: "Spróbuj wspiąć się z powrotem na biurko"
       - id: under_the_bed
         name: "Pod łóżkiem"
-        description: "Cienista jaskinia zapomnianych rzeczy — zgubionego kolczyka, zmiętych chusteczek i skarpetki pachnącej domem. Cicho i bezpiecznie, ale klatki tu nie ma."
+        description: "Cienista jaskinia zapomnianych rzeczy — zgubionego kolczyka, zmiętych chusteczek i skarpetki pachnącej domem. Cicho i bezpiecznie, lecz klatki tu nie ma."
         exits:
           - to: bedroom_floor
             label: "Wymyknij się z powrotem"
       - id: desk_climb
         name: "Biurko"
-        description: "Wysokie drewniane biurko, na którym stoi klatka. Książki leżą w stosach jak kamienie do przeprawy, kabel lampki zwisa jak liana, a drzwiczki klatki wciąż są uchylone — dom jest tuż obok."
+        description: "Wysokie drewniane biurko, na którym stoi klatka. Książki leżą w stosach jak kamienie do przeprawy, a drzwiczki klatki wciąż są uchylone — dom jest tuż obok. Kamila dostała się tu przez okno. Został ostatni kawałek drogi."
         exits:
-          - to: bedroom_floor
-            label: "Zsuń się z powrotem w dół"
+          - to: windowsill
+            label: "Wróć na parapet"
           - to: cage
             label: "Przeciśnij się przez drzwiczki klatki"
       - id: living_room
@@ -59,7 +57,7 @@ acts:
             label: "Przemknij przez szparę przy drzwiach do ogrodu"
       - id: kitchen
         name: "Kuchnia"
-        description: "Kraina okruszków i zapachów, połączona z salonem otwartym blatem. Płytki są chłodne pod maleńkimi łapkami. Przy lodówce leży okruszek chleba wielkości głowy Kamili. Blat kuchenny wydaje się niewyobrażalnie wysoki."
+        description: "Kraina okruszków i zapachów, połączona z salonem otwartym blatem. Płytki są chłodne pod maleńkimi łapkami. Przy lodówce leży okruszek chleba wielkości głowy Kamili. Kuchenny blat wydaje się niewyobrażalnie wysoki."
         exits:
           - to: living_room
             label: "Wróć do salonu"
@@ -79,13 +77,31 @@ acts:
             label: "Wdrap się z powrotem na krawędź"
       - id: garden
         name: "Ogród"
-        description: "Źdźbła trawy wyrastają tu jak las. Obok przelatuje motyl. Ziemia jest miękka i chłodna. Kwitną kwiaty w kolorach, jakich Kamila nigdy wcześniej nie widziała. Jest tu pięknie — ale to nie jest dom."
+        description: "Źdźbła trawy wyrastają tu jak las. Obok przelatuje motyl. Ziemia jest miękka i chłodna. Kwitną kwiaty w kolorach, jakich Kamila nigdy wcześniej nie widziała. Jest tu pięknie — ale to nie jest dom. Wzdłuż ściany mieszkania stare pnącza bluszczu wspinają się ku oknu sypialni."
         exits:
           - to: living_room
             label: "Wróć do środka przez szparę przy drzwiach"
+          - to: wall_vines
+            label: "Zacznij wspinaczkę po bluszczu na ścianie"
+      - id: wall_vines
+        name: "Pnącza na ścianie"
+        description: "Splątana sieć starego bluszczu przyczepionego do ściany mieszkania. Liście są gęste, łodygi zdrewniałe, ale wspinaczka jest stroma, a wiatr szarpie futerkiem Kamili. Każdy krok w górę to walka z grawitacją. Jej niezdarne łapki ślizgają się po gładkich liściach, a ziemia pod nią jest coraz dalej."
+        exits:
+          - to: garden
+            label: "Poddaj się i zejdź z powrotem na dół"
+          - to: windowsill
+            label: "Wspinaj się dalej w stronę okna"
+      - id: windowsill
+        name: "Parapet sypialni"
+        description: "Szczyt wspinaczki. Wąska kamienna półka za oknem sypialni, nagrzana słońcem. Okno jest uchylone akurat na tyle, by mała myszka mogła się przecisnąć. Stąd ogród pod spodem wygląda jak zielone morze, a w środku widać biurko, klatkę i siostry."
+        exits:
+          - to: wall_vines
+            label: "Zejdź z powrotem po pnączach"
+          - to: desk_climb
+            label: "Przeciśnij się przez szparę w oknie na biurko"
       - id: cage
         name: "Dom"
-        description: "Znajome ciepło wiórków, poidełko i małe kołowrotki. Alicia i Zuzanna są tutaj, popiskując z radości. Wreszcie w domu."
+        description: "Znajome ciepło wiórków, poidełko i mały kołowrotek. Alicia i Zuzanna są tutaj, popiskując z radości. Wreszcie w domu."
         exits: []
 
     actors:
@@ -98,6 +114,9 @@ acts:
       - id: butterfly
         name: "Ogrodowy motyl"
         description: "Łagodny pomarańczowy motyl, który frunie po ogrodzie. Nie jest przyjacielem, ale nie stanowi też zagrożenia — to po prostu piękna, ciekawska obecność."
+      - id: wild_mouse
+        name: "Dzika myszka"
+        description: "Dzika myszka mniej więcej wielkości Kamili, o ciemnobrązowym futerku i wyraźnym żółtym pasku biegnącym wzdłuż grzbietu. Mieszka gdzieś w ogrodzie i zna każdy korzeń, kamień i kryjówkę. Na początku ostrożnie podchodzi do domowych myszek — nigdy żadnej nie spotkała — ale ciekawość bierze górę i nie ma w niej złośliwości. Porusza się szybko i pewnie, jak ktoś, kto zna to miejsce na pamięć."
       - id: dust_bunny
         name: "Ogromny kłębek kurzu"
         description: "Puchata szara kulka kurzu pod łóżkiem. Dla maleńkiej myszki wygląda niemal jak żywa. Jest niegroźna, ale potrafi przestraszyć."
@@ -118,9 +137,6 @@ acts:
       - id: soap_bubble
         name: "Bańka mydlana"
         description: "Maleńka tęczowa bańka przyklejona do brzegu wanny. Delikatnie drży i odbija całą łazienkę w miniaturze. Jeden dotyk i pęknie."
-      - id: lamp_cord
-        name: "Kabel lampki"
-        description: "Długi kabel zwisający z lampki na biurku, sięgający niemal do samej podłogi. Odważna myszka mogłaby wspiąć się po nim jak po linie."
       - id: popcorn_kernel
         name: "Zapomniane ziarnko popcornu"
         description: "Jedno ziarnko popcornu zaklinowane między poduszkami kanapy. Jest prawie tak duże jak Kamila i pachnie cudownie, maślanie. Uczta godna mysiej królowej."
@@ -145,21 +161,35 @@ acts:
       - id: petal
         name: "Opadły płatek róży"
         description: "Pojedynczy miękki różowy płatek leżący w trawie w ogrodzie, wciąż lekko pachnący. Zawija się na brzegach jak mała łódeczka. Kamila mogłaby usiąść na nim jak na tronie."
+      - id: stuffed_bear
+        name: "Ogromny pluszowy miś"
+        description: "Ogromny brązowy miś pluszowy osunięty pod ścianą sypialni, ze szklanymi oczami wbitymi w pustkę. Dla Kamili wygląda jak prawdziwy niedźwiedź — zastygły w pół warczenia, straszny i olbrzymi. Jego futro pachnie kurzem i lawendą. Oczywiście jest zupełnie niegroźny. Tylko spróbuj to wytłumaczyć myszce."
+      - id: toy_snake
+        name: "Gumowy wąż"
+        description: "Zielony gumowy wąż zwinięty w kłębek na podłodze salonu. Wystawia namalowany język, a paciorkowate oczy błyszczą. Przez jedną okropną chwilę serce Kamili zamiera — potem zauważa, że pachnie plastikiem i ani drgnął. Nawet odrobinę."
+      - id: garden_gnome
+        name: "Krasnal ogrodowy"
+        description: "Mały ceramiczny krasnal stojący wśród kwiatów, zastygły w pogodnej pozie z malowaną łopatką. Różowe policzki i szeroki uśmiech powinny uspokajać, ale z wysokości mysich oczu jego twarz jest ogromna, a nieruchome spojrzenie zdaje się śledzić każdy krok. Bardzo niepokojące. I całkowicie ozdobne."
+      - id: drain_gurgle
+        name: "Odpływ wanny"
+        description: "Ciemny metalowy krąg na dnie wanny, który od czasu do czasu wydaje z siebie głębokie, dudniące bulgotanie — jakby coś ogromnego oddychało gdzieś daleko pod spodem. To tylko stare rury. Prawdopodobnie. Prawie na pewno. Kamila nie ma najmniejszej ochoty podchodzić bliżej."
+      - id: broom
+        name: "Wysoka miotła"
+        description: "Miotła oparta o ścianę w kuchni. Jej włosie sterczy jak dzikie kudły i z dołu wygląda jak dziwne stworzenie stojące na jednej nodze i obserwujące wszystko wokół. Gdy przeciąg poruszy powietrzem, lekko się kołysze — a wąsiki Kamili płasko przywierają do pyszczka."
 
     conditions:
-      - id: Kamila_home
-        description: "Kamila wraca do klatki i znów jest z siostrami"
+      - id: camilla_home
+        description: "Kamila dociera do klatki i znów jest z siostrami"
         narrative: "Maleńkie łapki na znajomych wiórkach. Zapach domu. Alicia przytula się blisko, a Zuzanna robi radosny mały piruet. Przygoda dobiegła końca — i była zarazem cudowna, trochę straszna i piękna."
-      - id: lost_in_garden
-        description: "Kamila zapuszcza się zbyt głęboko w ogród i czuje się przytłoczona"
-        narrative: "Ogród jest taki wielki, a mieszkanie wydaje się tak daleko. Kamila zwija się pod liściem, a jej wąsiki drżą. Ale wtedy to słyszy — cichutko, przez otwarte drzwi — popiskiwanie sióstr. Nie zgubiła się. Musi tylko wrócić do domu, podążając za ich głosami."
 
     events:
       - id: sisters_call
         description: "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Kamilę do domu."
       - id: zuzanna_wakes
-        description: "Zuzanna, zmęczona zamartwianiem się, zaczyna biegać w kołowrotku — tak sobie radzi. Rytmiczne piski, skrzyp-skrzyp-skrzyp, niosą się przez ciche mieszkanie jak maleńkie bicie serca."
+        description: "Zuzanna, zmęczona zamartwianiem się, zaczyna biegać w kołowrotku — tak sobie radzi. Rytmiczne skrzyp-skrzyp-skrzyp niesie się przez ciche mieszkanie jak maleńkie bicie serca."
       - id: butterfly_leaves
         description: "Motyl odlatuje ponad ogrodowym murem, zostawiając Kamilę samą pośród wysokich źdźbeł trawy."
+      - id: wild_mouse_appears
+        description: "Szmer w trawie — i między źdźbłami pojawiają się dwoje ciemnych oczu. Dzika myszka o brązowym futerku i jasnym żółtym pasku na grzbiecie obserwuje Kamilę, poruszając wąsikami. Nigdy wcześniej nie widziała białej myszki."
       - id: dust_bunny_rolls
         description: "Lekki przeciąg popycha kłębek kurzu prosto w stronę Kamili. Przez ułamek sekundy zastyga ze strachu — ale to tylko puszek i nic więcej."

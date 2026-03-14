@@ -63,7 +63,7 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
   test "find with locale pl returns Polish title for camillas_way_home" do
     scenario = ScenarioCatalog.find("camillas_way_home", locale: "pl")
     assert_not_nil scenario
-    assert_equal "Droga Camilli do domu", scenario["title"]
+    assert_equal "Droga Kamili do domu", scenario["title"]
   end
 
   test "find with locale pl merges scene name" do
@@ -95,13 +95,13 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     scenario = ScenarioCatalog.find("camillas_way_home", locale: "pl")
 
     assert_equal(
-      "Samica, mała biała myszka o ciemnych oczach. Domowa myszka mieszkająca w klatce z dwiema siostrami. Zwinna, ale niezdarna. Ciekawska, delikatnie odważna, łatwo płoszy się nowościami, lecz zawsze idzie dalej.",
+      "Samica, mała biała myszka o ciemnych oczach. Domowa myszka mieszkająca w klatce z dwiema siostrami. Zwinna, ale niezdarna. Ciekawska, łagodnie odważna, łatwo płoszy się nowościami, lecz zawsze idzie dalej.",
       scenario.dig("hero", "llm_description")
     )
 
     event = scenario.dig("acts", 0, "events").find { |e| e["id"] == "sisters_call" }
     assert_equal(
-      "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Camillę do domu.",
+      "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Kamilę do domu.",
       event["description"]
     )
   end

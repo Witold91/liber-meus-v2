@@ -91,7 +91,7 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
     event = events.find { |e| e["id"] == "sisters_call" }
     assert_not_nil event
     assert_equal(
-      "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Camillę do domu.",
+      "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Kamilę do domu.",
       event["description"]
     )
   end
