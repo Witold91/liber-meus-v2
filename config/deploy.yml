@@ -99,10 +99,10 @@ destinations:
   production:
     servers:
       web:
-        - <%= ENV.fetch("PRODUCTION_HOST") %>
+        - <%= ENV.fetch("PRODUCTION_HOST", "TODO") %>
     accessories:
       db:
-        host: <%= ENV.fetch("PRODUCTION_HOST") %>
+        host: <%= ENV.fetch("PRODUCTION_HOST", "TODO") %>
     env:
       clear:
         WEB_CONCURRENCY: 2
