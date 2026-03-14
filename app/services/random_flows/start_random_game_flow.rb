@@ -58,6 +58,7 @@ module RandomFlows
         "narrator_style" => world_data["narrator_style"],
         "setting_name" => world_data["setting_name"],
         "theme" => RandomMode::WorldGeneratorService.resolve_theme(world_data["theme_id"]),
+        "recently_visited_scenes" => [ scene_id ],
         "generated_scenes" => {
           scene_id => initial_scene
         }
@@ -98,6 +99,8 @@ module RandomFlows
         tokens_used: prologue_tokens,
         options_payload: { "prologue" => true }
       )
+
+      user&.deduct_tokens!(prologue_tokens) if user.present?
 
       game
     end

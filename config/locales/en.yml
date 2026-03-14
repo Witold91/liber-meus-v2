@@ -16,10 +16,15 @@ en:
         enter_action: "Please enter an action."
         ai_connection_error: "Unable to connect to the AI server. Please try again."
         error: "Error: %{message}"
+        out_of_tokens: "You have no tokens remaining. Please contact the app owner."
     scenario_select:
       alerts:
         unknown_scenario: "Unknown scenario."
         could_not_start: "Could not start game: %{message}"
+        out_of_tokens: "You have no tokens remaining. Please contact the app owner."
+    profiles:
+      notices:
+        account_deleted: "Your account has been deleted."
 
   views:
     scenario_select:
@@ -40,6 +45,16 @@ en:
         momentum: "Momentum"
       inventory:
         title: "Inventory"
+    nav:
+      tokens: "tokens"
+      out_of_tokens: "You have no tokens remaining. Please contact the app owner."
+    profile:
+      title: "Profile"
+      name: "Name"
+      email: "Email"
+      tokens_remaining: "Tokens remaining"
+      delete_account: "Delete Account"
+      delete_confirm: "Are you sure? This cannot be undone."
     scene_panel:
       unknown_location: "Unknown Location"
       hide: "Hide"
@@ -47,6 +62,8 @@ en:
       actors: "Actors"
       objects: "Objects"
       exits: "Exits"
+      nearby_scenes: "Known Locations"
+      go_to: "Go to %{name}"
       empty: "No scene information available."
 
   game:
@@ -107,6 +124,7 @@ en:
         objects_present: "OBJECTS PRESENT:"
         list_item: "  - %{name}: %{statuses}"
         exits: "EXITS (reachable locations from here): %{exits}"
+        story_so_far_header: "STORY SO FAR:"
         established_facts_header: "ESTABLISHED FACTS:"
         recent_actions_header: "RECENT ACTIONS:"
         recent_action_item: "  Turn %{turn_number}: %{action} → %{resolution}"
@@ -135,7 +153,7 @@ en:
         established_facts_header: "ESTABLISHED FACTS:"
         recent_actions_header: "RECENT ACTIONS:"
         recent_action_item: "  Turn %{turn_number}: %{action} → %{resolution}"
-        health_loss: "HEALTH LOST: %{amount} — the narrative must describe the physical cause of this damage concretely (a blow received, a wound, a fall, exhaustion). Do not skip this."
+        health_loss: "HEALTH LOST: %{amount} — the narrative must describe the physical cause of this damage concretely (a blow received, a wound, a fall, exhaustion). Use DIFFICULTY REASONING to justify why the damage occurred. Do not skip this."
         health_gain: "HEALTH RESTORED: %{amount} — the narrative must describe the healing concretely (bandaging a wound, taking medicine, receiving care). Do not skip this."
         previous_narrative_header: "LAST NARRATION (tail — continue from here):"
         player_action: "PLAYER ACTION: %{action}"

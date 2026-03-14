@@ -16,10 +16,15 @@ pl:
         enter_action: "Wpisz działanie."
         ai_connection_error: "Nie można połączyć się z serwerem AI. Spróbuj ponownie."
         error: "Błąd: %{message}"
+        out_of_tokens: "Brak pozostałych tokenów. Skontaktuj się z właścicielem aplikacji."
     scenario_select:
       alerts:
         unknown_scenario: "Nieznany scenariusz."
         could_not_start: "Nie udało się rozpocząć gry: %{message}"
+        out_of_tokens: "Brak pozostałych tokenów. Skontaktuj się z właścicielem aplikacji."
+    profiles:
+      notices:
+        account_deleted: "Twoje konto zostało usunięte."
 
   views:
     scenario_select:
@@ -40,6 +45,16 @@ pl:
         momentum: "Tempo"
       inventory:
         title: "Ekwipunek"
+    nav:
+      tokens: "tokeny"
+      out_of_tokens: "Brak pozostałych tokenów. Skontaktuj się z właścicielem aplikacji."
+    profile:
+      title: "Profil"
+      name: "Imię"
+      email: "E-mail"
+      tokens_remaining: "Pozostałe tokeny"
+      delete_account: "Usuń konto"
+      delete_confirm: "Czy na pewno? Tej operacji nie można cofnąć."
     scene_panel:
       unknown_location: "Nieznana lokacja"
       hide: "Ukryj"
@@ -47,6 +62,8 @@ pl:
       actors: "Postacie"
       objects: "Obiekty"
       exits: "Wyjścia"
+      nearby_scenes: "Znane lokacje"
+      go_to: "Idź do %{name}"
       empty: "Brak informacji o scenie."
 
   game:
@@ -107,6 +124,7 @@ pl:
         objects_present: "OBECNE OBIEKTY:"
         list_item: "  - %{name}: %{statuses}"
         exits: "WYJŚCIA (dostępne lokacje): %{exits}"
+        story_so_far_header: "HISTORIA DO TEJ PORY:"
         established_facts_header: "USTALONE FAKTY:"
         recent_actions_header: "OSTATNIE DZIAŁANIA:"
         recent_action_item: "  Tura %{turn_number}: %{action} → %{resolution}"
@@ -135,7 +153,7 @@ pl:
         established_facts_header: "USTALONE FAKTY:"
         recent_actions_header: "OSTATNIE DZIAŁANIA:"
         recent_action_item: "  Tura %{turn_number}: %{action} → %{resolution}"
-        health_loss: "UTRACONE ZDROWIE: %{amount} — narracja musi opisać fizyczną przyczynę tych obrażeń (otrzymany cios, rana, upadek, wyczerpanie). Nie pomijaj tego."
+        health_loss: "UTRACONE ZDROWIE: %{amount} — narracja musi opisać fizyczną przyczynę tych obrażeń (otrzymany cios, rana, upadek, wyczerpanie). Użyj UZASADNIENIA TRUDNOŚCI, aby wyjaśnić dlaczego obrażenia nastąpiły. Nie pomijaj tego."
         health_gain: "PRZYWRÓCONE ZDROWIE: %{amount} — narracja musi opisać leczenie konkretnie (opatrzenie rany, zażycie lekarstwa, otrzymanie opieki). Nie pomijaj tego."
         previous_narrative_header: "OSTATNIA NARRACJA (końcówka — kontynuuj stąd):"
         player_action: "DZIAŁANIE GRACZA: %{action}"

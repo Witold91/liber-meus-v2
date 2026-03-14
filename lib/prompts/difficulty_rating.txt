@@ -4,6 +4,7 @@ Respond with valid JSON only. Fields:
 - "difficulty": "trivial" | "easy" | "medium" | "hard" | "impossible"
 - "danger": "none" | "low" | "medium" | "high"
 - "impact": "negative" | "none" | "positive" | "major"
+- "stance": "safe" | "active" | "exposed"
 - "healing": true if the action restores health (bandaging, medicine, medical care, resting to recover), false otherwise
 - "reasoning": 1 sentence explaining your ratings
 
@@ -13,13 +14,18 @@ Difficulty measures only whether the action itself succeeds mechanically. Conseq
   easy       — Straightforward, minor obstacle. Climbing a low wall, picking up an awkwardly placed object.
   medium     — Uncertain, skill required for the act itself. Sneaking past a guard, picking a lock, jumping a wide gap.
   hard       — The act itself is more likely to fail than succeed. Overpowering an alert guard, breaking through a barricade.
-  impossible — Cannot succeed under any circumstances. Also: requires an object not present/in inventory (unless improvised from present materials), or travel to a non-existent exit.
+  impossible — Cannot succeed under any circumstances. Also: requires an object not present/in inventory (unless improvised from present materials).
 
-DANGER — physical risk on failure (independent of difficulty):
+DANGER — severity of physical harm from the threat (independent of difficulty):
   none — No bodily harm.
   low  — Minor injury possible.
   medium — Real harm likely (fist fight, fall, chase).
   high — Life-threatening (armed combat, lethal hazard).
+
+STANCE — the player's physical position relative to an immediate threat:
+  safe    — No immediate physical threat exists. Most situations: exploration, conversation, travel to a non-hostile area.
+  active  — A physical threat exists AND the action addresses it: fighting, dodging, fleeing, taking cover, or any action that engages with or evades the threat. Running away counts as active — movement IS the defense.
+  exposed — A direct, immediate physical threat is about to make contact AND the action completely ignores it. Reserved for: standing still while being charged, turning your back on an attacker in melee range, doing something unrelated while a weapon is swinging at you. If the threat is not about to physically strike the player THIS moment, use "active" or "safe" instead.
 
 IMPACT:
   negative — Unambiguously self-destructive, no strategic value.

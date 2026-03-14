@@ -27,6 +27,15 @@ class GamesController < ApplicationController
   end
 
   def continue
+    if current_user.out_of_tokens?
+      message = t("controllers.games.alerts.out_of_tokens")
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { message: message }) }
+        format.html { redirect_to game_path(@game), alert: message }
+      end
+      return
+    end
+
     unless @game.status == "active"
       respond_to do |format|
         format.turbo_stream { head :unprocessable_entity }

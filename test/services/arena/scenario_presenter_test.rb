@@ -64,13 +64,4 @@ class Arena::ScenarioPresenterTest < ActiveSupport::TestCase
     assert_nil @presenter.scene_context_for("bogus_scene", @world_state)
   end
 
-  test "adjacent_scene_ids returns reachable scenes" do
-    adj = @presenter.adjacent_scene_ids("sycamore_grove")
-    assert_includes adj, "verona_square"
-    assert_includes adj, "montague_grounds"
-  end
-
-  test "exit_scene? returns false for sycamore_grove" do
-    refute @presenter.exit_scene?("sycamore_grove")
-  end
 end

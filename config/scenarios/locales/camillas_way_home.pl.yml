@@ -1,12 +1,12 @@
-title: "Droga Camilli do domu"
+title: "Droga Kamili do domu"
 description: "Mała biała myszka gubi się w wielkim mieszkaniu. Pomóż jej odnaleźć drogę z powrotem do swoich sióstr."
 world_context: |
-  Przytulne niewielkie mieszkanie z ogrodem, współczesność. Świat oglądamy z perspektywy maleńkiej myszki — meble górują jak budynki, nogi stołu są kolumnami, a dywan rozciąga się jak ogromna łąka. Nie ma tu przemocy, śmiertelnego niebezpieczeństwa ani drapieżników. Najgorsze, co może się zdarzyć, to jeszcze bardziej się zgubić albo trochę się przestraszyć. Ton opowieści ma być ciepły, łagodny i pełen ciekawości. Camilla jest domową myszką, która mieszka w klatce na biurku w sypialni razem z dwiema siostrami. Przypadkiem wymknęła się na zewnątrz, gdy drzwiczki klatki zostały uchylone, i teraz musi znaleźć drogę z powrotem.
+  Przytulne niewielkie mieszkanie z ogrodem, współczesność. Świat oglądamy z perspektywy maleńkiej myszki — meble górują jak budynki, nogi stołu są kolumnami, a dywan rozciąga się jak ogromna łąka. Nie ma tu przemocy, śmiertelnego niebezpieczeństwa ani drapieżników. Najgorsze, co może się zdarzyć, to jeszcze bardziej się zgubić albo trochę się przestraszyć. Ton opowieści ma być ciepły, łagodny i pełen ciekawości. Kamila jest domową myszką, która mieszka w klatce na biurku w sypialni razem z dwiema siostrami. Przypadkiem wymknęła się na zewnątrz, gdy drzwiczki klatki zostały uchylone, i teraz musi znaleźć drogę z powrotem.
 narrator_style: |
-  Pisz ciepłym, baśniowym stylem, jak narrator książeczki dla dzieci. Używaj łagodnych detali zmysłowych — miękkości dywanu pod drobnymi łapkami, zapachu świeżych ziół z kuchni, ciepła słońca wpadającego przez okno. Zdania są krótkie i czułe. W oczach Camilli świat jest wielki i pełen cudów. Zachowaj poczucie łagodnej przygody i cichej odwagi. 30-60 słów.
+  Pisz ciepłym, baśniowym stylem, jak narrator książeczki dla dzieci. Używaj łagodnych detali zmysłowych — miękkości dywanu pod drobnymi łapkami, zapachu świeżych ziół z kuchni, ciepła słońca wpadającego przez okno. Zdania są krótkie i czułe. W oczach Kamili świat jest wielki i pełen cudów. Zachowaj poczucie łagodnej przygody i cichej odwagi. 30-60 słów.
 
 hero:
-  name: "Camilla"
+  name: "Kamila"
   description: "Mała biała myszka o ciemnych, błyszczących oczach. Jest zwinna i ciekawska, ale trochę niezdarna — bez przerwy potyka się o własne drobne łapki. Choć jest najmniejsza z trzech sióstr, ma największe serce i najbardziej przygodowego ducha."
   llm_description: "Samica, mała biała myszka o ciemnych oczach. Domowa myszka mieszkająca w klatce z dwiema siostrami. Zwinna, ale niezdarna. Ciekawska, delikatnie odważna, łatwo płoszy się nowościami, lecz zawsze idzie dalej."
 
@@ -15,7 +15,7 @@ acts:
     title: "Wielki świat"
     intro: |
       Drzwiczki klatki są otwarte — tylko odrobinę, ale to wystarczy.
-      Camilla nie chciała spaść. Wyciągała się, żeby powąchać powietrze za prętami, wychyliła się odrobinę za daleko i wtedy — fiuu — zleciała prosto z biurka.
+      Kamila nie chciała spaść. Wyciągała się, żeby powąchać powietrze za prętami, wychyliła się odrobinę za daleko i wtedy — fiuu — zleciała prosto z biurka.
       Wylądowała na czymś miękkim (pewnie na skarpetce) i przeturlała się dwa razy, zanim się zatrzymała.
       Teraz siedzi na podłodze w sypialni, a jej wąsiki drżą, gdy patrzy w górę na ogromny pokój wokół siebie.
       Gdzieś wysoko nad sobą słyszy, jak Alicia i Zuzanna popiskują z klatki.
@@ -59,7 +59,7 @@ acts:
             label: "Przemknij przez szparę przy drzwiach do ogrodu"
       - id: kitchen
         name: "Kuchnia"
-        description: "Kraina okruszków i zapachów, połączona z salonem otwartym blatem. Płytki są chłodne pod maleńkimi łapkami. Przy lodówce leży okruszek chleba wielkości głowy Camilli. Blat kuchenny wydaje się niewyobrażalnie wysoki."
+        description: "Kraina okruszków i zapachów, połączona z salonem otwartym blatem. Płytki są chłodne pod maleńkimi łapkami. Przy lodówce leży okruszek chleba wielkości głowy Kamili. Blat kuchenny wydaje się niewyobrażalnie wysoki."
         exits:
           - to: living_room
             label: "Wróć do salonu"
@@ -79,7 +79,7 @@ acts:
             label: "Wdrap się z powrotem na krawędź"
       - id: garden
         name: "Ogród"
-        description: "Źdźbła trawy wyrastają tu jak las. Obok przelatuje motyl. Ziemia jest miękka i chłodna. Kwitną kwiaty w kolorach, jakich Camilla nigdy wcześniej nie widziała. Jest tu pięknie — ale to nie jest dom."
+        description: "Źdźbła trawy wyrastają tu jak las. Obok przelatuje motyl. Ziemia jest miękka i chłodna. Kwitną kwiaty w kolorach, jakich Kamila nigdy wcześniej nie widziała. Jest tu pięknie — ale to nie jest dom."
         exits:
           - to: living_room
             label: "Wróć do środka przez szparę przy drzwiach"
@@ -91,10 +91,10 @@ acts:
     actors:
       - id: alicia
         name: "Alicia"
-        description: "Większa siostra Camilli, myszka o ciemnym futerku i spokojnych, czujnych oczach. Jest opiekuńcza i stateczna — to ona zawsze wie, co robić."
+        description: "Większa siostra Kamili, myszka o ciemnym futerku i spokojnych, czujnych oczach. Jest opiekuńcza i stateczna — to ona zawsze wie, co robić."
       - id: zuzanna
         name: "Zuzanna"
-        description: "Mała brązowa siostra Camilli, figlarna i trochę leniwa. Wolałaby spać, niż się martwić, ale tęskni za Camillą i wciąż ją nawołuje."
+        description: "Mała brązowa siostra Kamili, figlarna i trochę leniwa. Wolałaby spać, niż się martwić, ale tęskni za Kamilą i wciąż ją nawołuje."
       - id: butterfly
         name: "Ogrodowy motyl"
         description: "Łagodny pomarańczowy motyl, który frunie po ogrodzie. Nie jest przyjacielem, ale nie stanowi też zagrożenia — to po prostu piękna, ciekawska obecność."
@@ -105,7 +105,7 @@ acts:
     objects:
       - id: breadcrumb
         name: "Olbrzymi okruszek chleba"
-        description: "Okruszek chleba wielkości głowy Camilli. Idealna przekąska dla zmęczonej małej myszki."
+        description: "Okruszek chleba wielkości głowy Kamili. Idealna przekąska dla zmęczonej małej myszki."
       - id: sock
         name: "Ciepła skarpetka"
         description: "Miękka, znoszona skarpetka na podłodze w sypialni. Pachnie znajomo i bezpiecznie — idealna do odpoczynku."
@@ -123,13 +123,13 @@ acts:
         description: "Długi kabel zwisający z lampki na biurku, sięgający niemal do samej podłogi. Odważna myszka mogłaby wspiąć się po nim jak po linie."
       - id: popcorn_kernel
         name: "Zapomniane ziarnko popcornu"
-        description: "Jedno ziarnko popcornu zaklinowane między poduszkami kanapy. Jest prawie tak duże jak Camilla i pachnie cudownie, maślanie. Uczta godna mysiej królowej."
+        description: "Jedno ziarnko popcornu zaklinowane między poduszkami kanapy. Jest prawie tak duże jak Kamila i pachnie cudownie, maślanie. Uczta godna mysiej królowej."
       - id: hair_tie
         name: "Elastyczna gumka do włosów"
         description: "Fioletowa gumka do włosów leżąca na dywanie w salonie. Cudownie sprężysta — myszka mogłaby używać jej jak trampoliny albo ciągnąć za sobą niczym najmniejsze lasso na świecie."
       - id: rubber_duck
         name: "Żółta gumowa kaczuszka"
-        description: "Mała gumowa kaczuszka siedząca na brzegu wanny i uśmiechająca się swoim wiecznym uśmiechem. Dla Camilli jest ogromna — to jasna żółta olbrzymka o życzliwie namalowanych oczach."
+        description: "Mała gumowa kaczuszka siedząca na brzegu wanny i uśmiechająca się swoim wiecznym uśmiechem. Dla Kamili jest ogromna — to jasna żółta olbrzymka o życzliwie namalowanych oczach."
       - id: cotton_ball
         name: "Puchata kulka waty"
         description: "Kulka waty, która potoczyła się za łazienkowy kosz. Jest niewiarygodnie miękka — jeszcze miększa niż wiórki w domu. Idealna mała chmurka do odpoczynku."
@@ -144,22 +144,22 @@ acts:
         description: "Mały krawiecki naparstek schowany za regałem w salonie. Dla myszki byłby idealnym hełmem — albo bardzo elegancką wanienką."
       - id: petal
         name: "Opadły płatek róży"
-        description: "Pojedynczy miękki różowy płatek leżący w trawie w ogrodzie, wciąż lekko pachnący. Zawija się na brzegach jak mała łódeczka. Camilla mogłaby usiąść na nim jak na tronie."
+        description: "Pojedynczy miękki różowy płatek leżący w trawie w ogrodzie, wciąż lekko pachnący. Zawija się na brzegach jak mała łódeczka. Kamila mogłaby usiąść na nim jak na tronie."
 
     conditions:
-      - id: camilla_home
-        description: "Camilla wraca do klatki i znów jest z siostrami"
+      - id: Kamila_home
+        description: "Kamila wraca do klatki i znów jest z siostrami"
         narrative: "Maleńkie łapki na znajomych wiórkach. Zapach domu. Alicia przytula się blisko, a Zuzanna robi radosny mały piruet. Przygoda dobiegła końca — i była zarazem cudowna, trochę straszna i piękna."
       - id: lost_in_garden
-        description: "Camilla zapuszcza się zbyt głęboko w ogród i czuje się przytłoczona"
-        narrative: "Ogród jest taki wielki, a mieszkanie wydaje się tak daleko. Camilla zwija się pod liściem, a jej wąsiki drżą. Ale wtedy to słyszy — cichutko, przez otwarte drzwi — popiskiwanie sióstr. Nie zgubiła się. Musi tylko wrócić do domu, podążając za ich głosami."
+        description: "Kamila zapuszcza się zbyt głęboko w ogród i czuje się przytłoczona"
+        narrative: "Ogród jest taki wielki, a mieszkanie wydaje się tak daleko. Kamila zwija się pod liściem, a jej wąsiki drżą. Ale wtedy to słyszy — cichutko, przez otwarte drzwi — popiskiwanie sióstr. Nie zgubiła się. Musi tylko wrócić do domu, podążając za ich głosami."
 
     events:
       - id: sisters_call
-        description: "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Camillę do domu."
+        description: "Alicia przyciska nosek do prętów klatki i piszczy głośno — długim, wysokim głosem, który niesie się echem po mieszkaniu. Woła Kamilę do domu."
       - id: zuzanna_wakes
         description: "Zuzanna, zmęczona zamartwianiem się, zaczyna biegać w kołowrotku — tak sobie radzi. Rytmiczne piski, skrzyp-skrzyp-skrzyp, niosą się przez ciche mieszkanie jak maleńkie bicie serca."
       - id: butterfly_leaves
-        description: "Motyl odlatuje ponad ogrodowym murem, zostawiając Camillę samą pośród wysokich źdźbeł trawy."
+        description: "Motyl odlatuje ponad ogrodowym murem, zostawiając Kamilę samą pośród wysokich źdźbeł trawy."
       - id: dust_bunny_rolls
-        description: "Lekki przeciąg popycha kłębek kurzu prosto w stronę Camilli. Przez ułamek sekundy zastyga ze strachu — ale to tylko puszek i nic więcej."
+        description: "Lekki przeciąg popycha kłębek kurzu prosto w stronę Kamili. Przez ułamek sekundy zastyga ze strachu — ale to tylko puszek i nic więcej."

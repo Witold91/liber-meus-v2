@@ -7,10 +7,20 @@ class SessionsController < ApplicationController
 
   def create
     auth = request.env["omniauth.auth"]
-    user = User.find_or_create_by!(google_uid: auth["uid"]) do |u|
-      u.email = auth.dig("info", "email")
-      u.name  = auth.dig("info", "name")
+    email = auth.dig("info", "email")
+
+    # Check for soft-deleted user by email first (preserves token balance across re-signups)
+    user = User.find_by(email: email)
+    if user
+      user.update!(deleted_at: nil, google_uid: auth["uid"], name: auth.dig("info", "name"))
+    else
+      user = User.create!(
+        google_uid: auth["uid"],
+        email: email,
+        name: auth.dig("info", "name")
+      )
     end
+
     session[:user_id] = user.id
     redirect_to root_path
   end

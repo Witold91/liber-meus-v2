@@ -26,12 +26,13 @@ module Arena
             result["actors"][resolved_actor_id].merge!(updates.except("status")) if updates.key?("notes")
           elsif updates["new_actor"]
             # New actor introduced by the narrator (random mode)
+            normalized_id = normalize_slug(actor_id)
             result["actors"] ||= {}
-            result["actors"][actor_id] = {
+            result["actors"][normalized_id] = {
               "scene" => updates["scene"] || result["player_scene"],
               "status" => updates["status"] || "present"
             }
-            register_new_actor(result, actor_id, updates)
+            register_new_actor(result, normalized_id, updates)
           end
         end
       end
@@ -47,8 +48,9 @@ module Arena
             result["objects"][resolved_object_id]["scene"] = updates["scene"] if updates.key?("scene")
           else
             # Object not in scenario — treat as an improvised item (may be scene-bound or carried)
+            normalized_id = normalize_slug(object_id)
             result["improvised_objects"] ||= {}
-            result["improvised_objects"][object_id] = updates.slice("status", "scene").presence || { "status" => "acquired" }
+            result["improvised_objects"][normalized_id] = updates.slice("status", "scene").presence || { "status" => "acquired" }
           end
         end
       end
@@ -77,9 +79,9 @@ module Arena
 
       if (player_moved = diff["player_moved_to"])
         scene_id = resolve_id(player_moved, valid_scene_ids, scene_ids_by_slug)
-        if scene_id && presenter.adjacent_scene_ids(result["player_scene"]).include?(scene_id)
-          result["player_scene"] = scene_id
-        end
+        # In random mode, accept any scene ID (new scenes are generated on-the-fly)
+        scene_id ||= normalize_slug(player_moved) if presenter.is_a?(RandomMode::WorldPresenter)
+        result["player_scene"] = scene_id if scene_id
       end
 
       result

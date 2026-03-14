@@ -48,7 +48,7 @@
         <% end %>
       <% end %>
 
-      <% if scene_context[:exits].any? %>
+      <% if scene_context[:exits]&.any? %>
         <div class="scene-section-label"><%= t("views.scene_panel.exits") %></div>
         <% scene_context[:exits].each do |exit_def| %>
           <div class="exit-item">
@@ -56,6 +56,19 @@
                   data-action="click->game#fillAction"
                   data-label="<%= exit_def['label'] %>">
               → <%= exit_def['label'] %><%= " ★" if exit_def['arena_exit'] %>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if scene_context[:nearby_scenes]&.any? %>
+        <div class="scene-section-label"><%= t("views.scene_panel.nearby_scenes") %></div>
+        <% scene_context[:nearby_scenes].each do |nearby| %>
+          <div class="exit-item">
+            <span class="exit-label"
+                  data-action="click->game#fillAction"
+                  data-label="<%= t('views.scene_panel.go_to', name: nearby[:name]) %>">
+              → <%= nearby[:name] %>
             </span>
           </div>
         <% end %>

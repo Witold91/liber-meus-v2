@@ -2,3 +2,10 @@ one:
   google_uid: "google-uid-001"
   email: "player@example.com"
   name: "Test Player"
+  tokens_remaining: 100000
+
+broke:
+  google_uid: "google-uid-002"
+  email: "broke@example.com"
+  name: "Broke Player"
+  tokens_remaining: 0

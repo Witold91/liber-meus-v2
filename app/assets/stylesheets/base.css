@@ -14,10 +14,13 @@ body::before {
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 125%; }
+@media (max-width: 768px) { html { font-size: 100%; } }
 body { font-family: var(--theme-font); background: var(--theme-bg); color: var(--theme-text); min-height: 100vh; }
 a { color: var(--theme-accent); }
 
-.container { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 1rem; }
+.container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 1rem; }
+@media (min-width: 1400px) { .container { max-width: 1200px; } }
 
 .btn { display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid var(--theme-accent); background: transparent; color: var(--theme-accent); cursor: pointer; font-family: inherit; font-size: 0.9rem; text-decoration: none; }
 .btn:hover { background: var(--theme-accent); color: var(--theme-bg); }
@@ -35,3 +38,9 @@ h1, h2, h3 { color: #e8e8d4; font-weight: normal; letter-spacing: 0.05em; }
 .app-nav-user { font-family: 'Lora', Georgia, serif; font-style: italic; color: #4a4030; }
 .app-nav-signout { background: transparent; border: 1px solid #2a2318; color: #4a4030; padding: 0.1rem 0.4rem; cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; }
 .app-nav-signout:hover { color: var(--theme-accent); border-color: #3a3020; }
+.app-nav-tokens { color: #4a4030; font-size: 0.65rem; letter-spacing: 0.05em; }
+
+.token-banner { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 9999; background: #2a1010; border: 1px solid #6a3030; padding: 0.75rem 2.5rem 0.75rem 1.25rem; font-family: 'Lora', Georgia, serif; font-size: 0.82rem; color: #c8a0a0; box-shadow: 0 4px 20px rgba(0,0,0,0.6); max-width: 480px; width: calc(100% - 2rem); }
+.token-banner-text { display: block; }
+.token-banner-close { position: absolute; top: 0.4rem; right: 0.6rem; background: none; border: none; color: #6a4040; font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0.2rem; }
+.token-banner-close:hover { color: #c8a0a0; }

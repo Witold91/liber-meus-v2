@@ -1,7 +1,7 @@
 slug: camillas_way_home
 title: "Camilla's Way Home"
 description: "A small white mouse is lost in a big apartment. Help her find her way back to her sisters."
-turn_limit: 20
+turn_limit: 999
 world_context: |
   A cozy small apartment with a garden, present day. The world is seen from the perspective of a tiny mouse — furniture towers like buildings, table legs are columns, and a carpet is a vast meadow. There is no violence, no danger of death, no predators. The worst that can happen is getting more lost or a little scared. The tone is warm, gentle, and curious. Camilla is a pet mouse who lives in a cage on a desk in the bedroom with her two sisters. She accidentally slipped out when the cage door was left ajar and now she needs to find her way back.
 narrator_style: |
@@ -275,13 +275,6 @@ acts:
         type: goal
         check: player_at_scene
         scene: cage
-      - id: lost_in_garden
-        description: "Camilla wanders too deep into the garden and gets overwhelmed"
-        narrative: "The garden is so big, and the apartment feels so far away. Camilla curls up under a leaf, whiskers trembling. But then she hears it — faintly, through the open door — her sisters squeaking. She is not lost. She just needs to follow their voices home."
-        type: danger
-        check: actor_has_status
-        actor: butterfly
-        status: gone
 
     events:
       - id: sisters_call

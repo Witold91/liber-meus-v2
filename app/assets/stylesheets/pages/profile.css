@@ -1,0 +1,51 @@
+/* Profile page */
+
+.profile-screen {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.profile-box {
+  border: 1px solid #2a2318;
+  background: #0f0d09;
+  padding: 2.5rem 3rem;
+  max-width: 420px;
+  width: 100%;
+}
+.profile-heading {
+  font-family: 'Cinzel', 'Palatino Linotype', serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.15em;
+  color: var(--theme-accent);
+  margin-bottom: 1.5rem;
+}
+.profile-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #1a1510;
+}
+.profile-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: #4a4030;
+  text-transform: uppercase;
+}
+.profile-value {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.85rem;
+  color: var(--theme-text);
+}
+.profile-divider {
+  border: none;
+  border-top: 1px solid #2a2318;
+  margin: 1.75rem 0 1.25rem;
+}
+.profile-danger-zone {
+  text-align: center;
+}

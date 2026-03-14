@@ -18,15 +18,9 @@ Fields:
   - "name": Human-readable name
   - "scene": this scene's id
   - "default_status": short descriptive phrase (e.g. "locked with a rusty padlock", "half-full and warm")
-- "exits": Array of 1-3 exits. Each:
-  - "to": snake_case scene id
-  - "label": Descriptive label
 
 Rules:
-- MUST include an exit back to the ORIGIN SCENE using its exact id.
-- MAY include exits to EXISTING SCENES if geographically logical (interconnected map, not a tree).
-- MAY include exits to new scenes that don't exist yet.
-- Scene should feel like a natural continuation from the EXIT USED label.
+- Scene should feel like a natural continuation from the DIRECTION/DESTINATION label.
 - Stay thematically consistent with the WORLD CONTEXT.
 - Vary the scene — outdoor areas, transitional spaces, not just rooms. Some scenes can be empty of actors.
 - IDs: short, descriptive, snake_case.

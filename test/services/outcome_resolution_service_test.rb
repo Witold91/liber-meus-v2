@@ -27,24 +27,27 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     assert_equal 0, outcome[:health_loss]
   end
 
-  test "danger low: failure deals 8 health loss" do
+  test "danger low: failure rolls 2d6 for health loss" do
     OutcomeResolutionService.stubs(:rand).returns(1)
     outcome = OutcomeResolutionService.resolve(@game, "climb the fence", 1, { difficulty: "medium", danger: "low", impact: "positive" })
-    assert_equal 8, outcome[:health_loss]
+    assert_equal [1, 1], outcome[:damage_dice]
+    assert_equal 2, outcome[:health_loss]
   end
 
-  test "danger medium: partial deals 5 health loss" do
+  test "danger medium: partial rolls 2d6 for health loss" do
     # roll 4 + momentum 0 = 4 == medium threshold → partial
     OutcomeResolutionService.stubs(:rand).returns(4)
     outcome = OutcomeResolutionService.resolve(@game, "fight the guard", 1, { difficulty: "medium", danger: "medium", impact: "positive" })
     assert_equal "partial", outcome[:resolution_tag]
-    assert_equal 5, outcome[:health_loss]
+    assert_equal [4, 4], outcome[:damage_dice]
+    assert_equal 8, outcome[:health_loss]
   end
 
-  test "danger high: failure deals 35 health loss" do
-    OutcomeResolutionService.stubs(:rand).returns(1)
+  test "danger high: failure rolls 8d6 for health loss" do
+    OutcomeResolutionService.stubs(:rand).returns(3)
     outcome = OutcomeResolutionService.resolve(@game, "fight an armed guard", 1, { difficulty: "hard", danger: "high", impact: "positive" })
-    assert_equal 35, outcome[:health_loss]
+    assert_equal 8, outcome[:damage_dice].size
+    assert_equal 24, outcome[:health_loss]
   end
 
   test "success never deals health loss regardless of danger" do
@@ -116,20 +119,22 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
 
   # --- healing ---
 
-  test "healing true: success restores 15 health" do
+  test "healing true: success rolls 4d6 for health gain" do
     @game.update!(world_state: @game.world_state.merge("health" => 60))
-    OutcomeResolutionService.stubs(:rand).returns(6)
+    OutcomeResolutionService.stubs(:rand).returns(5)
     outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "easy", danger: "none", healing: true })
-    assert_equal 15, outcome[:health_gain]
+    assert_equal [5, 5, 5, 5], outcome[:healing_dice]
+    assert_equal 20, outcome[:health_gain]
     @game.reload
-    assert_equal 75, @game.world_state["health"]
+    assert_equal 80, @game.world_state["health"]
   end
 
-  test "healing true: partial restores 8 health" do
+  test "healing true: partial rolls 2d6 for health gain" do
     @game.update!(world_state: @game.world_state.merge("health" => 60))
     OutcomeResolutionService.stubs(:rand).returns(4)
     outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "medium", danger: "none", healing: true })
     assert_equal "partial", outcome[:resolution_tag]
+    assert_equal [4, 4], outcome[:healing_dice]
     assert_equal 8, outcome[:health_gain]
     @game.reload
     assert_equal 68, @game.world_state["health"]
@@ -140,35 +145,88 @@ class OutcomeResolutionServiceTest < ActiveSupport::TestCase
     OutcomeResolutionService.stubs(:rand).returns(1)
     outcome = OutcomeResolutionService.resolve(@game, "perform surgery", 1, { difficulty: "hard", danger: "high", healing: true })
     assert_equal 0, outcome[:health_gain]
+    assert_equal [], outcome[:healing_dice]
     @game.reload
-    assert_equal 25, @game.world_state["health"]  # 60 - 35 + 0
+    # 8d6 with all 1s = 8 damage; 60 - 8 + 0 = 52
+    assert_equal 52, @game.world_state["health"]
   end
 
   test "healing cannot exceed max health" do
     @game.update!(world_state: @game.world_state.merge("health" => 95))
     OutcomeResolutionService.stubs(:rand).returns(6)
     outcome = OutcomeResolutionService.resolve(@game, "bandage the wound", 1, { difficulty: "easy", danger: "none", healing: true })
-    assert_equal 15, outcome[:health_gain]
+    # 4d6 with all 6s = 24, but capped at 100
+    assert_equal 24, outcome[:health_gain]
     @game.reload
     assert_equal 100, @game.world_state["health"]
   end
 
   test "healing and danger stack on same turn" do
     @game.update!(world_state: @game.world_state.merge("health" => 60))
-    # partial with high danger: -12 health, +8 healing = net -4
+    # partial with high danger: 4d6 damage + 2d6 healing, all 4s
     OutcomeResolutionService.stubs(:rand).returns(4)
     outcome = OutcomeResolutionService.resolve(@game, "risky surgery", 1, { difficulty: "medium", danger: "high", healing: true })
     assert_equal "partial", outcome[:resolution_tag]
-    assert_equal 12, outcome[:health_loss]
+    assert_equal 16, outcome[:health_loss]
     assert_equal 8, outcome[:health_gain]
     @game.reload
-    assert_equal 56, @game.world_state["health"]  # 60 - 12 + 8
+    assert_equal 52, @game.world_state["health"]  # 60 - 16 + 8
   end
 
   test "healing false returns zero health_gain" do
     OutcomeResolutionService.stubs(:rand).returns(6)
     outcome = OutcomeResolutionService.resolve(@game, "look around", 1, { difficulty: "easy", danger: "none", healing: false })
     assert_equal 0, outcome[:health_gain]
+  end
+
+  # --- stance ---
+
+  test "stance safe: no health loss even with high danger and failure" do
+    OutcomeResolutionService.stubs(:rand).returns(1)
+    outcome = OutcomeResolutionService.resolve(@game, "sing a song", 1, { difficulty: "hard", danger: "high", stance: "safe", impact: "positive" })
+    assert_equal "failure", outcome[:resolution_tag]
+    assert_equal 0, outcome[:health_loss]
+  end
+
+  test "stance exposed: rolls failure-level dice regardless of resolution" do
+    OutcomeResolutionService.stubs(:rand).returns(3)
+    outcome = OutcomeResolutionService.resolve(@game, "I wait", 1, { difficulty: "trivial", danger: "high", stance: "exposed", impact: "none" })
+    assert_equal "success", outcome[:resolution_tag]
+    assert_equal 8, outcome[:damage_dice].size  # 8d6 (high/failure)
+    assert_equal 24, outcome[:health_loss]
+  end
+
+  test "stance exposed with medium danger" do
+    OutcomeResolutionService.stubs(:rand).returns(3)
+    outcome = OutcomeResolutionService.resolve(@game, "sing a song", 1, { difficulty: "trivial", danger: "medium", stance: "exposed", impact: "none" })
+    assert_equal 4, outcome[:damage_dice].size  # 4d6 (medium/failure)
+    assert_equal 12, outcome[:health_loss]
+  end
+
+  test "stance exposed with low danger" do
+    OutcomeResolutionService.stubs(:rand).returns(3)
+    outcome = OutcomeResolutionService.resolve(@game, "I wait", 1, { difficulty: "trivial", danger: "low", stance: "exposed", impact: "none" })
+    assert_equal 2, outcome[:damage_dice].size  # 2d6 (low/failure)
+    assert_equal 6, outcome[:health_loss]
+  end
+
+  test "stance exposed with danger none deals no damage" do
+    outcome = OutcomeResolutionService.resolve(@game, "I wait", 1, { difficulty: "trivial", danger: "none", stance: "exposed", impact: "none" })
+    assert_equal 0, outcome[:health_loss]
+  end
+
+  test "stance active uses resolution-based dice logic" do
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    outcome = OutcomeResolutionService.resolve(@game, "dodge the beast", 1, { difficulty: "medium", danger: "high", stance: "active", impact: "positive" })
+    assert_equal "success", outcome[:resolution_tag]
+    assert_equal 0, outcome[:health_loss]
+  end
+
+  test "stance defaults to active when omitted" do
+    OutcomeResolutionService.stubs(:rand).returns(6)
+    outcome = OutcomeResolutionService.resolve(@game, "fight the guard", 1, { difficulty: "easy", danger: "high" })
+    assert_equal "success", outcome[:resolution_tag]
+    assert_equal 0, outcome[:health_loss]
   end
 
   # --- defaults ---

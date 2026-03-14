@@ -1,0 +1,32 @@
+<% content_for :title, t("views.profile.title", default: "Profile") %>
+
+<div class="profile-screen">
+  <div class="profile-box">
+    <h1 class="profile-heading"><%= t("views.profile.title", default: "Profile") %></h1>
+
+    <div class="profile-field">
+      <span class="profile-label"><%= t("views.profile.name", default: "Name") %></span>
+      <span class="profile-value"><%= @user.name || "—" %></span>
+    </div>
+
+    <div class="profile-field">
+      <span class="profile-label"><%= t("views.profile.email", default: "Email") %></span>
+      <span class="profile-value"><%= @user.email %></span>
+    </div>
+
+    <div class="profile-field">
+      <span class="profile-label"><%= t("views.profile.tokens_remaining", default: "Tokens remaining") %></span>
+      <span class="profile-value"><%= number_with_delimiter(@user.tokens_remaining) %></span>
+    </div>
+
+    <hr class="profile-divider">
+
+    <div class="profile-danger-zone">
+      <%= button_to t("views.profile.delete_account", default: "Delete Account"),
+            profile_path,
+            method: :delete,
+            class: "btn btn-danger",
+            data: { turbo_confirm: t("views.profile.delete_confirm", default: "Are you sure? This cannot be undone.") } %>
+    </div>
+  </div>
+</div>

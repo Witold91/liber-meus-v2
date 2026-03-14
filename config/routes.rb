@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   delete "/session"                     => "sessions#destroy", as: :sign_out
 
   scope "(:locale)", locale: /en|pl/ do
+    resource :profile, only: [ :show, :destroy ]
     resource :scenario_select, controller: :scenario_select, only: [ :show, :create ]
 
     resource :random_setup, controller: :random_setup, only: [ :new ] do

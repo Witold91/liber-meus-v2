@@ -59,6 +59,12 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     assert_equal "sycamore_grove", result["player_scene"]
   end
 
+  test "apply_scene_diff allows non-adjacent player movement" do
+    diff = { "player_moved_to" => "capulet_hall" }
+    result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
+    assert_equal "capulet_hall", result["player_scene"]
+  end
+
   test "apply_scene_diff allows any status on a known object" do
     diff = { "object_updates" => { "romeo_sword" => { "status" => "broken" } } }
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
@@ -82,6 +88,13 @@ class Arena::WorldStateManagerTest < ActiveSupport::TestCase
     result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
     assert_equal "burning", result.dig("improvised_objects", "campfire", "status")
     assert_equal "capulet_grounds", result.dig("improvised_objects", "campfire", "scene")
+  end
+
+  test "apply_scene_diff normalizes improvised object ID to snake_case" do
+    diff = { "object_updates" => { "Korgoth's Axe" => { "status" => "dropped" } } }
+    result = Arena::WorldStateManager.new(@world_state).apply_scene_diff(diff, scenario: @scenario)
+    assert_equal "dropped", result.dig("improvised_objects", "korgoth_s_axe", "status")
+    assert_nil result.dig("improvised_objects", "Korgoth's Axe")
   end
 
   test "apply_scene_diff defaults improvised object status to acquired when no status given" do

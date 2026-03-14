@@ -7,17 +7,7 @@ module RandomMode
     end
 
     def scenes
-      real_scenes = @generated_scenes.values
-
-      # Include stub entries for exit targets that haven't been generated yet.
-      # This allows WorldStateManager to validate player_moved_to for new scenes.
-      known_ids = @generated_scenes.keys.to_set
-      exit_target_ids = real_scenes.flat_map { |s| (s["exits"] || []).map { |e| e["to"] } }.uniq
-      stubs = exit_target_ids.reject { |id| known_ids.include?(id) }.map do |id|
-        { "id" => id, "name" => id.tr("_", " ").titleize }
-      end
-
-      real_scenes + stubs
+      @generated_scenes.values
     end
 
     def actors
@@ -87,7 +77,7 @@ module RandomMode
         scene: { id: scene["id"], name: scene["name"], description: scene["description"] },
         actors: scene_actors,
         objects: scene_objects,
-        exits: scene["exits"] || [],
+        nearby_scenes: nearby_scene_names,
         inventory: player_inventory(world_state)
       }
     end
@@ -136,12 +126,6 @@ module RandomMode
       changes
     end
 
-    def adjacent_scene_ids(scene_id)
-      scene = @generated_scenes[scene_id]
-      return [] unless scene
-      (scene["exits"] || []).map { |e| e["to"] }
-    end
-
     private
 
     def player_inventory(world_state)
@@ -165,8 +149,13 @@ module RandomMode
     end
 
     def nearby_scenes
-      nearby_ids = Set.new([@player_scene]) + adjacent_scene_ids(@player_scene)
-      @generated_scenes.values_at(*nearby_ids).compact
+      recent_ids = (@world_state["recently_visited_scenes"] || []).last(5).to_set
+      recent_ids << @player_scene
+      @generated_scenes.values_at(*recent_ids).compact
+    end
+
+    def nearby_scene_names
+      @generated_scenes.except(@player_scene).map { |id, s| { id: id, name: s["name"] } }
     end
 
     def current_scene_for(entity, states)

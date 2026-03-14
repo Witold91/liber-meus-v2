@@ -229,11 +229,17 @@ class ArenaNarratorService
       parts << ""
     end
 
-    if scene_context[:exits].any?
+    if scene_context[:exits]&.any?
       parts << I18n.t(
         "services.arena_narrator_service.prompt.exits",
         exits: scene_context[:exits].map { |e| "#{e["label"]} (to: #{e["to"]})" }.join(", ")
       )
+      parts << ""
+    end
+
+    if scene_context[:nearby_scenes]&.any?
+      nearby = scene_context[:nearby_scenes].map { |s| "#{s[:name]} (#{s[:id]})" }.join(", ")
+      parts << "NEARBY SCENES: #{nearby}"
       parts << ""
     end
 

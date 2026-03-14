@@ -14,7 +14,9 @@
   difficulty   = turn.options_payload["difficulty"]
   momentum     = turn.options_payload["momentum_at_roll"]
   health_loss  = turn.options_payload["health_loss"].to_i
+  damage_dice  = turn.options_payload["damage_dice"] || []
   health_gain  = turn.options_payload["health_gain"].to_i
+  healing_dice = turn.options_payload["healing_dice"] || []
   show_roll    = roll && difficulty && !%w[trivial impossible].include?(difficulty) &&
                  !turn.options_payload["ending"] && !turn.options_payload["prologue"]
 
@@ -52,19 +54,45 @@
     <% if health_loss > 0 %>
       <div class="health-loss">
         <span class="health-loss-icon">♥</span>
+        <% if damage_dice.any? %>
+          <span class="damage-dice"><%= damage_dice.size %>d6 [<%= damage_dice.join(", ") %>]</span>
+          <span class="roll-op">=</span>
+        <% end %>
         <span class="health-loss-value">−<%= health_loss %></span>
-        <span>health</span>
       </div>
     <% end %>
     <% if health_gain > 0 %>
       <div class="health-gain">
         <span class="health-gain-icon">♥</span>
+        <% if healing_dice.any? %>
+          <span class="healing-dice"><%= healing_dice.size %>d6 [<%= healing_dice.join(", ") %>]</span>
+          <span class="roll-op">=</span>
+        <% end %>
         <span class="health-gain-value">+<%= health_gain %></span>
-        <span>health</span>
       </div>
     <% end %>
   <% elsif turn.resolution_tag.present? %>
     <div class="turn-meta">[<%= t("game.resolution_tags.#{turn.resolution_tag}", default: turn.resolution_tag) %>]</div>
+    <% if health_loss > 0 %>
+      <div class="health-loss">
+        <span class="health-loss-icon">♥</span>
+        <% if damage_dice.any? %>
+          <span class="damage-dice"><%= damage_dice.size %>d6 [<%= damage_dice.join(", ") %>]</span>
+          <span class="roll-op">=</span>
+        <% end %>
+        <span class="health-loss-value">−<%= health_loss %></span>
+      </div>
+    <% end %>
+    <% if health_gain > 0 %>
+      <div class="health-gain">
+        <span class="health-gain-icon">♥</span>
+        <% if healing_dice.any? %>
+          <span class="healing-dice"><%= healing_dice.size %>d6 [<%= healing_dice.join(", ") %>]</span>
+          <span class="roll-op">=</span>
+        <% end %>
+        <span class="health-gain-value">+<%= health_gain %></span>
+      </div>
+    <% end %>
   <% end %>
   <div class="turn-narrative"><%= turn.content %></div>
 </div>

@@ -2,6 +2,7 @@ class ImpressionService
   DETERMINISTIC_LIMIT = 5
   SEMANTIC_LIMIT = 5
   MAX_RESULTS = 10
+  SEMANTIC_DISTANCE_THRESHOLD = 0.45
 
   def self.store!(game:, turn_number:, impressions_data:, memory_note: nil)
     records = Array(impressions_data).filter_map do |imp|
@@ -60,13 +61,14 @@ class ImpressionService
           .nearest_neighbors(:embedding, query_embedding, distance: "cosine")
           .limit(SEMANTIC_LIMIT)
           .to_a
+          .select { |imp| imp.neighbor_distance <= SEMANTIC_DISTANCE_THRESHOLD }
       end
     end
 
     (deterministic + semantic)
       .uniq(&:id)
       .first(MAX_RESULTS)
-      .map(&:fact)
+      .map { |imp| imp.subject_id.present? ? "[#{imp.subject_id}] #{imp.fact}" : imp.fact }
   rescue => e
     Rails.logger.error("[ImpressionService] retrieve failed: #{e.message}")
     []

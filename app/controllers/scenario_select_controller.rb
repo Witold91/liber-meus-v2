@@ -9,6 +9,11 @@ class ScenarioSelectController < ApplicationController
   end
 
   def create
+    if current_user.out_of_tokens?
+      redirect_to scenario_select_path, alert: t("controllers.scenario_select.alerts.out_of_tokens")
+      return
+    end
+
     scenario_slug = params[:scenario_slug]
     selected_locale = normalized_locale(params[:game_language]) || I18n.default_locale
     I18n.locale = selected_locale

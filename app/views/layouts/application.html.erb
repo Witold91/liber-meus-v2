@@ -24,6 +24,7 @@
     <%= stylesheet_link_tag "pages/random_setup", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "pages/sessions", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "pages/dashboard", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "pages/profile", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 
     <style>
@@ -43,7 +44,8 @@
     <div class="container">
       <% if current_user && controller_name != "sessions" %>
         <nav class="app-nav">
-          <span class="app-nav-user"><%= current_user.name || current_user.email %></span>
+          <%= link_to (current_user.name || current_user.email), profile_path, class: "app-nav-user" %>
+          <span class="app-nav-tokens"><%= number_with_delimiter(current_user.tokens_remaining) %> <%= t("views.nav.tokens", default: "tokens") %></span>
           <%= button_to t("views.sessions.sign_out", default: "Sign out"), sign_out_path, method: :delete, class: "app-nav-signout" %>
         </nav>
       <% end %>
@@ -54,6 +56,12 @@
         <div class="flash-alert"><%= alert %></div>
       <% end %>
       <div id="flash"></div>
+      <% if current_user&.out_of_tokens? %>
+        <div class="token-banner" id="token-banner">
+          <span class="token-banner-text"><%= t("views.nav.out_of_tokens", default: "You have no tokens remaining. Please contact the app owner.") %></span>
+          <button class="token-banner-close" onclick="document.getElementById('token-banner').remove()">&times;</button>
+        </div>
+      <% end %>
       <%= yield %>
     </div>
   </body>

@@ -43,6 +43,7 @@ module ArenaFlows
         difficulty: difficulty,
         danger: rating["danger"] || "none",
         impact: rating["impact"] || "positive",
+        stance: rating["stance"] || rating["exposure"] || "active",
         healing: rating["healing"] == true
       }
       outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
@@ -97,7 +98,7 @@ module ArenaFlows
       )
 
       # Steps 8-11: DB writes (in transaction)
-      ActiveRecord::Base.transaction do
+      turn = ActiveRecord::Base.transaction do
         # Step 8: Apply world-state diff from narration
         diff = narration["diff"] || {}
         world_state = Arena::WorldStateManager.new(world_state).apply_scene_diff(diff, scenario: scenario)
@@ -133,7 +134,7 @@ module ArenaFlows
         narrative_content = narration["narrative"] || ""
         tokens_used = difficulty_tokens + narrator_tokens
 
-        roll_payload = { "roll" => outcome[:roll], "difficulty" => difficulty, "momentum_at_roll" => momentum_at_roll, "health_loss" => outcome[:health_loss], "health_gain" => outcome[:health_gain] }
+        roll_payload = { "roll" => outcome[:roll], "difficulty" => difficulty, "momentum_at_roll" => momentum_at_roll, "health_loss" => outcome[:health_loss], "damage_dice" => outcome[:damage_dice], "health_gain" => outcome[:health_gain], "healing_dice" => outcome[:healing_dice], "stance" => rating["stance"] || rating["exposure"] || "active" }
 
         turn = TurnPersistenceService.create!(
           game: game,
@@ -230,6 +231,14 @@ module ArenaFlows
 
         turn
       end # transaction
+
+      # Deduct all tokens used in this turn (main + any epilogue/prologue) from user's budget
+      if game.user.present?
+        all_tokens = game.turns.where(turn_number: turn_number..(turn_number + 2)).sum(:tokens_used)
+        game.user.deduct_tokens!(all_tokens)
+      end
+
+      turn
     end
 
     def self.transition_to_next_act?(end_condition:, scenario:, act_number:)

@@ -116,18 +116,6 @@ module Arena
       changes
     end
 
-    def adjacent_scene_ids(scene_id)
-      scene = scenes.find { |s| s["id"] == scene_id }
-      return [] unless scene
-      (scene["exits"] || []).map { |e| e["to"] }
-    end
-
-    def exit_scene?(scene_id)
-      scene = scenes.find { |s| s["id"] == scene_id }
-      return false unless scene
-      (scene["exits"] || []).any? { |e| e["arena_exit"] == true }
-    end
-
     private
 
     def player_inventory(world_state)

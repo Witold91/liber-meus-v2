@@ -52,14 +52,20 @@ class DifficultyRatingService
       parts << ""
     end
 
-    if scene_context[:exits].any?
+    if scene_context[:exits]&.any?
       exits_str = scene_context[:exits].map { |e| e["label"] }.join(", ")
       parts << I18n.t("services.difficulty_rating_service.prompt.exits", exits: exits_str)
       parts << ""
     end
 
+    if scene_context[:nearby_scenes]&.any?
+      nearby = scene_context[:nearby_scenes].map { |s| s[:name] }.join(", ")
+      parts << "NEARBY SCENES: #{nearby}"
+      parts << ""
+    end
+
     if memory_summary.present? || memory_notes.any?
-      parts << I18n.t("services.difficulty_rating_service.prompt.story_context_header", default: "STORY CONTEXT:")
+      parts << I18n.t("services.difficulty_rating_service.prompt.story_so_far_header", default: "STORY SO FAR:")
       if memory_summary.present?
         parts << "  #{memory_summary}"
       end

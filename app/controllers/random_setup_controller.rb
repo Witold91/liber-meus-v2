@@ -4,6 +4,11 @@ class RandomSetupController < ApplicationController
   end
 
   def create_setting
+    if current_user.out_of_tokens?
+      redirect_to new_random_setup_path, alert: t("controllers.random_setup.alerts.out_of_tokens", default: "You have no tokens remaining. Please contact the app owner.")
+      return
+    end
+
     setting_description = params[:setting_description].to_s.strip
     game_language = (normalized_locale(params[:game_language]) || I18n.default_locale).to_s
 

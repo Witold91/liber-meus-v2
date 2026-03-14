@@ -43,6 +43,8 @@ module ArenaFlows
         options_payload: { "prologue" => true }
       )
 
+      user&.deduct_tokens!(prologue_tokens) if user.present?
+
       game
     end
 

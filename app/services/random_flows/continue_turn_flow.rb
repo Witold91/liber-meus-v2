@@ -48,6 +48,7 @@ module RandomFlows
         difficulty: difficulty,
         danger: rating["danger"] || "none",
         impact: rating["impact"] || "positive",
+        stance: rating["stance"] || rating["exposure"] || "active",
         healing: rating["healing"] == true
       }
       outcome = OutcomeResolutionService.resolve(game, action, turn_number, intent)
@@ -104,7 +105,7 @@ module RandomFlows
       )
 
       # Steps 7-10: DB writes (in transaction)
-      ActiveRecord::Base.transaction do
+      turn = ActiveRecord::Base.transaction do
         # Step 7: Apply world-state diff from narration
         diff = narration["diff"] || {}
         world_state = Arena::WorldStateManager.new(world_state).apply_scene_diff(diff, presenter: presenter)
@@ -115,6 +116,13 @@ module RandomFlows
         if new_player_scene && !generated_scenes.key?(new_player_scene)
           world_state = generate_new_scene(game, world_state, player_scene, new_player_scene, diff)
         end
+
+        # Track recently visited scenes for context
+        visited = world_state["recently_visited_scenes"] ||= []
+        new_scene = world_state["player_scene"]
+        visited.delete(new_scene)
+        visited << new_scene
+        world_state["recently_visited_scenes"] = visited.last(10)
 
         world_state["act_turn"] = act_turn_number
 
@@ -131,7 +139,10 @@ module RandomFlows
           "difficulty" => difficulty,
           "momentum_at_roll" => momentum_at_roll,
           "health_loss" => outcome[:health_loss],
-          "health_gain" => outcome[:health_gain]
+          "damage_dice" => outcome[:damage_dice],
+          "health_gain" => outcome[:health_gain],
+          "healing_dice" => outcome[:healing_dice],
+          "stance" => rating["stance"] || rating["exposure"] || "active"
         }
 
         turn = TurnPersistenceService.create!(
@@ -176,15 +187,20 @@ module RandomFlows
 
         turn
       end # transaction
+
+      # Deduct all tokens used in this turn from user's budget
+      if game.user.present?
+        all_tokens = game.turns.where(turn_number: turn_number..(turn_number + 1)).sum(:tokens_used)
+        game.user.deduct_tokens!(all_tokens)
+      end
+
+      turn
     end
 
     def self.generate_new_scene(game, world_state, origin_scene_id, target_scene_id, diff)
       generated_scenes = world_state["generated_scenes"] || {}
 
-      # Find the exit label used
-      origin_scene = generated_scenes[origin_scene_id]
-      exit_used = (origin_scene&.dig("exits") || []).find { |e| e["to"] == target_scene_id }
-      exit_label = exit_used&.dig("label") || target_scene_id.to_s.tr("_", " ")
+      exit_label = target_scene_id.to_s.tr("_", " ")
 
       # Gather context
       presenter = RandomMode::WorldPresenter.new(world_state)

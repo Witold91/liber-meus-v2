@@ -29,13 +29,12 @@ module RandomMode
 
       parts << "EXISTING SCENES:"
       existing_scenes.each do |scene|
-        exit_labels = (scene["exits"] || []).map { |e| "#{e["label"]} (to: #{e["to"]})" }.join(", ")
-        parts << "- #{scene["id"]}: #{scene["name"]} [exits: #{exit_labels}]"
+        parts << "- #{scene["id"]}: #{scene["name"]}"
       end
       parts << ""
 
       parts << "ORIGIN SCENE: #{origin_scene_id}"
-      parts << "EXIT USED: #{exit_label}"
+      parts << "DIRECTION/DESTINATION: #{exit_label}"
       parts << ""
 
       if player_inventory.any?
