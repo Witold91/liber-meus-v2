@@ -1,3 +1,7 @@
+proxy:
+  ssl: true
+  host: staging.libermeus.com
+
 servers:
   web:
     - <%= ENV.fetch("STAGING_HOST", "TODO") %>

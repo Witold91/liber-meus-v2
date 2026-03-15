@@ -1,0 +1,662 @@
+title: "Korgoth z Barbarii"
+description: "Na mrocznych pustkowiach przyszłości wielkie miasta wzniosły się i upadły, pradawne bestie odzyskały dzicz, a złodzieje i dzikusi zaludniają nieliczne, obskurne osady. Z lodowatej północy wyłania się wojownik zwany Korgothem, a jego bezlitosne okrucieństwo może być jedynym kluczem do przetrwania."
+world_context: |
+  Postapokaliptyczne fantastyczne pustkowie. Ultraprzemocowy slapstick grany całkiem serio.
+  Skorumpowana arena gladiatorów prowadzona przez Goratha, Mistrza Areny, który zarabia na widowisku i śmierci.
+  Każdy akt ma fazę przygotowań i walkę na arenie. Sprytni gladiatorzy wykorzystują czas między starciami,
+  żeby knuć, szabrować i zwiększać swoje szanse. Nic nie jest uczciwe. Wszystko jest brutalne. Komizm rodzi się
+  z absurdalności przemocy, nie z tego, że ktokolwiek ją komentuje.
+narrator_style: |
+  Przesadna rzeź opisywana z lepkim, zmysłowym detalem. Suchy, cyniczny styl dialogów Korgotha — lakoniczny,
+  nigdy dłuższy niż jedno zdanie. Czarny humor grany całkiem serio, bez puszczania oka do odbiorcy.
+  40-80 słów na turę. Krótkie oznajmujące zdania. Brutalność jest poezją.
+
+hero:
+  name: "Korgoth"
+  description: "Ogromny, pokryty bliznami barbarzyńca o ramionach jak pnie drzew i wiecznej ponurej minie. Cyniczny, lakoniczny i niewiarygodnie brutalny. Wcale się o to nie prosił."
+  llm_description: "Mężczyzna, około trzydziestki. Olbrzymi barbarzyńca — ciężko pokryty bliznami, nadludzko silny, o suchym cynicznym humorze. Niechętny, ale druzgocąco skuteczny w walce. Mówi rzadko, uderza często."
+
+acts:
+  - number: 1
+    title: "Świeże mięso"
+    intro: |
+      Na mrocznych pustkowiach przyszłości wielkie miasta wzniosły się i upadły,
+      pradawne bestie odzyskały dzicz, a złodzieje i dzikusi zaludniają nieliczne, obskurne osady.
+      Z lodowatej północy wyłania się wojownik zwany Korgothem,
+      a jego bezlitosne okrucieństwo może być jedynym kluczem do przetrwania.
+
+      Czujesz się, jakby ktoś użył twojej czaszki zamiast kowadła. Ostatnie, co pamiętasz, to karczma,
+      kobieta o ciemnych oczach i jeszcze ciemniejszym uśmiechu oraz drink smakujący migdałami.
+      Teraz jesteś w kajdanach. Powietrze śmierdzi krwią, potem i psim moczem.
+      Witaj na arenie Goratha. Kobieta, która cię tu przyprowadziła, jest jego córką.
+      Twoją pierwszą walkę nazywają "Powitaniem". Biorą w niej udział psy. Mnóstwo psów.
+      Masz trochę czasu, zanim zaciągną cię na piasek. Wykorzystaj go.
+    scenes:
+      - id: holding_pens
+        name: "Kojce"
+        description: "Żelazne klatki i kamienne ściany. Nowych gladiatorów trzymają tu jak bydło. Łańcuchy są stare, ale zamki nie."
+        exits:
+          - to: mess_hall
+            label: "Idź za zapachem jedzenia"
+          - to: rat_tunnels
+            label: "Wciśnij się do kratki odpływowej"
+          - to: arena_gate
+            label: "Podejdź do bramy areny"
+      - id: mess_hall
+        name: "Jadalnia"
+        description: "Długie kamienne pomieszczenie z topornymi stołami i jeszcze gorszym jedzeniem. Gladiatorzy jedzą tu pod okiem strażników. Ściany ozdobiono motywacyjną przemocą."
+        exits:
+          - to: holding_pens
+            label: "Wróć do kojców"
+          - to: armory
+            label: "Drzwi do zbrojowni (zamknięte)"
+      - id: armory
+        name: "Zbrojownia"
+        description: "Stojaki pełne poobijanej broni i pogiętych pancerzy. Wszystko tutaj już kogoś zabiło. Jedynego wejścia pilnuje Durge."
+        exits:
+          - to: mess_hall
+            label: "Wróć do jadalni"
+      - id: rat_tunnels
+        name: "Szczurze tunele"
+        description: "Tunele techniczne pod kojcami. Za ciasne dla większości gladiatorów. Tutejsze szczury mają rozmiar kotów, a koty dawno się wyniosły."
+        exits:
+          - to: holding_pens
+            label: "Wespnij się z powrotem"
+          - to: arena_gate
+            label: "Podążaj tunelem w stronę areny"
+      - id: arena_gate
+        name: "Brama areny"
+        description: "Strefa przed walką. Od piasku oddziela cię masywna żelazna krata. Słychać tłum. Słychać też psy."
+        exits:
+          - to: holding_pens
+            label: "Wróć do kojców"
+          - to: arena_floor
+            label: "Wejdź na arenę"
+      - id: arena_floor
+        name: "Piasek areny"
+        description: "Piasek nasiąknięty krwią pod otwartym niebem. Tłum ryczy z kamiennych trybun. Psy już tu są i mają malutkie gladiatorskie hełmy. Wcale nie są zadowolone."
+        exits: []
+
+    actors:
+      - id: vexxa
+        name: "Vexxa"
+        description: "Córka Goratha. Ciemne oczy, cięty język i ani odrobiny skrupułów. Zwabiła Korgotha tutaj uwodzeniem i trucizną. Jej plany sięgają daleko poza arenę ojca."
+      - id: gristleback
+        name: "Gristleback"
+        description: "Weteran areny z większą liczbą blizn niż skóry. Przetrwał dwanaście walk. Zna każdy numer, jaki ta arena potrafi wyciąć. Neutralny, dopóki nie dostanie powodu, by nie być."
+      - id: durge
+        name: "Durge"
+        description: "Brutalny strażnik zbudowany jak wychodek z cegły. Kontroluje dostęp do zbrojowni. Można go przekupić, oszukać albo obezwładnić, ale nic z tego nie będzie łatwe."
+      - id: weeping_gerald
+        name: "Płaczący Gerald"
+        description: "Gladiator, który nieprzerwanie szlocha od trzech tygodni. Nikt nie wie dlaczego. Ostatnią walkę wygrał, rycząc bez opamiętania. Zaskakująco dobry słuchacz."
+      - id: kevin
+        name: "Kevin"
+        description: "Pies bojowy na arenie, zdecydowanie zbyt przyjacielski, żeby walczyć. Macha ogonem. Nosi najmniejszy hełmik świata. Pozostałe psy go przez to nie znoszą."
+
+    objects:
+      - id: rusty_shiv
+        name: "Zardzewiały szpikulec"
+        description: "Prymitywne ostrze ukryte pod ławą w jadalni przez gladiatora, który nie pożył dość długo, by go użyć."
+      - id: chain_links
+        name: "Ciężkie ogniwa łańcucha"
+        description: "Odcinek ciężkiego łańcucha w kojcach. Jeśli uda się go wyrwać, może posłużyć jako broń albo prowizoryczny pancerz."
+      - id: dog_bait
+        name: "Zjełczałe mięso"
+        description: "Kawał mięsa leżący na stole w jadalni, dawno po terminie przydatności. Psy go pokochają. Wszyscy inni zdecydowanie nie powinni."
+      - id: armory_weapon
+        name: "Porządna broń"
+        description: "Prawdziwy miecz za zamkniętymi drzwiami zbrojowni. Wyszczerbiony i paskudny, ale działa."
+      - id: motivational_skull
+        name: "Motywacyjna czaszka"
+        description: >-
+          Czaszka przybita do ściany jadalni z wyrytym na czole napisem "DASZ RADĘ". Właściciel nieznany. Dziwnie podnosząca na duchu.
+      - id: soggy_pamphlet
+        name: "Rozmokła broszura"
+        description: >-
+          Zalana wodą broszura zatytułowana "Sprzedali cię do walk gladiatorskich: poradnik samopomocy". Wszystko nieczytelne poza krokiem pierwszym: "Nie panikuj".
+
+    conditions:
+      - id: act1_survived_dogs
+        description: "Korgoth przeżywa starcie z psami bojowymi"
+        narrative: >-
+          Ostatni pies skomli i odpełza, ciągnąc za sobą smugę krwi. Piasek jest zasłany maleńkimi hełmami i kłakami futra. Tłum wyje twoje imię. Nie prosiłeś ich o to.
+      - id: act1_killed_by_durge
+        description: "Durge zabija Korgotha za niesubordynację"
+        narrative: >-
+          Buława Durge'a trafia cię w skroń. Odgłos jest mokry i ostateczny. Arena nawet nie musiała wypuszczać psów.
+      - id: act1_mauled_by_dogs
+        description: "Korgotha rozszarpują psy bojowe"
+        narrative: >-
+          Wypuszczają coraz więcej psów. Małe hełmy zlewają się w rozmazaną plamę. Tłum buczy — nie na psy, tylko na to, jak krótko trwało widowisko.
+
+    events:
+      - id: act1_vexxa_taunts
+        description: >-
+          Vexxa staje przy kratach. "Nie bierz tego do siebie, Korgoth. Ojciec potrzebował świeżego mięsa, a ty byłeś najświeższą rzeczą, która piła samotnie." Uśmiecha się jak nóż.
+      - id: act1_gristleback_watches
+        description: >-
+          Gristleback obserwuje cię z drugiego końca jadalni, żując coś, co kiedyś mogło być jedzeniem. Mierzy cię wzrokiem.
+      - id: act1_dogs_howling
+        description: >-
+          Gdzieś pod areną zaczynają wyć psy bojowe. Dźwięk niesie się przez kamień jak obietnica.
+      - id: act1_arena_gate_opens
+        description: >-
+          Durge pojawia się przy bramie areny. "Czas minął, mięso. Tłum czeka." Krata zaczyna iść w górę.
+      - id: act1_gate_unlocked
+        description: "Brama areny jest już otwarta. Nie ma ani chwili więcej na przygotowania."
+      - id: act1_gristleback_shares
+        description: >-
+          Gristleback pochyla się bliżej. "Psy boją się ognia. Wszystkiego, co płonie. Rozpraszają się natychmiast. I uważaj na tego małego. Kevina. Gryzie, kiedy nie patrzysz. Właściwie nie. To po prostu Kevin."
+
+  - number: 2
+    title: "Nieoczekiwani sojusznicy"
+    intro: |
+      Przeżyłeś psy. Tłum cię uwielbia. Gorath nie.
+      Nagrodą za zwycięstwo jest walka drużynowa — i najgorszy partner w historii areny.
+      Nazywa się Philosophus. Aresztowano go za publiczną nieprzyzwoitość. Nie potrafi przestać
+      mówić o etyce. To twój jedyny sojusznik przeciwko Karmazynowym Bliźniakom, które nigdy nie przegrały walki drużynowej.
+      Masz czas na przygotowania. Arena stoi przed tobą otworem. Wykorzystaj to mądrze.
+    scenes:
+      - id: gladiator_quarters
+        name: "Kwatery gladiatorów"
+        description: "Ulepszone lokum dla ocalałych. Nadal pachnie rozpaczą, ale przynajmniej prycze mają już koce. Centrum towarzyskie dla tych, którzy jeszcze nie umarli."
+        exits:
+          - to: training_yard
+            label: "Idź na dziedziniec treningowy"
+          - to: gambling_den
+            label: "Podążaj za hałasem do jaskini hazardu"
+          - to: arena_gate_2
+            label: "Podejdź do bramy areny"
+      - id: training_yard
+        name: "Dziedziniec treningowy"
+        description: "Otwarty dziedziniec z manekinami do ćwiczeń i kręgami sparingowymi. Trenują tu Karmazynowe Bliźniaki. I każdy, kto jest zbyt uparty, żeby umrzeć."
+        exits:
+          - to: gladiator_quarters
+            label: "Wróć do kwater"
+          - to: sewage_tunnels
+            label: "Podważ kratę"
+      - id: gambling_den
+        name: "Jaskinia hazardu"
+        description: "Zadymiona podziemna sala, w której fortuny zmieniają właściciela, a walki kupuje się jeszcze przed pierwszym ciosem. Wszystkim rządzi tu bukmacher Skratch."
+        exits:
+          - to: gladiator_quarters
+            label: "Wróć do kwater"
+      - id: sewage_tunnels
+        name: "Kanały ściekowe"
+        description: "Cuchnące tunele łączące różne części kompleksu areny. Prowadzą między innymi do kwater przeciwników."
+        exits:
+          - to: training_yard
+            label: "Wróć na dziedziniec"
+      - id: arena_gate_2
+        name: "Brama areny"
+        description: "Strefa przed walką. Twój partner Philosophus już tu jest i rozciąga się w sposób medycznie nierozsądny, za to filozoficznie uzasadniony."
+        exits:
+          - to: gladiator_quarters
+            label: "Wróć do kwater"
+          - to: arena_floor_2
+            label: "Wejdź na arenę"
+      - id: arena_floor_2
+        name: "Piasek areny"
+        description: "Piasek został zagrabiony od ostatniego razu. Zaraz się to zmieni. Karmazynowe Bliźniaki stoją naprzeciwko ciebie i poruszają się w idealnym rytmie."
+        exits: []
+
+    actors:
+      - id: philosophus
+        name: "Philosophus"
+        description: "Starszy człowiek aresztowany za publiczną nieprzyzwoitość, którego ktoś omyłkowo wpisał na listę gladiatorów. Uważa walkę za 'dialog ciał'. W bitce jest bezużyteczny. Nie potrafi przestać gadać."
+      - id: crimson_krath
+        name: "Krath"
+        description: "Jedna połowa Karmazynowych Bliźniaków. Leworęczny, lubi niskie cięcia. Z Vornem koordynuje się tak, jakby mieli jeden wspólny mózg."
+      - id: crimson_vorn
+        name: "Vorn"
+        description: "Druga połowa Karmazynowych Bliźniaków. Praworęczny, lubi wysokie cięcia. Kończy zdania Kratha i jego przeciwników."
+      - id: bookie_skratch
+        name: "Bukmacher Skratch"
+        description: "Prowadzi jaskinię hazardu z tłustą sprawnością. Wie wszystko, sprzeda wszystko, nie ufa nikomu. Informacje i sabotaż ma w tym samym menu."
+      - id: vexxa
+        name: "Vexxa"
+        description: "Pojawia się tylko między walkami. Jej plan robi się coraz trudniejszy do odczytania. Zostawia wskazówki jak ktoś, kto sprawdza pułapkę."
+      - id: blorg
+        name: "Blörg"
+        description: "Olbrzymi gladiator, który boi się wszystkiego. Wzdryga się na cienie, wrzeszczy na gołębie, a walki wygrywa głównie tym, że przez przypadek wali przeciwników głową, kiedy próbuje się kulić."
+
+    objects:
+      - id: opponent_intel
+        name: "Schemat walki Bliźniaków"
+        description: "Obserwacja skoordynowanego stylu walki Bliźniaków ujawnia półsekundową lukę, gdy zamieniają się miejscami."
+      - id: laxative_powder
+        name: "Proszek przeczyszczający"
+        description: "Mocny przyspieszacz trawienia dostępny u Skratcha. Dosypanie go do jedzenia Bliźniaków byłoby niesportowe. Doskonale."
+      - id: weighted_gloves
+        name: "Obciążone rękawice"
+        description: "Ciężkie skórzane rękawice z ołowiem wszytym w kostki, zakopane pod stosem sprzętu treningowego."
+      - id: singing_toilet
+        name: "Śpiewająca toaleta"
+        description: "Latrina w kwaterach gladiatorów, która przy użyciu wydaje melodyjne buczenie. Jedni uważają ją za nawiedzoną. Inni za utalentowaną."
+      - id: inspirational_loincloth
+        name: "Inspirująca przepaska biodrowa"
+        description: "Szczęśliwa przepaska Philosophusa. Poplamiona, za mała i rzekomo 'pobłogosławiona przez muzę walki'. Philosophus nalega, żebyś założył ją do walki."
+      - id: severed_finger_collection
+        name: "Kolekcja odciętych palców"
+        description: "Słój z 47 odciętymi palcami, każdy starannie opisany. Nikt nie pamięta, kto zaczął tę kolekcję. Stoi na półce w jaskini hazardu, nietknięty i niewyjaśniony."
+
+    conditions:
+      - id: act2_won_team_fight
+        description: "Korgoth i Philosophus wygrywają walkę drużynową"
+        narrative: >-
+          Karmazynowe Bliźniaki leżą na piasku, a ich idealna synchronizacja wreszcie pękła. Philosophus wygłasza zwycięski monolog o naturze podboju. Nikt go nie słucha. Tłum też nie. Oni chcą tylko więcej.
+      - id: act2_twins_overwhelm
+        description: "Karmazynowe Bliźniaki przytłaczają Korgotha"
+        narrative: >-
+          Krath idzie nisko, Vorn wysoko. Robili to już setki razy. Philosophus próbuje interweniować wykładem o niestosowaniu przemocy. To nie pomaga.
+      - id: act2_philosophus_killed
+        description: "Philosophus prowadzi was obu do zguby"
+        narrative: >-
+          Philosophus wchodzi w zasięg twojego zamachu, właśnie gdy tłumaczy coś o imperatywie kategorycznym. Bliźniaki nie marnują takiej okazji.
+
+    events:
+      - id: act2_vexxa_appears
+        description: >-
+          Vexxa staje w drzwiach. "Bardziej interesujesz mnie żywy niż martwy, Korgoth. Ojciec uważa inaczej. Jeszcze nie wiem, które z nas ma rację." Odchodzi, zanim zdążysz odpowiedzieć.
+      - id: act2_philosophus_monologue
+        description: >-
+          Philosophus zagania cię w róg. "Arena to metafora, Korgoth. Bliźniaki reprezentują dualizm — ja i inny. Nasza walka tak naprawdę dotyczy epistemologii." Rozważasz uderzenie go.
+      - id: act2_twins_spotted
+        description: >-
+          Karmazynowe Bliźniaki są na dziedzińcu treningowym i wykonują ćwiczenia z mechaniczną precyzją. Patrzenie, jak walczą, przypomina obserwowanie maszyny stworzonej wyłącznie do zabijania.
+      - id: act2_odds_shift
+        description: >-
+          Do Bliźniaków dociera wieść, że kursy mocno przechyliły się na ich korzyść. Od razu odpuszczają trening. Zarozumiałość to też rodzaj trucizny.
+      - id: act2_vorn_overconfident
+        description: >-
+          Vorn dołącza do Kratha w błogim lenistwie. Już świętują. Walka nawet się jeszcze nie zaczęła.
+      - id: act2_gate_opens
+        description: >-
+          Brama areny z jękiem się otwiera. Tłum skanduje. Philosophus wykonuje ćwiczenia oddechowe. Karmazynowe Bliźniaki czekają.
+      - id: act2_laxative_effect
+        description: >-
+          Twarz Kratha nagle blednie. Potem zielenieje. On i Vorn sprintem ruszają do latryny w idealnej synchronizacji. Nawet ich problemy trawienne są skoordynowane.
+
+  - number: 3
+    title: "Bestia z otchłani"
+    intro: |
+      Twoja sława rośnie. Tłum skanduje twoje imię. Gorath patrzy ze swojego balkonu miną,
+      która sugeruje, że twoje dalsze przeżycie zaczyna mu psuć model biznesowy.
+      Następna walka odbędzie się w Dole — zapadniętej arenie, którą zalewa bagienna woda,
+      podczas gdy ty walczysz z czymś, co trzymają tam na łańcuchu. Bestia była kiedyś cudzym egzotycznym zwierzakiem.
+      Wyrosła z klatki. Potem wyrosła z kolejnych trzech.
+      Plan Vexxy robi się coraz bardziej mętny. Chirurg może pomóc. Bestia raczej nie.
+    scenes:
+      - id: champion_corridor
+        name: "Korytarz mistrzów"
+        description: "Lepsze kwatery dla tych, którzy przeżyli więcej niż dwie walki. Łóżka mają już prawdziwe materace. Ktoś namalował na ścianie toporny mural przedstawiający twoją walkę z psami."
+        exits:
+          - to: infirmary
+            label: "Odwiedź lazaret"
+          - to: beast_pens
+            label: "Zejdź do klatek bestii"
+          - to: vexxa_quarters
+            label: "Komnaty Vexxy (zamknięte)"
+          - to: pit_entrance
+            label: "Idź do wejścia do dołu"
+      - id: infirmary
+        name: "Lazaret"
+        description: "Pomieszczenie pachnące ziołami, krwią i rezygnacją. Chirurg pracuje tu spokojnymi rękami i z ponurą oceną szans na przeżycie."
+        exits:
+          - to: champion_corridor
+            label: "Wróć na korytarz"
+      - id: vexxa_quarters
+        name: "Komnaty Vexxy"
+        description: "Prywatne komnaty wypełnione skradzionymi luksusami. Mapy, księgi rachunkowe i zamknięta szafka sugerują, że ambicje Vexxy wykraczają daleko poza arenę."
+        exits:
+          - to: champion_corridor
+            label: "Wyjdź po cichu"
+      - id: beast_pens
+        name: "Klatki bestii"
+        description: "Podziemne klatki, w których trzymają stworzenia areny. Smrodu nie da się opisać. W ciemności coś ogromnego oddycha, a z każdym wydechem dzwoni łańcuch."
+        exits:
+          - to: champion_corridor
+            label: "Wróć na korytarz"
+          - to: pit_entrance
+            label: "Przejdź do wejścia do dołu"
+      - id: pit_entrance
+        name: "Wejście do dołu"
+        description: "Platforma górująca nad zapadniętą areną. Tam na dole woda sięga już kostek. Łańcuch znika w mętnej toni."
+        exits:
+          - to: champion_corridor
+            label: "Wróć na korytarz"
+          - to: the_pit
+            label: "Zejdź do dołu"
+      - id: the_pit
+        name: "Dół"
+        description: "Zapadnięta kamienna arena powoli wypełniająca się ciemną wodą. Łańcuch bestii ciągnie się od przeciwległej ściany. Z każdą rundą łańcuch robi się dłuższy, a wody przybywa."
+        exits: []
+
+    actors:
+      - id: gorath
+        name: "Gorath, Mistrz Areny"
+        description: "Ojciec Vexxy. Okrutny showman, który traktuje gladiatorów jak towar, a tłum jak klientów. Patrzy z balkonu z zaborczym zainteresowaniem."
+      - id: vexxa
+        name: "Vexxa"
+        description: "Coraz trudniejsza do odczytania. Może zaoferować pomoc — za cenę. W jej planie pojawiają się pęknięcia i nie wszystkie prowadzą z powrotem do ojca."
+      - id: the_surgeon
+        name: "Chirurg"
+        description: "Medyk areny. Przyjazny, ale ponury. Poskładał więcej gladiatorów, niż potrafi zliczyć. Zna anatomię bestii, bo leczył jej wcześniejsze ofiary."
+      - id: narrator_gob
+        name: "Gob Narrator"
+        description: "Mały, nadgorliwy człowieczek, który sam mianował się 'oficjalnym biografem' Korgotha. Łazi za nim i opowiada w trzeciej osobie wszystko, co robi. Źle."
+      - id: comfort_leech
+        name: "Pijawka pocieszycielka"
+        description: "Duża pijawka w lazarecie, o której Chirurg twierdzi, że ma 'właściwości terapeutyczne'. Siedzi na półce i wygląda na wilgotną. Nie daje żadnego pocieszenia."
+
+    objects:
+      - id: numbing_salve
+        name: "Maść znieczulająca"
+        description: "Gęsta pasta, która na wiele godzin uśmierza ból. Chirurg trzyma ją w szafce dla tych wojowników, którzy poproszą odpowiednio grzecznie albo odpowiednio groźnie."
+      - id: beast_weakness
+        name: "Wiedza o słabym punkcie bestii"
+        description: "Informacja o miękkim miejscu za lewym uchem bestii. Chirurg dowiedział się o nim podczas sekcji podobnych stworzeń."
+      - id: rusted_harpoon
+        name: "Zardzewiały harpun"
+        description: "Dawno zapomniana broń ukryta w części technicznej klatek bestii. Zardzewiała, ale wciąż dość ostra, by przebić skórę."
+      - id: pit_drain_valve
+        name: "Zawór spustowy dołu"
+        description: "Zawór serwisowy w klatkach bestii, sterujący dopływem wody do dołu. Otwarcie go spowolniłoby zalewanie podczas walki."
+      - id: beast_sedative
+        name: "Fiolka środka usypiającego dla bestii"
+        description: "Skoncentrowany środek uspokajający, który oferuje Vexxa. Ceną jest 'przysługa'. Nie doprecyzowuje jaka."
+      - id: commemorative_plate
+        name: "Pamiątkowy talerz"
+        description: "Toporny ceramiczny talerz z namalowaną twarzą Korgotha. Źle. Najwyraźniej sprzedają to na trybunach. Szczęka jest wyjątkowo łaskawie potraktowana."
+      - id: mysterious_egg
+        name: "Tajemnicze jajo"
+        description: "Duże, ciepłe jajo znalezione w klatkach bestii. Nikt nie wie, co jest w środku. Co jakiś czas lekko pulsuje. Zabranie go nic nie daje. Zostawienie też nie. To po prostu jajo."
+
+    conditions:
+      - id: act3_beast_defeated
+        description: "Korgoth zabija bestię albo umyka jej w Dole"
+        narrative: >-
+          Bestia zapada się pod czarną wodę, a jej ostatni ryk tonie w zalewającej arenę toni. Wspinasz się z dołu, ociekając bagienną wodą, krwią i czymś, co pachnie gorzej niż jedno i drugie. Tłum wstaje z miejsc. Gorath się nie uśmiecha.
+      - id: act3_drowned
+        description: "Korgoth tonie w zalewanym dole"
+        narrative: >-
+          Wody przybywa. Bestia wciska cię pod powierzchnię. Ostatnie, co widzisz, to tłum pochylający się do przodu, rozczarowany tempem widowiska.
+      - id: act3_beast_breaks_free
+        description: "Bestia całkiem zrywa się z łańcucha i przytłacza Korgotha"
+        narrative: >-
+          Łańcuch pęka. Bestia rzuca się naprzód, a nic już jej nie trzyma. Tłum wreszcie dostaje widowisko, które obiecał Gorath.
+
+    events:
+      - id: act3_gorath_appears
+        description: >-
+          Gorath obserwuje z balkonu, splatając palce. Zainteresował się twoją następną walką osobiście. To nigdy nie wróży nic dobrego.
+      - id: act3_surgeon_greets
+        description: >-
+          Chirurg podnosi wzrok znad zszywanej rany. "A, pogromca psów. Na bestię z Dołu szczęście nie wystarczy. Siadaj. Powiem ci, jak utrzymać swoje wnętrzności wewnątrz."
+      - id: act3_vexxa_appears
+        description: >-
+          Vexxa pojawia się bez ostrzeżenia. "Mam coś, co może pomóc z bestią. Potrzebuję tylko przysługi. Później. Nic strasznego." Jej uśmiech mówi coś odwrotnego.
+      - id: act3_pit_opens
+        description: >-
+          Wejście do Dołu zostaje odpieczętowane. Woda już leje się do środka. Bestia porusza się na łańcuchu. Czas minął.
+      - id: act3_surgeon_shares
+        description: >-
+          Chirurg ścisza głos. "Za lewym uchem. Jest tam miękkie miejsce, gdzie płyty czaszki się nie schodzą. Jeden porządny cios i bestia pada. Nie pytaj, skąd wiem. Odpowiedź obejmuje wielu martwych gladiatorów."
+
+  - number: 4
+    title: "Ulubieniec tłumu"
+    intro: |
+      Trzy walki. Trzy zwycięstwa. Tłum wykrzykuje twoje imię jak modlitwę do boga przemocy.
+      Gorath widzi w tobie jednocześnie zysk i zagrożenie. Vexxa wykonuje swój ruch: pomóż jej obalić
+      ojca albo walcz dalej sam. Następna próba to Rękawica — arena pełna pułapek,
+      w której tłum głosuje, które mechanizmy się uaktywnią. Ostatnim przeciwnikiem będzie Rotgut,
+      jedyny gladiator, którego tłum kocha bardziej od ciebie. To idealny moment na knucie.
+    scenes:
+      - id: champions_suite
+        name: "Apartament mistrza"
+        description: "Luksusowe kwatery jak na standardy areny. Łóżko ma ramę. Jest okno. Zakratowane, ale jednak okno. Postęp."
+        exits:
+          - to: betting_hall
+            label: "Odwiedź salę zakładów"
+          - to: trap_workshop
+            label: "Wkradnij się do warsztatu pułapek"
+          - to: gorath_balcony
+            label: "Balkon Goratha (tylko z zaproszeniem)"
+          - to: arena_gate_4
+            label: "Idź do bramy areny"
+      - id: betting_hall
+        name: "Sala zakładów"
+        description: "Publiczna hala hazardu. Głośniejsza niż sama arena. Nastrój tłumu jest tu walutą, a to właśnie tłum steruje pułapkami."
+        exits:
+          - to: champions_suite
+            label: "Wróć do apartamentu"
+      - id: trap_workshop
+        name: "Warsztat pułapek"
+        description: "Miejsce, w którym pułapki areny są konserwowane, uzbrajane i testowane. Majster Clink pracuje tu wśród mechanizmów stworzonych do zabijania w widowiskowy sposób."
+        exits:
+          - to: champions_suite
+            label: "Wróć do apartamentu"
+      - id: gorath_balcony
+        name: "Balkon Goratha"
+        description: "Prywatna loża Mistrza Areny. Miękkie siedzenia, dobre wino i doskonały widok na rzeź poniżej."
+        exits:
+          - to: champions_suite
+            label: "Opuść balkon"
+      - id: arena_gate_4
+        name: "Brama areny"
+        description: "Strefa przed walką. Po drugiej stronie kraty słychać uzbrajane pułapki: mechaniczne klikanie, syk hydrauliki i głosujący tłum."
+        exits:
+          - to: champions_suite
+            label: "Wróć do apartamentu"
+          - to: arena_floor_4
+            label: "Wejdź do Rękawicy"
+      - id: arena_floor_4
+        name: "Piasek areny — Rękawica"
+        description: "Arena pełna pułapek. Panele się przesuwają, kolce wyskakują, dysze ognia buchają — wszystko na rozkaz tłumu. Kolejni przeciwnicy czekają w odstępach. Na końcu czeka Rotgut."
+        exits: []
+
+    actors:
+      - id: gorath
+        name: "Gorath, Mistrz Areny"
+        description: "Teraz już otwarcie wrogi. Podejrzliwy wobec popularności Korgotha. Ulubieniec tłumu jest dochodowy tylko do chwili, gdy wymyka się spod kontroli."
+      - id: vexxa
+        name: "Vexxa"
+        description: "Składa ofertę: pomóż jej przejąć arenę. Jej prawdziwy plan jest jasny — chce nią rządzić, nie kogokolwiek uwolnić. To układ o władzę, nie o wybawienie."
+      - id: rotgut
+        name: "Rotgut"
+        description: "Ulubieniec publiczności. Wielki, pokryty bliznami i podły. Widzi w Korgothcie zagrożenie dla swojej pozycji. Ma źle zrośnięte kolano, które sprytnie ukrywa."
+      - id: trap_master_clink
+        name: "Majster Clink"
+        description: "Dogląda pułapek areny. Mały, nerwowy i zaskakująco pryncypialny w sprawach własnego rzemiosła. Można go przekupić albo zastraszyć, żeby zdradził układ pułapek."
+      - id: fan_club_murd
+        name: "Murd, przewodniczący fan klubu"
+        description: "Obsesyjny fan Korgotha, który w jakiś sposób dostał przepustkę za kulisy. Ma tatuaż twarzy Korgotha na własnej twarzy. Chce autograf. Nie zamierza odejść."
+      - id: old_man_breakfast
+        name: "Stary Breakfast"
+        description: "Pradawny gladiator 'na emeryturze' od dekad, tylko nikt mu tego nie powiedział. Nadal zjawia się na każdej odprawie przed walką. Jego porady były przestarzałe już czterdzieści lat temu."
+
+    objects:
+      - id: trap_map
+        name: "Mapa układu pułapek"
+        description: "Schemat wszystkich pułapek na Rękawicy. Wiedza o tym, gdzie są, bardzo pomaga w niebyciu tam, gdzie się uruchamiają."
+      - id: crowd_favor
+        name: "Przychylność tłumu"
+        description: "Nastawienie tłumu do Korgotha. Gdy publiczność ci sprzyja, pułapki celują raczej w przeciwników. Da się na to wpłynąć przez salę zakładów."
+      - id: sabotaged_traps
+        name: "Zsabotażowane pułapki"
+        description: "Konkretne pułapki na arenie, które unieszkodliwiono w warsztacie. Klikną, ale nie wystrzelą."
+      - id: rotgut_weakness
+        name: "Chore kolano Rotguta"
+        description: "Informacja, że Rotgut ma po prawej stronie źle zaleczone kolano. Dobrze je kompensuje, ale po precyzyjnym ciosie nie odzyskuje równowagi."
+      - id: spiked_grog
+        name: "Doprawiony grog"
+        description: "Napój Rotguta przed walką, zatruty dzięki kontaktom z sali zakładów. Dość, by go spowolnić, nie dość, by go położyć."
+      - id: emotional_trap
+        name: "Pułapka emocjonalna"
+        description: "Pułapka areny wypuszczająca chmurę pyłku, po której każdy w pobliżu płacze bez opamiętania przez trzydzieści sekund. Tłum przegłosował ją jednogłośnie."
+      - id: korgoth_action_figure
+        name: "Figurka Korgotha"
+        description: "Mała drewniana figurka wyrzeźbiona na podobieństwo Korgotha. Jedna ręka jest dłuższa od drugiej. Twarz wygląda, jakby cierpiała na zaparcie. Sprzedaje ją handlarz w sali zakładów."
+
+    conditions:
+      - id: act4_survived_gauntlet
+        description: "Korgoth przeżywa Rękawicę i pokonuje Rotguta"
+        narrative: >-
+          Rotgut po raz ostatni wali w piasek. Pułapki milką. Tłum jest w euforii. Gorath ściska poręcz balkonu tak mocno, że pęka drewno. Stałeś się problemem, którego nie da się rozwiązać psami, bestiami ani bliźniakami.
+      - id: act4_killed_by_traps
+        description: "Korgoth ginie w pułapkach areny"
+        narrative: >-
+          Pułapka odpala. Tłum wciąga powietrze. Potem wiwatuje. A zaraz potem zaczyna się kłócić, czy to w ogóle liczy się jako zabójstwo czy dyskwalifikacja. Jesteś zbyt martwy, by to obchodziło.
+      - id: act4_rotgut_overwhelms
+        description: "Rotgut przytłacza Korgotha w ostatnim pojedynku"
+        narrative: >-
+          Rotgut bije jak osuwisko. Ulubieniec tłumu pozostaje ulubieńcem tłumu. Twoje figurki trafią na potężną wyprzedaż.
+
+    events:
+      - id: act4_vexxa_offers
+        description: >-
+          Vexxa siada na twoim łóżku bez pytania. "Układ jest prosty, Korgoth. Pomóż mi usunąć ojca, a dopilnuję, żebyś wyszedł stąd żywy. Ja chcę arenę. Ty chcesz wolność. Wszyscy wygrywają." Robi pauzę. "Głównie ja."
+      - id: act4_murd_appears
+        description: >-
+          W twoich kwaterach stoi człowiek z wytatuowaną twoją twarzą na własnej twarzy. "Jestem twoim największym fanem" — mówi. Po raz pierwszy od dawna ktoś mówi dosłowną prawdę.
+      - id: act4_rotgut_arrives
+        description: >-
+          Rotgut pojawia się przy bramie areny. Jest większy, niż głosiły plotki. Patrzy na ciebie jak pies na kość. Nie Kevin. Prawdziwy pies.
+      - id: act4_gate_opens
+        description: >-
+          Rękawica czeka. Pułapki mruczą. Tłum trzyma numerowane tabliczki do głosowania. Tak wygląda rozrywka.
+      - id: act4_spiked_effect
+        description: >-
+          Rotgut ociera usta po swoim przedwalkowym trunku. Ręce drżą mu odrobinę, wzrok nie łapie ostrości. Jeszcze o tym nie wie, ale jego walka zaczęła się dziesięć minut temu i już ją przegrywa.
+      - id: act4_clink_bribed
+        description: >-
+          Clink wsadza ci zwinięty pergamin, nie patrząc w oczy. "Płyty trzy, siedem i dwanaście. Nie stawaj na nich. Reszta... cóż, reszta to problem tłumu."
+
+  - number: 5
+    title: "Wolność albo śmierć"
+    intro: |
+      To jest to. Walka mistrzowska. Gorath zostawił na koniec swoje najlepsze danie: Groka Nieujarzmionego,
+      potwornego czempiona, który nigdy nie przegrał. Gorath będzie oszukiwał — wypuści bestie, uzbroi Groka,
+      przechyli samą podłogę areny. Tutaj wszystko się zbiega. Decyzja Vexxy. Lojalność Gristlebacka.
+      Sekret o Groku, który zmienia wszystko.
+      Zaczynasz w celi, bez broni. Chcą, żebyś umarł zgodnie z harmonogramem.
+      Znajdź sposób, żeby przepisać ten harmonogram.
+    scenes:
+      - id: death_row_cell
+        name: "Cela śmierci"
+        description: "Goła kamienna cela dla gladiatorów czekających na walkę mistrzowską. Zabrali wszystko. Ściany pokrywają wydrapane wiadomości od tych, którzy byli tu przed tobą."
+        exits:
+          - to: tunnel_network
+            label: "Podważ luźny kamień"
+          - to: arena_floor_5
+            label: "Strażnicy przychodzą po ciebie"
+      - id: tunnel_network
+        name: "Sieć tuneli"
+        description: "Ukryte przejścia pod areną. Graffiti, szczury i od czasu do czasu kupiec, którego nie da się logicznie wytłumaczyć. Tunele łączą miejsca, których łączyć nie powinny."
+        exits:
+          - to: death_row_cell
+            label: "Wróć do celi"
+          - to: weapon_cache
+            label: "Idź za wydrapaną strzałką"
+          - to: arena_floor_5
+            label: "Wyjdź na arenę"
+      - id: weapon_cache
+        name: "Skrytka z bronią"
+        description: "Ukryty schowek w tunelach. Broń pozostawiona przez gladiatorów, którzy planowali ucieczkę i nigdy jej nie dokończyli. Ich strata, twój zysk."
+        exits:
+          - to: tunnel_network
+            label: "Wróć do tuneli"
+      - id: arena_floor_5
+        name: "Piasek areny — finał"
+        description: "Arena w największej możliwej chwale. Każde miejsce zajęte. Sztandary łopoczą. Grok Nieujarzmiony stoi pośrodku, milczący i olbrzymi. Przy gardle błyszczy metalowa obroża. Z góry patrzy Gorath ze swego tronu."
+        exits:
+          - to: gorath_throne
+            label: "Przedrzyj się na platformę tronu"
+          - to: arena_exit
+            label: "Przejdź przez bramę ku wolności"
+      - id: gorath_throne
+        name: "Tron Goratha"
+        description: "Podwyższona platforma nad areną, z której Gorath steruje swoimi oszustwami — dźwigniami od bestii, dodatkowej broni i przechylanej podłogi. Siedziba małego tyrana."
+        exits:
+          - to: arena_floor_5
+            label: "Wróć na arenę"
+      - id: arena_exit
+        name: "Wyjście z areny"
+        description: "Brama do wolności. Za nią pustkowia. Za tobą wszystko, co próbowało cię zabić. Każdy krok na zewnątrz naprawdę sobie wywalczyłeś."
+        exits: []
+
+    actors:
+      - id: grok
+        name: "Grok Nieujarzmiony"
+        description: "Panujący mistrz. Monstrualny, milczący i przerażający. Nigdy nie przegrał. Na gardle nosi metalową obrożę kontroli — walczy, bo musi, nie dlatego, że chce."
+      - id: gorath
+        name: "Gorath, Mistrz Areny"
+        description: "Oszukuje z tronu ponad areną. Wypuszcza bestie, daje Grokowi dodatkową broń, przechyla podłogę. Nie pozwoli Korgothowi wyjść stąd żywemu."
+      - id: vexxa
+        name: "Vexxa"
+        description: "Jej ostatni ruch zależy od wcześniejszych wyborów. Jeśli sprzymierzona w Akcie 4: sabotuje mechanizmy Goratha. Jeśli odrzucona: obserwuje chłodno z trybun i kalkuluje kolejną okazję."
+      - id: gristleback
+        name: "Gristleback"
+        description: "Weteran z Aktu 1. Jeśli zdobyłeś jego sympatię, zebrał innych gladiatorów. Jedno słowo od Korgotha może wzniecić rozruch na trybunach — idealne odwrócenie uwagi."
+      - id: commemorative_vendor
+        name: "Sprzedawca pamiątek"
+        description: "Kupiec, który jakimś cudem rozstawił stoisko z pamiątkami w sieci tuneli. Sprzedaje kubki 'Przeżyłem Arenę Goratha' i proporczyki 'Grok zjadł moją rodzinę'. Nikt nie wyjaśnia, jak tu trafił."
+      - id: emotional_support_scorpion
+        name: "Skorpion wsparcia emocjonalnego"
+        description: "Skorpion w celi śmierci noszący małą kamizelkę z napisem 'ZWIERZĘ WSPARCIA'. Jest jadowity. Nie zapewnia żadnego wsparcia emocjonalnego."
+
+    objects:
+      - id: tunnel_discovery
+        name: "Wejście do tuneli"
+        description: "Luźny kamień w celi śmierci prowadzący do sieci tuneli pod areną."
+      - id: hidden_blade
+        name: "Ukryte ostrze"
+        description: "Krótka, złośliwa klinga ukryta w skrytce z bronią przez gladiatora, który nigdy po nią nie wrócił."
+      - id: grok_secret
+        name: "Sekret obroży Groka"
+        description: "Graffiti w tunelach zdradza, że Grok nosi obrożę kontroli. Rozbij ją w trakcie walki, a Grok odzyska wolę — i znajdzie sobie nowy cel dla gniewu."
+      - id: arena_structure
+        name: "Słabe punkty areny"
+        description: "Obserwacja areny z tuneli ujawnia słabe punkty konstrukcji — panele, które można zawalić, podpory, które można połamać."
+      - id: participation_trophy
+        name: "Puchar za udział"
+        description: "Małe, żałosne trofeum z napisem 'Dzięki za próbę'. Dawane wszystkim gladiatorom, którzy nie przeżyli. Ktoś zostawił je na podłodze. Jest obraźliwe nawet jak na trofeum."
+      - id: graffiti_poetry
+        name: "Tunelowa poezja graffiti"
+        description: >-
+          Toporna poezja wydrapana na ścianach tuneli. Wśród hitów: "Róże są czerwone, bestia jest blisko, trzeba było zostać w domu, bo zginę tu szybko."
+
+    conditions:
+      - id: act5_freedom
+        description: "Korgoth pokonuje Groka i Goratha, po czym wychodzi wolny"
+        narrative: >-
+          Brama się otwiera. Po raz pierwszy od tygodni światło słońca dotyka twojej twarzy. Za tobą arena płonie od buntu i ruin. Przed tobą pustkowie ciągnie się aż po horyzont. Nie oglądasz się za siebie. Nigdy tego nie robisz.
+      - id: act5_grok_kills_korgoth
+        description: "Grok przytłacza Korgotha w walce mistrzowskiej"
+        narrative: >-
+          Pięść Groka trafia. Potem trafia znowu. Obroża brzęczy. On nie chce tego robić, ale obroży to nie obchodzi. Tak samo jak Goratha, który już ogłasza skład następnego sezonu.
+      - id: act5_gorath_cheats_win
+        description: "Oszustwa Goratha przytłaczają Korgotha"
+        narrative: >-
+          Podłoga się przechyla. Z bram wylewają się bestie. Grok dostaje drugą broń. Gorath odchyla się na tronie, zadowolony. Kasyno zawsze wygrywa. Zwłaszcza kiedy oszukuje.
+
+    events:
+      - id: act5_gorath_cheats
+        description: >-
+          Gorath pociąga za pierwszą dźwignię. Podłoga areny przesuwa się. Klatki po bokach otwierają się z hukiem. "Dać czempionowi jego narzędzia" — uśmiecha się Gorath. To nigdy nie miało być uczciwe.
+      - id: act5_vexxa_sabotage
+        description: >-
+          Z panelu sterowania Goratha sypią się iskry. Dźwignie zamierają. Gorath wrzeszczy. W cieniu za tronem Vexxa uśmiecha się i znika. Dotrzymała umowy. Oszustwa zostały odcięte.
+      - id: act5_gristleback_riot
+        description: >-
+          Z sektora gladiatorów wybucha ryk. Gristleback staje na ławie i ryczy głośniej od wszystkich. Łańcuchy pękają. Strażnicy wpadają w popłoch. Bunt rozlewa się po arenie jak ogień po suchej trawie. Uwaga tłumu pęka na pół.
+      - id: act5_grok_freed
+        description: >-
+          Graffiti jest toporne, ale jasne: "OBROŻA. ROZBIJ OBROŻĘ. ON ZROBI RESZTĘ." Ktoś odkrył to już wcześniej. Po prostu nie przeżył wystarczająco długo, żeby zadziałać.
+      - id: act5_collar_broken
+        description: >-
+          Obroża rozpada się z trzaskiem. Grok zatrzymuje zamach w pół ruchu. Po raz pierwszy od lat jego spojrzenie robi się jasne. Patrzy na własne ręce. Potem podnosi wzrok na tron. Gorath przestaje się uśmiechać.
+      - id: act5_guards_come
+        description: >-
+          Strażnicy docierają do celi. Niezależnie od tego, czy znalazłeś tunele, czy nie, czas nadszedł. Finał czeka.
