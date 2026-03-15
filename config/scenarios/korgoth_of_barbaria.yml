@@ -1,0 +1,1405 @@
+slug: korgoth_of_barbaria
+title: "Korgoth of Barbaria"
+description: "In a dark future wasteland, the great cities have risen and fallen, primordial beasts have reclaimed the wilderness and thieves and savages populate sparse, dirty towns. From the frozen north emerges a warrior known as Korgoth, and his merciless savagery may be his only key to survival."
+turn_limit: 300
+world_context: |
+  Post-apocalyptic fantasy wasteland. Ultra-violent slapstick played completely straight.
+  A corrupt gladiatorial arena run by Gorath the Arena Master, who profits from spectacle and death.
+  Each act has a preparation phase and an arena fight. Smart gladiators use the time between fights
+  to scheme, scavenge, and stack the odds. Nothing is fair. Everything is brutal. Comedy emerges
+  from the absurdity of violence, not from anyone acknowledging it.
+narrator_style: |
+  Over-the-top gore described with visceral sensory detail. Dry, cynical Korgoth dialogue — laconic,
+  never more than a sentence. Dark humor played completely straight, never winking at the audience.
+  40-80 words per turn. Short declarative sentences. Brutality is poetry.
+
+theme:
+  bg_color: "#0d0907"
+  text_color: "#d4c4a0"
+  accent_color: "#8b1a1a"
+  font_family: "'Cinzel', 'Palatino Linotype', serif"
+  bg_image: ~
+
+hero:
+  slug: korgoth
+  name: "Korgoth"
+  description: "A massive, scarred barbarian with arms like tree trunks and a permanent scowl. Cynical, laconic, and extraordinarily violent. He didn't ask for any of this."
+  llm_description: "Male, mid-30s. Enormous barbarian — heavily scarred, superhumanly strong, cynical dry wit. Reluctant but devastatingly effective in combat. Speaks rarely, hits often."
+  sex: male
+
+acts:
+  # ═══════════════════════════════════════════════════════════════
+  # ACT 1 — "Fresh Meat" (Solo vs. endless war-dogs)
+  # ═══════════════════════════════════════════════════════════════
+  - number: 1
+    title: "Fresh Meat"
+    intro: |
+      In a dark future wasteland, the great cities have risen and fallen, 
+      primordial beasts have reclaimed the wilderness and thieves and savages populate sparse, dirty towns. 
+      From the frozen north emerges a warrior known as Korgoth, 
+      and his merciless savagery may be his only key to survival.
+      
+      Your skull feels like someone used it as an anvil. The last thing you remember is a tavern,
+      a woman with dark eyes and a darker smile, and a drink that tasted like almonds.
+      Now you are in chains. The air stinks of blood, sweat, and dog piss.
+      Welcome to Gorath's Arena. The woman who brought you here is his daughter.
+      They call your first fight "The Welcoming." It involves dogs. Many dogs.
+      You have some time before they drag you to the sand. Use it.
+    scenes:
+      - id: holding_pens
+        name: "Holding Pens"
+        description: "Iron cages and stone walls. New gladiators are kept here like livestock. The chains are old but the locks are not."
+        exits:
+          - to: mess_hall
+            label: "Follow the smell of food"
+          - to: rat_tunnels
+            label: "Squeeze into the drain grate"
+          - to: arena_gate
+            label: "Approach the arena gate"
+            locked: true
+
+      - id: mess_hall
+        name: "Mess Hall"
+        description: "A long stone room with rough tables and worse food. Gladiators eat here under the watch of guards. The walls are decorated with motivational violence."
+        exits:
+          - to: holding_pens
+            label: "Back to the pens"
+          - to: armory
+            label: "Door to the armory (locked)"
+            locked: true
+
+      - id: armory
+        name: "Armory"
+        description: "Racks of battered weapons and dented armor. Everything here has killed someone. Pen Master Durge guards the only entrance."
+        exits:
+          - to: mess_hall
+            label: "Back to the mess hall"
+
+      - id: rat_tunnels
+        name: "Rat Tunnels"
+        description: "Maintenance tunnels under the holding pens. Too small for most gladiators. The rats here are the size of cats, and the cats left long ago."
+        exits:
+          - to: holding_pens
+            label: "Climb back up"
+          - to: arena_gate
+            label: "Follow the tunnel toward the arena"
+
+      - id: arena_gate
+        name: "Arena Gate"
+        description: "The staging area before the fight. A massive iron portcullis separates you from the sand. You can hear the crowd. You can hear the dogs."
+        exits:
+          - to: holding_pens
+            label: "Back to the pens"
+          - to: arena_floor
+            label: "Enter the arena"
+
+      - id: arena_floor
+        name: "Arena Floor"
+        description: "Blood-soaked sand under an open sky. The crowd roars from tiered stone seats. The dogs are already here, wearing tiny gladiator helmets. They are not happy."
+        exits: []
+
+    actors:
+      - id: vexxa
+        name: "Vexxa"
+        description: "Gorath's daughter. Dark-eyed, sharp-tongued, and utterly without remorse. She lured Korgoth here with seduction and poison. Her agenda extends beyond her father's arena."
+        scene: holding_pens
+        default_disposition: hostile
+        status_options:
+          - taunting
+          - scheming
+          - bargaining
+          - allied
+          - treacherous
+        default_status: taunting
+
+      - id: gristleback
+        name: "Gristleback"
+        description: "A veteran gladiator with more scars than skin. Survived twelve bouts. Knows every trick the arena has. Neutral until given a reason not to be."
+        scene: mess_hall
+        default_disposition: neutral
+        status_options:
+          - eating
+          - wary
+          - friendly
+          - sharing_intel
+        default_status: eating
+
+      - id: durge
+        name: "Pen Master Durge"
+        description: "A brutal guard built like a brick outhouse. Controls access to the armory. Can be bribed, tricked, or overpowered, but none of those are easy."
+        scene: armory
+        default_disposition: hostile
+        status_options:
+          - guarding
+          - distracted
+          - bribed
+          - unconscious
+        default_status: guarding
+
+      - id: weeping_gerald
+        name: "Weeping Gerald"
+        description: "A gladiator who has been crying non-stop for three weeks. Nobody knows why. He won his last fight while sobbing uncontrollably. Surprisingly good listener."
+        scene: holding_pens
+        default_disposition: friendly
+        status_options:
+          - weeping
+        default_status: weeping
+
+      - id: kevin
+        name: "Kevin"
+        description: "A war-dog on the arena floor who is clearly too friendly to fight. Wags his tail. Wears the tiniest helmet. The other dogs are embarrassed by him."
+        scene: arena_floor
+        default_disposition: friendly
+        status_options:
+          - friendly
+        default_status: friendly
+
+      - id: war_dogs_1
+        name: "War-Dogs — First Wave"
+        description: "A pack of snarling war-dogs in tiny gladiator helmets. Starving, vicious, and released the moment the gate opens."
+        scene: arena_floor
+        default_disposition: hostile
+        status_options:
+          - attacking
+          - defeated
+        default_status: attacking
+
+      - id: war_dogs_2
+        name: "War-Dogs — Second Wave"
+        description: "A larger pack of war-dogs, released when the first wave falls. These ones are bigger and angrier. Their helmets have plumes."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - waiting
+          - attacking
+          - defeated
+        default_status: waiting
+
+      - id: war_dogs_3
+        name: "War-Dogs — Third Wave"
+        description: "The final wave. The biggest, meanest dogs in the kennel. One of them might actually be a small bear. The crowd is losing its mind."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - waiting
+          - attacking
+          - defeated
+        default_status: waiting
+
+    objects:
+      - id: rusty_shiv
+        name: "Rusty Shiv"
+        description: "A crude blade hidden under a mess hall bench by a gladiator who didn't survive long enough to use it."
+        scene: mess_hall
+        status_options:
+          - hidden
+          - found
+          - taken
+        default_status: hidden
+
+      - id: chain_links
+        name: "Heavy Chain Links"
+        description: "A length of heavy chain in the holding pens. Could serve as a weapon or improvised armor if broken free."
+        scene: holding_pens
+        status_options:
+          - attached
+          - broken_off
+          - taken
+        default_status: attached
+
+      - id: dog_bait
+        name: "Rancid Meat"
+        description: "A slab of meat on the mess hall table that has gone well past questionable. The dogs would love it. Everyone else should not."
+        scene: mess_hall
+        status_options:
+          - on_table
+          - taken
+          - used
+        default_status: on_table
+
+      - id: armory_weapon
+        name: "Proper Weapon"
+        description: "A real sword behind the locked armory door. Chipped and ugly, but functional."
+        scene: armory
+        status_options:
+          - locked_away
+          - taken
+        default_status: locked_away
+
+      - id: motivational_skull
+        name: "Motivational Skull"
+        description: "A skull nailed to the mess hall wall with 'YOU CAN DO IT' carved into its forehead. Previous owner unclear. Oddly encouraging."
+        scene: mess_hall
+        status_options:
+          - mounted
+        default_status: mounted
+
+      - id: soggy_pamphlet
+        name: "Soggy Pamphlet"
+        description: "A waterlogged pamphlet titled 'So You've Been Sold Into Gladiatorial Combat: A Self-Help Guide.' Completely illegible except for step 1: 'Don't panic.'"
+        scene: rat_tunnels
+        status_options:
+          - soggy
+          - taken
+        default_status: soggy
+
+    conditions:
+      - id: act1_survived_dogs
+        description: "All three waves of war-dogs are defeated"
+        narrative: "The last dog whimpers and crawls away trailing blood. The sand is a ruin of tiny helmets and torn fur. The crowd screams your name. You didn't ask them to."
+        type: act_goal
+        next_act: 2
+        check: all_actors_have_status
+        actors:
+          - war_dogs_1
+          - war_dogs_2
+          - war_dogs_3
+        status: defeated
+
+    events:
+      - id: act1_vexxa_taunts
+        act_turn: 1
+        action:
+          type: actor_enters
+          actor_id: vexxa
+          scene: holding_pens
+          new_status: taunting
+        description: "Vexxa appears at the bars. 'Don't take it personally, Korgoth. Father needed fresh meat, and you were the freshest thing drinking alone.' She smiles like a knife."
+
+      - id: act1_gristleback_watches
+        act_turn: 3
+        action:
+          type: actor_enters
+          actor_id: gristleback
+          scene: mess_hall
+          new_status: wary
+        description: "Gristleback watches you from across the mess hall, chewing something that might have been food once. He's sizing you up."
+
+      - id: act1_dogs_howling
+        act_turn: 6
+        action:
+          type: world_flag
+          flag: dogs_howling
+          value: true
+        description: "The war-dogs begin howling from somewhere below the arena. The sound carries through the stone like a promise."
+
+      - id: act1_arena_gate_opens
+        act_turn: 8
+        action:
+          type: actor_enters
+          actor_id: durge
+          scene: arena_gate
+          new_status: guarding
+        description: "Durge appears at the arena gate. 'Time's up, meat. The crowd's waiting.' The portcullis begins to rise."
+
+      - id: act1_gate_unlocked
+        act_turn: 8
+        condition:
+          actor_status:
+            id: durge
+            status: guarding
+        action:
+          type: world_flag
+          flag: arena_gate_open
+          value: true
+        description: "The arena gate is now open. There is no more time to prepare."
+
+      - id: act1_gristleback_shares
+        trigger:
+          actor_status:
+            actor: gristleback
+            status: friendly
+        action:
+          type: actor_enters
+          actor_id: gristleback
+          scene: mess_hall
+          new_status: sharing_intel
+        description: "Gristleback leans in. 'The dogs — they're afraid of fire. Anything burning, they scatter. Also, watch the small one. Kevin. He bites when you're not looking. Actually no, he doesn't. He's just Kevin.'"
+
+      - id: act1_wave_2_released
+        trigger:
+          actor_status:
+            actor: war_dogs_1
+            status: defeated
+        action:
+          type: actor_enters
+          actor_id: war_dogs_2
+          scene: arena_floor
+          new_status: attacking
+        description: "The first wave is down. A horn blasts. The side gates open and a second pack charges onto the sand — bigger, angrier, with plumed helmets. The crowd roars approval."
+
+      - id: act1_wave_3_released
+        trigger:
+          actor_status:
+            actor: war_dogs_2
+            status: defeated
+        action:
+          type: actor_enters
+          actor_id: war_dogs_3
+          scene: arena_floor
+          new_status: attacking
+        description: "The second wave falls. A pause. Then the main gate opens and the final pack surges out. One of them might actually be a small bear. The crowd is on its feet. Gorath leans forward on his balcony."
+
+  # ═══════════════════════════════════════════════════════════════
+  # ACT 2 — "Unlikely Allies" (Team fight with useless partner)
+  # ═══════════════════════════════════════════════════════════════
+  - number: 2
+    title: "Unlikely Allies"
+    intro: |
+      You survived the dogs. The crowd loves you. Gorath does not.
+      Your reward for winning is a team match — and the worst partner in arena history.
+      His name is Philosophus. He was arrested for public indecency. He won't stop talking
+      about ethics. He is your only ally against the Crimson Twins, who have never lost a team fight.
+      You have time to prepare. The arena has opened up. Use it wisely.
+    scenes:
+      - id: gladiator_quarters
+        name: "Gladiator Quarters"
+        description: "Upgraded housing for survivors. Still smells like despair, but the cots have blankets now. A social hub for those not yet dead."
+        exits:
+          - to: training_yard
+            label: "Head to the training yard"
+          - to: gambling_den
+            label: "Follow the noise to the gambling den"
+          - to: arena_gate_2
+            label: "Approach the arena gate"
+            locked: true
+
+      - id: training_yard
+        name: "Training Yard"
+        description: "An open courtyard with practice dummies and sparring circles. The Crimson Twins train here. So does everyone too stubborn to die."
+        exits:
+          - to: gladiator_quarters
+            label: "Back to quarters"
+          - to: sewage_tunnels
+            label: "Pry open the grate"
+
+      - id: gambling_den
+        name: "Gambling Den"
+        description: "A smoky underground room where fortunes change hands and fights are bought before they begin. Bookie Skratch runs everything."
+        exits:
+          - to: gladiator_quarters
+            label: "Back to quarters"
+
+      - id: sewage_tunnels
+        name: "Sewage Tunnels"
+        description: "Foul-smelling tunnels that connect various parts of the arena complex. They lead, among other places, to the opponent's quarters."
+        exits:
+          - to: training_yard
+            label: "Back to the training yard"
+
+      - id: arena_gate_2
+        name: "Arena Gate"
+        description: "The staging area. Your partner Philosophus is here, stretching in ways that are medically inadvisable and philosophically motivated."
+        exits:
+          - to: gladiator_quarters
+            label: "Back to quarters"
+          - to: arena_floor_2
+            label: "Enter the arena"
+
+      - id: arena_floor_2
+        name: "Arena Floor"
+        description: "The sand has been raked since last time. New bloodstains will fix that shortly. The Crimson Twins stand opposite, moving in perfect sync."
+        exits: []
+
+    actors:
+      - id: philosophus
+        name: "Philosophus"
+        description: "An elderly man arrested for public indecency who was accidentally entered into the gladiator roster. Believes combat is 'a dialogue of bodies.' Useless in a fight. Won't stop talking."
+        scene: gladiator_quarters
+        default_disposition: friendly
+        status_options:
+          - philosophizing
+          - coached
+          - fighting
+          - unconscious
+        default_status: philosophizing
+
+      - id: crimson_krath
+        name: "Krath"
+        description: "One half of the Crimson Twins. Left-handed, favors low strikes. Coordinates with Vorn like they share one brain."
+        scene: training_yard
+        default_disposition: hostile
+        status_options:
+          - training
+          - overconfident
+          - poisoned
+          - defeated
+        default_status: training
+
+      - id: crimson_vorn
+        name: "Vorn"
+        description: "The other half of the Crimson Twins. Right-handed, favors high strikes. Finishes Krath's sentences and his opponents."
+        scene: training_yard
+        default_disposition: hostile
+        status_options:
+          - training
+          - overconfident
+          - poisoned
+          - defeated
+        default_status: training
+
+      - id: bookie_skratch
+        name: "Bookie Skratch"
+        description: "Runs the gambling den with greasy efficiency. Knows everything, sells anything, trusts nobody. Information and sabotage are both on the menu."
+        scene: gambling_den
+        default_disposition: neutral
+        status_options:
+          - dealing
+          - negotiating
+          - bribed
+        default_status: dealing
+
+      - id: vexxa
+        name: "Vexxa"
+        description: "Appears briefly between fights. Her agenda is becoming harder to read. She drops hints like someone testing a trap."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - scheming
+          - hinting
+        default_status: scheming
+
+      - id: blorg
+        name: "Blörg"
+        description: "An enormous gladiator who is terrified of everything. Flinches at shadows, screams at pigeons, somehow keeps winning fights by accidentally headbutting opponents while cowering."
+        scene: training_yard
+        default_disposition: neutral
+        status_options:
+          - cowering
+        default_status: cowering
+
+    objects:
+      - id: opponent_intel
+        name: "Crimson Twins Fighting Pattern"
+        description: "Observation of the Twins' coordinated fighting style reveals a half-second gap when they switch positions."
+        scene: training_yard
+        status_options:
+          - unknown
+          - observed
+        default_status: unknown
+
+      - id: laxative_powder
+        name: "Laxative Powder"
+        description: "A potent digestive accelerant available from Bookie Skratch. Slipping it into the Twins' food would be unsporting. Good."
+        scene: gambling_den
+        status_options:
+          - available
+          - purchased
+          - administered
+        default_status: available
+
+      - id: weighted_gloves
+        name: "Weighted Gloves"
+        description: "Heavy leather gloves with lead sewn into the knuckles, buried in the training yard equipment pile."
+        scene: training_yard
+        status_options:
+          - buried
+          - found
+          - taken
+        default_status: buried
+
+      - id: singing_toilet
+        name: "The Singing Toilet"
+        description: "A latrine in the gladiator quarters that makes a melodic humming noise when used. Other gladiators consider it haunted. Some consider it talented."
+        scene: gladiator_quarters
+        status_options:
+          - humming
+        default_status: humming
+
+      - id: inspirational_loincloth
+        name: "Inspirational Loincloth"
+        description: "Philosophus's 'lucky' loincloth. It's stained, too small, and allegedly 'blessed by the muse of combat.' Philosophus insists you wear it for the fight."
+        scene: gladiator_quarters
+        status_options:
+          - offered
+          - taken
+        default_status: offered
+
+      - id: severed_finger_collection
+        name: "Severed Finger Collection"
+        description: "A jar containing 47 severed fingers, meticulously labeled. Nobody remembers starting the collection. It sits on a shelf in the gambling den, undisturbed and unexplained."
+        scene: gambling_den
+        status_options:
+          - displayed
+        default_status: displayed
+
+    conditions:
+      - id: act2_won_team_fight
+        description: "Both Crimson Twins are defeated"
+        narrative: "The Crimson Twins lie in the sand, their coordination finally broken. Philosophus is delivering a victory monologue about the nature of conquest. Nobody is listening. The crowd doesn't care. They just want more."
+        type: act_goal
+        next_act: 3
+        check: all_actors_have_status
+        actors:
+          - crimson_krath
+          - crimson_vorn
+        status: defeated
+
+    events:
+      - id: act2_vexxa_appears
+        act_turn: 2
+        action:
+          type: actor_enters
+          actor_id: vexxa
+          scene: gladiator_quarters
+          new_status: hinting
+        description: "Vexxa appears in the doorway. 'You're more interesting alive than dead, Korgoth. Father disagrees. I'm not sure which of us is right yet.' She leaves before you can respond."
+
+      - id: act2_philosophus_monologue
+        act_turn: 3
+        action:
+          type: actor_enters
+          actor_id: philosophus
+          scene: gladiator_quarters
+          new_status: philosophizing
+        description: "Philosophus corners you. 'The arena is a metaphor, Korgoth. The Twins represent duality — the self and the other. Our fight is really about epistemology.' You consider hitting him."
+
+      - id: act2_twins_spotted
+        act_turn: 4
+        action:
+          type: actor_enters
+          actor_id: crimson_krath
+          scene: training_yard
+          new_status: training
+        description: "The Crimson Twins are in the training yard, moving through their drills with mechanical precision. Watching them fight is like watching a machine designed specifically for killing."
+
+      - id: act2_odds_shift
+        trigger:
+          actor_status:
+            actor: bookie_skratch
+            status: bribed
+        action:
+          type: actor_enters
+          actor_id: crimson_krath
+          scene: training_yard
+          new_status: overconfident
+        description: "Word reaches the Twins that the betting odds have shifted heavily in their favor. They ease off training. Overconfidence is its own poison."
+
+      - id: act2_vorn_overconfident
+        trigger:
+          actor_status:
+            actor: crimson_krath
+            status: overconfident
+        action:
+          type: actor_enters
+          actor_id: crimson_vorn
+          scene: training_yard
+          new_status: overconfident
+        description: "Vorn joins Krath in slacking off. They're already celebrating. The fight hasn't started."
+
+      - id: act2_gate_opens
+        act_turn: 8
+        action:
+          type: world_flag
+          flag: arena_gate_2_open
+          value: true
+        description: "The arena gate groans open. The crowd is chanting. Philosophus is doing breathing exercises. The Crimson Twins are waiting."
+
+      - id: act2_laxative_effect
+        trigger:
+          object_status:
+            object: laxative_powder
+            status: administered
+        action:
+          type: actor_enters
+          actor_id: crimson_krath
+          scene: training_yard
+          new_status: poisoned
+        description: "Krath's face goes pale. Then green. He and Vorn sprint for the latrine in perfect synchronization. Even their digestive distress is coordinated."
+
+  # ═══════════════════════════════════════════════════════════════
+  # ACT 3 — "The Beast Below" (Solo vs. chained beast in flooding pit)
+  # ═══════════════════════════════════════════════════════════════
+  - number: 3
+    title: "The Beast Below"
+    intro: |
+      Your fame grows. The crowd chants your name. Gorath watches from his balcony with an expression
+      that suggests your continued survival is becoming a business problem.
+      Your next fight is in the Pit — a sunken arena that floods with swamp water while you fight
+      whatever they've chained down there. The beast used to be someone's exotic pet.
+      It outgrew its cage. Then it outgrew the next three cages.
+      Vexxa's agenda is getting murkier. The Surgeon might help. The beast might not.
+    scenes:
+      - id: champion_corridor
+        name: "Champion Corridor"
+        description: "Better quarters for survivors who've lasted more than two fights. The beds have actual mattresses. Someone painted a crude mural of your dog fight on the wall."
+        exits:
+          - to: infirmary
+            label: "Visit the infirmary"
+          - to: beast_pens
+            label: "Descend to the beast pens"
+          - to: vexxa_quarters
+            label: "Vexxa's quarters (locked)"
+            locked: true
+          - to: pit_entrance
+            label: "Head to the pit entrance"
+            locked: true
+
+      - id: infirmary
+        name: "Infirmary"
+        description: "A room that smells of herbs, blood, and resignation. The Surgeon works here with steady hands and a grim outlook on life expectancy."
+        exits:
+          - to: champion_corridor
+            label: "Back to the corridor"
+
+      - id: vexxa_quarters
+        name: "Vexxa's Quarters"
+        description: "Private chambers decorated with stolen luxuries. Maps, ledgers, and a locked cabinet that suggests Vexxa's ambitions extend beyond the arena."
+        exits:
+          - to: champion_corridor
+            label: "Leave quietly"
+
+      - id: beast_pens
+        name: "Beast Pens"
+        description: "Underground cages where arena creatures are kept. The smell is indescribable. Something enormous is breathing in the darkness, and its chain rattles with every exhale."
+        exits:
+          - to: champion_corridor
+            label: "Back up to the corridor"
+          - to: pit_entrance
+            label: "Through to the pit entrance"
+
+      - id: pit_entrance
+        name: "Pit Entrance"
+        description: "A platform overlooking the sunken pit. The water level is already ankle-deep down there. The chain disappears into the murk."
+        exits:
+          - to: champion_corridor
+            label: "Back to the corridor"
+          - to: the_pit
+            label: "Descend into the pit"
+
+      - id: the_pit
+        name: "The Pit"
+        description: "A sunken stone arena filling with dark water. The beast's chain extends from the far wall. Each round, the chain gets longer and the water gets deeper."
+        exits: []
+
+    actors:
+      - id: gorath
+        name: "Gorath the Arena Master"
+        description: "Vexxa's father. A cruel showman who treats gladiators like inventory and the crowd like customers. Watches from his balcony with proprietary interest."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - watching
+          - scheming
+          - enraged
+        default_status: watching
+
+      - id: vexxa
+        name: "Vexxa"
+        description: "More complex now. She may offer help — for a price. Her agenda is showing cracks, and not all of them point toward her father."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - scheming
+          - bargaining
+          - offering
+          - allied
+        default_status: scheming
+
+      - id: the_surgeon
+        name: "The Surgeon"
+        description: "The arena's medic. Friendly but grim. Has patched together more gladiators than he can count. Knows the beast's biology from treating its previous victims."
+        scene: infirmary
+        default_disposition: friendly
+        status_options:
+          - working
+          - helpful
+          - sharing_intel
+        default_status: working
+
+      - id: narrator_gob
+        name: "Narrator Gob"
+        description: "A tiny, enthusiastic man who has appointed himself Korgoth's 'official biographer.' Follows Korgoth around narrating everything he does in third person, badly."
+        scene: champion_corridor
+        default_disposition: friendly
+        status_options:
+          - narrating
+        default_status: narrating
+
+      - id: pit_beast
+        name: "The Pit Beast"
+        description: "A massive chained creature in the sunken pit. It used to be someone's exotic pet that outgrew its cage. Then outgrew the next three cages. Its chain gets longer every round. The water gets deeper."
+        scene: the_pit
+        default_disposition: hostile
+        status_options:
+          - chained
+          - raging
+          - defeated
+        default_status: chained
+
+      - id: comfort_leech
+        name: "The Comfort Leech"
+        description: "A large leech in the infirmary that The Surgeon swears has 'therapeutic properties.' It just sits on a shelf looking moist. It does not provide comfort."
+        scene: infirmary
+        default_disposition: neutral
+        status_options:
+          - moist
+        default_status: moist
+
+    objects:
+      - id: numbing_salve
+        name: "Numbing Salve"
+        description: "A thick paste that deadens pain for hours. The Surgeon keeps it in his cabinet for fighters who ask nicely or intimidatingly."
+        scene: infirmary
+        status_options:
+          - in_cabinet
+          - taken
+          - applied
+        default_status: in_cabinet
+
+      - id: beast_weakness
+        name: "Beast Weakness Intel"
+        description: "Knowledge of a soft spot behind the beast's left ear. The Surgeon learned this from autopsying similar creatures."
+        scene: infirmary
+        status_options:
+          - unknown
+          - learned
+        default_status: unknown
+
+      - id: rusted_harpoon
+        name: "Rusted Harpoon"
+        description: "A long-forgotten weapon hidden in the beast pens maintenance area. Rusted but still sharp enough to pierce hide."
+        scene: beast_pens
+        status_options:
+          - hidden
+          - found
+          - taken
+        default_status: hidden
+
+      - id: pit_drain_valve
+        name: "Pit Drain Valve"
+        description: "A maintenance valve in the beast pens that controls water flow to the pit. Opening it would slow the flooding during the fight."
+        scene: beast_pens
+        status_options:
+          - sealed
+          - found
+          - opened
+        default_status: sealed
+
+      - id: beast_sedative
+        name: "Beast Sedative Vial"
+        description: "A vial of concentrated sedative that Vexxa offers. The price is 'a favor.' She doesn't specify what kind."
+        scene: vexxa_quarters
+        status_options:
+          - offered
+          - taken
+          - refused
+        default_status: offered
+
+      - id: commemorative_plate
+        name: "Commemorative Plate"
+        description: "A crude ceramic plate with Korgoth's face painted on it. Badly. Apparently they're selling these in the stands. The likeness is generous about the jawline."
+        scene: infirmary
+        status_options:
+          - on_shelf
+          - taken
+        default_status: on_shelf
+
+      - id: mysterious_egg
+        name: "Mysterious Egg"
+        description: "A large, warm egg found in the beast pens. Nobody knows what's inside. It pulses occasionally. Taking it does nothing. Leaving it does nothing. It's just an egg."
+        scene: beast_pens
+        status_options:
+          - warm
+          - taken
+        default_status: warm
+
+    conditions:
+      - id: act3_beast_defeated
+        description: "The pit beast is defeated"
+        narrative: "The beast sinks beneath the dark water, its last bellow drowning in the flood. You climb out of the pit soaked in swamp water, blood, and something that smells worse than both. The crowd is on its feet. Gorath is not smiling."
+        type: act_goal
+        next_act: 4
+        check: actor_has_status
+        actor: pit_beast
+        status: defeated
+
+    events:
+      - id: act3_gorath_appears
+        act_turn: 1
+        action:
+          type: actor_enters
+          actor_id: gorath
+          scene: offstage
+          new_status: watching
+        description: "Gorath watches from his balcony, fingers steepled. He's taken a personal interest in your next fight. That's never good."
+
+      - id: act3_surgeon_greets
+        act_turn: 2
+        action:
+          type: actor_enters
+          actor_id: the_surgeon
+          scene: infirmary
+          new_status: helpful
+        description: "The Surgeon looks up from stitching a wound. 'Ah, the dog-fighter. You'll need more than luck for the pit beast. Sit. Let me tell you what I know about keeping your insides inside.'"
+
+      - id: act3_vexxa_appears
+        act_turn: 4
+        action:
+          type: actor_enters
+          actor_id: vexxa
+          scene: champion_corridor
+          new_status: bargaining
+        description: "Vexxa appears without warning. 'I have something that could help with the beast. All I need is a favor. Later. Nothing terrible.' Her smile suggests otherwise."
+
+      - id: act3_pit_opens
+        act_turn: 8
+        action:
+          type: world_flag
+          flag: pit_entrance_open
+          value: true
+        description: "The pit entrance is unsealed. Water is already pouring in below. The beast stirs in its chains. Time's up."
+
+      - id: act3_surgeon_shares
+        trigger:
+          actor_status:
+            actor: the_surgeon
+            status: helpful
+        action:
+          type: actor_enters
+          actor_id: the_surgeon
+          scene: infirmary
+          new_status: sharing_intel
+        description: "The Surgeon lowers his voice. 'Behind the left ear. There's a soft spot where the skull plates don't meet. One good hit there and the thing goes down. Don't ask how I know. The answer involves a lot of dead gladiators.'"
+
+  # ═══════════════════════════════════════════════════════════════
+  # ACT 4 — "The Crowd's Favorite" (Gauntlet with crowd-controlled traps)
+  # ═══════════════════════════════════════════════════════════════
+  - number: 4
+    title: "The Crowd's Favorite"
+    intro: |
+      Three fights. Three wins. The crowd screams your name like a prayer to a god of violence.
+      Gorath sees profit and threat in equal measure. Vexxa makes her move: help her overthrow
+      her father, or keep fighting alone. The next challenge is the Gauntlet — a trap-filled
+      arena floor where the crowd votes on which traps activate. Your final opponent is Rotgut,
+      the only gladiator the crowd loves more than you. This is peak scheming territory.
+    scenes:
+      - id: champions_suite
+        name: "Champion's Suite"
+        description: "Luxury quarters by arena standards. The bed has a frame. There's a window. It's barred, but still — a window. Progress."
+        exits:
+          - to: betting_hall
+            label: "Visit the betting hall"
+          - to: trap_workshop
+            label: "Sneak into the trap workshop"
+          - to: gorath_balcony
+            label: "Gorath's balcony (invitation only)"
+            locked: true
+          - to: arena_gate_4
+            label: "Head to the arena gate"
+            locked: true
+
+      - id: betting_hall
+        name: "Betting Hall"
+        description: "The public gambling floor. Louder than the arena itself. Crowd sentiment is currency here, and the crowd controls the traps."
+        exits:
+          - to: champions_suite
+            label: "Back to the suite"
+
+      - id: trap_workshop
+        name: "Trap Workshop"
+        description: "Where arena traps are maintained, armed, and tested. Trap Master Clink works here surrounded by mechanisms designed to kill in entertaining ways."
+        exits:
+          - to: champions_suite
+            label: "Back to the suite"
+
+      - id: gorath_balcony
+        name: "Gorath's Balcony"
+        description: "The Arena Master's private viewing area. Plush seating, fine wine, and a commanding view of the killing floor below."
+        exits:
+          - to: champions_suite
+            label: "Leave the balcony"
+
+      - id: arena_gate_4
+        name: "Arena Gate"
+        description: "The staging area. You can hear the traps being armed on the other side of the portcullis. Mechanical clicking. Hydraulic hissing. The crowd voting."
+        exits:
+          - to: champions_suite
+            label: "Back to the suite"
+          - to: arena_floor_4
+            label: "Enter the gauntlet"
+
+      - id: arena_floor_4
+        name: "Arena Floor — The Gauntlet"
+        description: "A trap-laden arena floor. Panels shift, spikes emerge, fire jets ignite — all at the crowd's command. A series of opponents wait at intervals. Rotgut waits at the end."
+        exits: []
+
+    actors:
+      - id: gorath
+        name: "Gorath the Arena Master"
+        description: "Directly antagonistic now. Suspicious of Korgoth's popularity. A crowd favorite is profitable until they become uncontrollable."
+        scene: gorath_balcony
+        default_disposition: hostile
+        force_status: scheming
+        status_options:
+          - scheming
+          - enraged
+          - defeated
+        default_status: scheming
+
+      - id: vexxa
+        name: "Vexxa"
+        description: "Makes her offer: help her take over the arena. Her true agenda — she wants to run it herself, not free anyone. The deal is power, not liberation."
+        scene: champions_suite
+        default_disposition: neutral
+        status_options:
+          - bargaining
+          - allied
+          - refused
+          - treacherous
+        default_status: bargaining
+
+      - id: rotgut
+        name: "Rotgut"
+        description: "The arena's fan-favorite gladiator. Massive, scarred, and mean. Sees Korgoth as a threat to his status. Has a bad knee from an old injury that he hides well."
+        scene: offstage
+        default_disposition: hostile
+        status_options:
+          - confident
+          - poisoned
+          - fighting
+          - defeated
+        default_status: confident
+
+      - id: trap_master_clink
+        name: "Trap Master Clink"
+        description: "Maintains the arena traps. Small, nervous, and surprisingly principled about his craft. Can be bribed or threatened into sharing the trap layout."
+        scene: trap_workshop
+        default_disposition: neutral
+        status_options:
+          - working
+          - bribed
+          - threatened
+        default_status: working
+
+      - id: fan_club_murd
+        name: "Fan Club President Murd"
+        description: "An obsessive Korgoth fan who somehow got backstage access. Has a tattoo of Korgoth's face on his face. Wants an autograph. Won't leave."
+        scene: champions_suite
+        default_disposition: friendly
+        status_options:
+          - fanboying
+        default_status: fanboying
+
+      - id: old_man_breakfast
+        name: "Old Man Breakfast"
+        description: "An ancient gladiator who has been 'retired' for decades but nobody told him. Still shows up to every pre-fight briefing. His combat advice was outdated forty years ago."
+        scene: champions_suite
+        default_disposition: neutral
+        status_options:
+          - advising
+        default_status: advising
+
+    objects:
+      - id: trap_map
+        name: "Trap Layout Map"
+        description: "A schematic of every trap on the gauntlet floor. Knowing where they are means not being where they activate."
+        scene: trap_workshop
+        status_options:
+          - unknown
+          - acquired
+        default_status: unknown
+
+      - id: crowd_favor
+        name: "Crowd Favor"
+        description: "The crowd's sentiment toward Korgoth. A favorable crowd aims traps at opponents instead. Worked through the betting hall."
+        scene: betting_hall
+        status_options:
+          - neutral
+          - favorable
+        default_status: neutral
+
+      - id: sabotaged_traps
+        name: "Sabotaged Traps"
+        description: "Specific traps on the arena floor that have been disabled from the workshop. They'll click but won't fire."
+        scene: trap_workshop
+        status_options:
+          - active
+          - sabotaged
+        default_status: active
+
+      - id: rotgut_weakness
+        name: "Rotgut's Bad Knee"
+        description: "Intel that Rotgut has a badly healed knee injury on his right side. He compensates well but can't recover from a targeted strike there."
+        scene: betting_hall
+        status_options:
+          - unknown
+          - discovered
+        default_status: unknown
+
+      - id: spiked_grog
+        name: "Spiked Grog"
+        description: "Rotgut's pre-fight drink, poisoned through betting hall contacts. Enough to slow him, not enough to drop him."
+        scene: betting_hall
+        status_options:
+          - available
+          - administered
+        default_status: available
+
+      - id: emotional_trap
+        name: "The Emotional Trap"
+        description: "An arena trap that releases a cloud of pollen causing everyone nearby to cry uncontrollably for 30 seconds. The crowd voted for it unanimously."
+        scene: arena_floor_4
+        status_options:
+          - armed
+          - triggered
+        default_status: armed
+
+      - id: korgoth_action_figure
+        name: "Korgoth Action Figure"
+        description: "A small wooden figure carved to look like Korgoth. One arm is longer than the other. The face looks constipated. Sold by a vendor in the betting hall."
+        scene: betting_hall
+        status_options:
+          - for_sale
+          - purchased
+        default_status: for_sale
+
+    conditions:
+      - id: act4_survived_gauntlet
+        description: "Rotgut is defeated in the gauntlet"
+        narrative: "Rotgut hits the sand for the last time. The traps go silent. The crowd is delirious. Gorath grips the railing of his balcony hard enough to crack the wood. You've become a problem he can't solve with dogs or beasts or twins."
+        type: act_goal
+        next_act: 5
+        check: actor_has_status
+        actor: rotgut
+        status: defeated
+
+    events:
+      - id: act4_vexxa_offers
+        act_turn: 2
+        action:
+          type: actor_enters
+          actor_id: vexxa
+          scene: champions_suite
+          new_status: bargaining
+        description: "Vexxa sits on your bed uninvited. 'Here's the deal, Korgoth. Help me remove my father, and I'll make sure you walk out of here alive. I want the arena. You want freedom. Everyone wins.' She pauses. 'Mostly me.'"
+
+      - id: act4_murd_appears
+        act_turn: 1
+        action:
+          type: actor_enters
+          actor_id: fan_club_murd
+          scene: champions_suite
+          new_status: fanboying
+        description: "A man with your face tattooed on his face is standing in your quarters. 'I'm your biggest fan,' he says. This is immediately and literally true."
+
+      - id: act4_rotgut_arrives
+        act_turn: 5
+        action:
+          type: actor_enters
+          actor_id: rotgut
+          scene: arena_gate_4
+          new_status: confident
+        description: "Rotgut appears at the arena gate. He's bigger than the rumors suggested. He looks at you the way a dog looks at a bone. Not Kevin. A real dog."
+
+      - id: act4_gate_opens
+        act_turn: 8
+        action:
+          type: world_flag
+          flag: arena_gate_4_open
+          value: true
+        description: "The gauntlet awaits. The traps hum. The crowd holds numbered paddles for trap voting. This is entertainment."
+
+      - id: act4_spiked_effect
+        trigger:
+          object_status:
+            object: spiked_grog
+            status: administered
+        action:
+          type: actor_enters
+          actor_id: rotgut
+          scene: arena_gate_4
+          new_status: poisoned
+        description: "Rotgut wipes his mouth after his pre-fight drink. His hands are shaking slightly. His eyes can't quite focus. He doesn't know it yet, but his fight started ten minutes ago and he's already losing."
+
+      - id: act4_clink_bribed
+        trigger:
+          actor_status:
+            actor: trap_master_clink
+            status: bribed
+        action:
+          type: world_flag
+          flag: trap_intel_acquired
+          value: true
+        description: "Clink slides you a rolled parchment without making eye contact. 'Panels three, seven, and twelve. Stay off them. The rest... well, the rest are the crowd's problem.'"
+
+  # ═══════════════════════════════════════════════════════════════
+  # ACT 5 — "Freedom or Death" (Championship vs. the Unchained)
+  # ═══════════════════════════════════════════════════════════════
+  - number: 5
+    title: "Freedom or Death"
+    intro: |
+      This is it. The championship. Gorath has saved his best for last: Grok the Unchained,
+      a monstrous champion who has never lost. Gorath will cheat — releasing beasts, arming Grok,
+      tilting the floor itself. Everything converges here. Vexxa's choice. Gristleback's loyalty.
+      A secret about Grok that changes everything.
+      You start in a cell, stripped of weapons. They want you to die on schedule.
+      Find a way to rewrite the schedule.
+    scenes:
+      - id: death_row_cell
+        name: "Death Row Cell"
+        description: "A bare stone cell for gladiators facing the championship. They took everything. The walls are covered in scratched messages from those who came before."
+        exits:
+          - to: tunnel_network
+            label: "Pry open the loose stone"
+            locked: true
+          - to: arena_floor_5
+            label: "The guards come for you"
+            locked: true
+
+      - id: tunnel_network
+        name: "Tunnel Network"
+        description: "Hidden passages under the arena. Graffiti, rats, and the occasional inexplicable merchant. These tunnels connect to places they shouldn't."
+        exits:
+          - to: death_row_cell
+            label: "Back to the cell"
+          - to: weapon_cache
+            label: "Follow the scratched arrow"
+          - to: arena_floor_5
+            label: "Emerge onto the arena floor"
+
+      - id: weapon_cache
+        name: "Weapon Cache"
+        description: "A hidden stash in the tunnels. Weapons left by gladiators who planned escapes that never happened. Their loss, your gain."
+        exits:
+          - to: tunnel_network
+            label: "Back to the tunnels"
+
+      - id: arena_floor_5
+        name: "Arena Floor — Championship"
+        description: "The arena at its grandest. Every seat filled. Banners fly. Grok the Unchained stands in the center, silent and massive. A metal collar glints at his throat. Gorath watches from his throne above."
+        exits:
+          - to: gorath_throne
+            label: "Reach the throne platform"
+          - to: arena_exit
+            label: "Walk through the gate to freedom"
+            locked: true
+            arena_exit: true
+
+      - id: gorath_throne
+        name: "Gorath's Throne"
+        description: "The elevated platform above the arena where Gorath controls his cheats — levers for beasts, weapons, and the tilting floor. The seat of a petty tyrant."
+        exits:
+          - to: arena_floor_5
+            label: "Back to the arena floor"
+
+      - id: arena_exit
+        name: "Arena Exit"
+        description: "The gate to freedom. Beyond it, the wasteland. Behind it, everything that tried to kill you. You've earned every step."
+        exits: []
+
+    actors:
+      - id: grok
+        name: "Grok the Unchained"
+        description: "The reigning champion. Monstrous, silent, and terrifying. Has never lost. Wears a metal control collar at his throat — he fights because he has to, not because he wants to."
+        scene: arena_floor_5
+        default_disposition: hostile
+        status_options:
+          - controlled
+          - fighting
+          - freed
+          - enraged
+        default_status: controlled
+
+      - id: gorath
+        name: "Gorath the Arena Master"
+        description: "Cheats from his throne above the arena. Releases beasts, provides Grok extra weapons, tilts the arena floor. He will not let Korgoth walk out alive."
+        scene: gorath_throne
+        default_disposition: hostile
+        force_status: scheming
+        status_options:
+          - scheming
+          - cheating
+          - exposed
+          - defeated
+        default_status: scheming
+
+      - id: vexxa
+        name: "Vexxa"
+        description: "Her final move depends on the choices made. If allied in Act 4: she sabotages Gorath's controls. If refused: she watches coldly from the stands, calculating her next opportunity."
+        scene: offstage
+        default_disposition: neutral
+        status_options:
+          - allied
+          - treacherous
+          - watching
+        default_status: watching
+
+      - id: gristleback
+        name: "Gristleback"
+        description: "The veteran from Act 1. If befriended, he's rallied other gladiators. A word from Korgoth could start a riot in the stands — the perfect distraction."
+        scene: offstage
+        default_disposition: neutral
+        status_options:
+          - waiting
+          - rallied
+          - rioting
+        default_status: waiting
+
+      - id: commemorative_vendor
+        name: "Commemorative Vendor"
+        description: "A merchant who has somehow set up a souvenir stall in the tunnel network. Sells 'I Survived Gorath's Arena' mugs and 'Grok Ate My Family' pennants. How he got down here is never explained."
+        scene: tunnel_network
+        default_disposition: neutral
+        status_options:
+          - selling
+        default_status: selling
+
+      - id: emotional_support_scorpion
+        name: "The Emotional Support Scorpion"
+        description: "A scorpion in the death row cell wearing a tiny vest that says 'SUPPORT ANIMAL.' It's venomous. It does not provide emotional support."
+        scene: death_row_cell
+        default_disposition: neutral
+        status_options:
+          - skittering
+        default_status: skittering
+
+    objects:
+      - id: tunnel_discovery
+        name: "Tunnel Entrance"
+        description: "A loose stone in the death row cell that leads to the tunnel network beneath the arena."
+        scene: death_row_cell
+        status_options:
+          - hidden
+          - found
+        default_status: hidden
+
+      - id: hidden_blade
+        name: "Hidden Blade"
+        description: "A short, vicious blade stashed in the weapon cache by a gladiator who never came back for it."
+        scene: weapon_cache
+        status_options:
+          - hidden
+          - found
+          - taken
+        default_status: hidden
+
+      - id: grok_secret
+        name: "Grok's Control Collar Secret"
+        description: "Graffiti in the tunnels reveals that Grok wears a control collar. Destroy it mid-fight, and Grok is free — and his rage will find a new target."
+        scene: tunnel_network
+        status_options:
+          - unknown
+          - discovered
+        default_status: unknown
+
+      - id: arena_structure
+        name: "Arena Weak Points"
+        description: "Study of the arena floor from the tunnels reveals structural weak points — panels that can be collapsed, supports that can be broken."
+        scene: tunnel_network
+        status_options:
+          - unknown
+          - mapped
+        default_status: unknown
+
+      - id: participation_trophy
+        name: "Participation Trophy"
+        description: "A small, pathetic trophy engraved 'Thanks For Trying.' Given to all gladiators who don't survive. Someone left it behind. It's deeply insulting."
+        scene: death_row_cell
+        status_options:
+          - on_floor
+          - taken
+        default_status: on_floor
+
+      - id: graffiti_poetry
+        name: "Tunnel Graffiti Poetry"
+        description: "Crude poetry scratched into tunnel walls. Highlights include: 'Roses are red, the pit beast is near, I should have stayed home, I should not be here.'"
+        scene: tunnel_network
+        status_options:
+          - scrawled
+        default_status: scrawled
+
+    conditions:
+      - id: act5_freedom
+        description: "Korgoth defeats Grok and Gorath, and walks free"
+        narrative: "The gate opens. Sunlight hits your face for the first time in weeks. Behind you, the arena burns with riot and ruin. Ahead, the wasteland stretches to the horizon. You don't look back. You never do."
+        type: goal
+        check: player_at_scene
+        scene: arena_exit
+
+      - id: act5_grok_kills_korgoth
+        description: "Grok overwhelms Korgoth in the championship"
+        narrative: "Grok's fist connects. Then connects again. The collar hums. He doesn't want to do this, but the collar doesn't care. Neither does Gorath, who is already announcing the next season's lineup."
+        type: danger
+        check: actor_has_status
+        actor: grok
+        status: controlled
+
+      - id: act5_gorath_cheats_win
+        description: "Gorath's cheating overwhelms Korgoth"
+        narrative: "The floor tilts. Beasts pour from the gates. Grok gets a second weapon. Gorath leans back in his throne, satisfied. The house always wins. Especially when the house cheats."
+        type: danger
+        check: actor_has_status
+        actor: gorath
+        status: cheating
+
+    events:
+      - id: act5_gorath_cheats
+        act_turn: 1
+        condition:
+          actor_status:
+            id: gorath
+            status: scheming
+        action:
+          type: actor_enters
+          actor_id: gorath
+          scene: gorath_throne
+          new_status: cheating
+        description: "Gorath pulls the first lever. The arena floor shifts. Cages open on the sides. 'Give the champion his tools,' Gorath smiles. This was never going to be fair."
+
+      - id: act5_vexxa_sabotage
+        act_turn: 2
+        condition:
+          actor_status:
+            id: vexxa
+            status: allied
+        action:
+          type: actor_enters
+          actor_id: gorath
+          scene: gorath_throne
+          new_status: exposed
+        description: "Sparks fly from Gorath's control panel. The levers go dead. Gorath screams. In the shadows behind the throne, Vexxa smiles and disappears. She kept her end of the deal. The cheats are offline."
+
+      - id: act5_gristleback_riot
+        act_turn: 3
+        condition:
+          actor_status:
+            id: gristleback
+            status: rallied
+        action:
+          type: actor_enters
+          actor_id: gristleback
+          scene: arena_floor_5
+          new_status: rioting
+        description: "A roar erupts from the gladiator section. Gristleback stands on a bench, bellowing. Chains break. Guards scramble. The riot spreads like fire through dry grass. The arena's attention splits."
+
+      - id: act5_grok_freed
+        trigger:
+          object_status:
+            object: grok_secret
+            status: discovered
+        action:
+          type: world_flag
+          flag: collar_weakness_known
+          value: true
+        description: "The graffiti is crude but clear: 'THE COLLAR. BREAK THE COLLAR. HE'LL DO THE REST.' Someone figured it out before. They just didn't survive long enough to act on it."
+
+      - id: act5_collar_broken
+        trigger:
+          actor_status:
+            actor: grok
+            status: freed
+        action:
+          type: actor_enters
+          actor_id: grok
+          scene: gorath_throne
+          new_status: enraged
+        description: "The collar shatters. Grok stops mid-swing. His eyes clear for the first time in years. He looks at his hands. Then he looks up at the throne. Gorath stops smiling."
+
+      - id: act5_guards_come
+        act_turn: 5
+        action:
+          type: world_flag
+          flag: arena_floor_open
+          value: true
+        description: "The guards arrive at the cell. Whether you found the tunnels or not, it's time. The championship waits."

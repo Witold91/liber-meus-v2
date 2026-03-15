@@ -96,6 +96,30 @@ class ScenarioEventServiceTest < ActiveSupport::TestCase
     )
   end
 
+  test "returns localized korgoth event descriptions when locale is provided" do
+    state = {
+      "scenario_slug" => "korgoth_of_barbaria",
+      "act_number" => 1,
+      "player_scene" => "holding_pens",
+      "actors" => {},
+      "objects" => {}
+    }
+
+    events = ScenarioEventService.events_for_turn(
+      turn_number: 99,
+      act_turn_number: 1,
+      world_state: state,
+      locale: "pl"
+    )
+
+    event = events.find { |e| e["id"] == "act1_vexxa_taunts" }
+    assert_not_nil event
+    assert_equal(
+      "Vexxa staje przy kratach. \"Nie bierz tego do siebie, Korgoth. Ojciec potrzebował świeżego mięsa, a ty byłeś najświeższą rzeczą, która piła samotnie.\" Uśmiecha się jak nóż.",
+      event["description"]
+    )
+  end
+
   test "state-triggered event fires when actor condition is met" do
     state = {
       "scenario_slug" => "romeo_juliet",
