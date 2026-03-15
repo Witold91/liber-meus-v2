@@ -66,6 +66,12 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert_equal "Droga Kamili do domu", scenario["title"]
   end
 
+  test "find with locale pl returns Polish title for korgoth_of_barbaria" do
+    scenario = ScenarioCatalog.find("korgoth_of_barbaria", locale: "pl")
+    assert_not_nil scenario
+    assert_equal "Korgoth z Barbarii", scenario["title"]
+  end
+
   test "find with locale pl merges scene name" do
     scenario = ScenarioCatalog.find("romeo_juliet", locale: "pl")
     act = scenario["acts"].first
@@ -106,6 +112,24 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     )
   end
 
+  test "find with locale pl merges korgoth hero scene and event description" do
+    scenario = ScenarioCatalog.find("korgoth_of_barbaria", locale: "pl")
+
+    assert_equal(
+      "Mężczyzna, około trzydziestki. Olbrzymi barbarzyńca — ciężko pokryty bliznami, nadludzko silny, o suchym cynicznym humorze. Niechętny, ale druzgocąco skuteczny w walce. Mówi rzadko, uderza często.",
+      scenario.dig("hero", "llm_description")
+    )
+
+    scene = scenario.dig("acts", 0, "scenes").find { |s| s["id"] == "holding_pens" }
+    assert_equal "Kojce", scene["name"]
+
+    event = scenario.dig("acts", 0, "events").find { |e| e["id"] == "act1_vexxa_taunts" }
+    assert_equal(
+      "Vexxa staje przy kratach. \"Nie bierz tego do siebie, Korgoth. Ojciec potrzebował świeżego mięsa, a ty byłeś najświeższą rzeczą, która piła samotnie.\" Uśmiecha się jak nóż.",
+      event["description"]
+    )
+  end
+
   test "find with unsupported locale falls back to English" do
     scenario = ScenarioCatalog.find("romeo_juliet", locale: "de")
     assert_not_nil scenario
@@ -134,6 +158,7 @@ class ScenarioCatalogTest < ActiveSupport::TestCase
     assert scenarios.all? { |s| s["slug"].present? }
     slugs = scenarios.map { |s| s["slug"] }
     assert_includes slugs, "camillas_way_home"
+    assert_includes slugs, "korgoth_of_barbaria"
     assert_includes slugs, "romeo_juliet"
     assert_includes slugs, "tavern_heist"
   end
