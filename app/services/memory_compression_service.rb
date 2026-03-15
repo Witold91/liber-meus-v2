@@ -4,9 +4,7 @@ class MemoryCompressionService
   SYSTEM_PROMPT_PATH = Rails.root.join("lib", "prompts", "memory_compression.txt")
 
   def self.maybe_compress!(game)
-    uncompressed_turns = game.turns
-                             .where.not(llm_memory: [ nil, "" ])
-                             .order(:turn_number)
+    uncompressed_turns = game.turns.with_memory.order(:turn_number)
 
     return false if uncompressed_turns.count < COMPRESSION_THRESHOLD
 

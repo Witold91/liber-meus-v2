@@ -2,7 +2,7 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: <%= ENV.fetch("DB_USERNAME", "wkl") %>
+  username: <%= ENV.fetch("DB_USERNAME", "") %>
   password: <%= ENV.fetch("DB_PASSWORD", "") %>
   host: <%= ENV.fetch("DB_HOST", "") %>
 
@@ -15,8 +15,18 @@ test:
   database: liber_meus_v2_test
 
 production:
-  <<: *default
-  database: <%= ENV.fetch("DB_NAME", "liber_meus_v2_production") %>
-  username: <%= ENV["DB_USERNAME"] %>
-  password: <%= ENV["DB_PASSWORD"] %>
-  host: <%= ENV["DB_HOST"] %>
+  primary: &primary_production
+    <<: *default
+    database: <%= ENV.fetch("DB_NAME", "liber_meus_v2_production") %>
+    username: <%= ENV["DB_USERNAME"] %>
+    password: <%= ENV["DB_PASSWORD"] %>
+    host: <%= ENV["DB_HOST"] %>
+  queue:
+    <<: *primary_production
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    migrations_paths: db/cable_migrate
+  cache:
+    <<: *primary_production
+    migrations_paths: db/cache_migrate

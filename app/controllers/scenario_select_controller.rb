@@ -2,7 +2,7 @@ class ScenarioSelectController < ApplicationController
   PER_PAGE = 10
 
   def show
-    all_scenarios = ScenarioCatalog.all
+    all_scenarios = ScenarioCatalog.visible
     @page = [ params.fetch(:page, 1).to_i, 1 ].max
     @scenarios = all_scenarios.slice((@page - 1) * PER_PAGE, PER_PAGE) || []
     @has_next_page = all_scenarios.length > @page * PER_PAGE

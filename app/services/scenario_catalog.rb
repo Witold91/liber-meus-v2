@@ -21,6 +21,11 @@ module ScenarioCatalog
     @@cache.select { |k, _| !k.include?(".") }.values
   end
 
+  def self.visible
+    hidden = ENV.fetch("HIDDEN_SCENARIOS", "").split(",").map(&:strip).to_set
+    all.reject { |s| hidden.include?(s["slug"]) }
+  end
+
   def self.reload!
     @@cache = {}
 

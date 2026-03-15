@@ -34,7 +34,7 @@
     <%# Left: Console panel %>
     <div class="console-panel">
       <div class="console-header">
-        <h2><%= @game.hero.name %> // <%= @game.random_mode? ? @game.world_state&.dig("setting_name") : ScenarioCatalog.find(@game.scenario_slug, locale: @game.game_language)&.dig("title") %></h2>
+        <h2><%= @game.hero.name %> // <%= game_title(@game) %></h2>
         <span class="console-status" id="turn-counter"><%= t("views.games.turn", number: @game.turns.maximum(:turn_number) || 0) %></span>
         <button class="mobile-world-btn"
                 data-game-target="worldBtn"

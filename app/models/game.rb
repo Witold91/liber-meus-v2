@@ -21,4 +21,8 @@ class Game < ApplicationRecord
   def current_act
     acts.where(status: "active").order(:number).last
   end
+
+  def next_turn_number
+    (turns.maximum(:turn_number) || 0) + 1
+  end
 end

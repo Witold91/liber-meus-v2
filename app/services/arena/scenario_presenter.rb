@@ -1,5 +1,7 @@
 module Arena
   class ScenarioPresenter
+    include Presenters::BaseMethods
+
     def initialize(scenario_hash, act_number, world_state)
       @scenario = scenario_hash
       @act_number = act_number
@@ -43,25 +45,9 @@ module Arena
       object_states = world_state["objects"] || {}
       improvised    = world_state["improvised_objects"] || {}
 
-      scene_actors = actors.select { |a| current_actor_scene(a, actor_states) == scene_id }
-        .map do |a|
-          statuses = Array(actor_states.dig(a["id"], "statuses") || [ actor_states.dig(a["id"], "status") || a["default_status"] ])
-          disposition = actor_states.dig(a["id"], "disposition") || a["default_disposition"] || "neutral"
-          { id: a["id"], name: a["name"], description: a["description"], statuses: statuses, status_options: a["status_options"] || [], disposition: disposition }
-        end
-
-      scene_objects = objects.select { |o| current_object_scene(o, object_states) == scene_id }
-        .map do |o|
-          statuses = Array(object_states.dig(o["id"], "statuses") || [ object_states.dig(o["id"], "status") || o["default_status"] ])
-          { id: o["id"], name: o["name"], description: o["description"], statuses: statuses }
-        end
-
-      # Include improvised objects that are at this specific scene only
-      improvised.each do |item_id, data|
-        item_scene = data["scene"]
-        next unless item_scene == scene_id
-        scene_objects << { id: item_id, name: item_id.gsub("_", " "), statuses: [ data["status"] || "acquired" ] }
-      end
+      scene_actors = build_scene_actors(actors, actor_states, scene_id)
+      scene_objects = build_scene_objects(objects, object_states, scene_id)
+      append_improvised_objects(scene_objects, improvised, scene_id)
 
       {
         scene: { id: scene["id"], name: scene["name"], description: scene["description"] },
@@ -70,81 +56,6 @@ module Arena
         exits: scene["exits"] || [],
         inventory: player_inventory(world_state)
       }
-    end
-
-    def world_state_delta
-      changes = []
-      actor_states  = @world_state["actors"]  || {}
-      object_states = @world_state["objects"] || {}
-
-      actors.each do |actor|
-        state          = actor_states[actor["id"]] || {}
-        current_status = state["status"] || actor["default_status"]
-        current_scene  = state["scene"]  || actor["scene"]
-
-        status_changed = current_status != actor["default_status"]
-        scene_changed  = current_scene  != actor["scene"]
-        next unless status_changed || scene_changed
-
-        changes << {
-          type:   "actor",
-          id:     actor["id"],
-          name:   actor["name"],
-          status: current_status,
-          scene:  scene_changed ? current_scene : nil
-        }
-      end
-
-      objects.each do |obj|
-        state          = object_states[obj["id"]] || {}
-        current_status = state["status"] || obj["default_status"]
-        current_scene  = state["scene"]  || obj["scene"]
-
-        status_changed = current_status != obj["default_status"]
-        scene_changed  = current_scene  != obj["scene"]
-        next unless status_changed || scene_changed
-
-        changes << {
-          type:   "object",
-          id:     obj["id"],
-          name:   obj["name"],
-          status: current_status,
-          scene:  scene_changed ? current_scene : nil
-        }
-      end
-
-      changes
-    end
-
-    private
-
-    def player_inventory(world_state)
-      object_states = world_state["objects"] || {}
-      improvised    = world_state["improvised_objects"] || {}
-      items = []
-
-      objects.each do |obj|
-        state = object_states[obj["id"]] || {}
-        next unless state["scene"] == "player_inventory"
-        statuses = Array(state["status"] || obj["default_status"])
-        items << { id: obj["id"], name: obj["name"], statuses: statuses }
-      end
-
-      improvised.each do |item_id, data|
-        item_scene = data["scene"]
-        next unless item_scene.nil? || item_scene == "player_inventory"
-        items << { id: item_id, name: item_id.gsub("_", " "), statuses: [ data["status"] || "acquired" ] }
-      end
-
-      items
-    end
-
-    def current_actor_scene(actor, actor_states)
-      actor_states.dig(actor["id"], "scene") || actor["scene"]
-    end
-
-    def current_object_scene(object, object_states)
-      object_states.dig(object["id"], "scene") || object["scene"]
     end
   end
 end

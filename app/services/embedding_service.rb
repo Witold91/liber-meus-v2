@@ -12,7 +12,7 @@ class EmbeddingService
     tokens = response.dig("usage", "total_tokens").to_i
     AIClient.log_request(
       service_name: "EmbeddingService",
-      parameters: { model: model, input_count: texts.size },
+      parameters: { model: model, messages: texts },
       response_body: { token_count: tokens, embedding_count: response.dig("data")&.size },
       tokens: tokens,
       duration_ms: duration_ms
